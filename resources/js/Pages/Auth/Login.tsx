@@ -19,7 +19,7 @@ export default function Login({
     canResetPassword: boolean;
 }) {
     const { data, setData, post, processing, errors, reset } = useForm({
-        email: '',
+        credential: '',
         password: '',
         remember: false as boolean,
     });
@@ -50,18 +50,30 @@ export default function Login({
                     <CardContent>
                         <form onSubmit={handleSubmit} className="space-y-4">
                             <div className="space-y-2">
-                                <Label htmlFor="email">Email</Label>
+                                <Label htmlFor="credential">
+                                    Email or Username
+                                </Label>
                                 <Input
-                                    id="email"
-                                    type="email"
-                                    value={data.email}
+                                    id="credential"
+                                    type="text"
+                                    value={data.credential}
                                     onChange={(e) =>
-                                        setData('email', e.target.value)
+                                        setData('credential', e.target.value)
                                     }
                                     required
+                                    autoFocus
                                 />
+                                {/* @ts-expect-error  error returns as errors.username or errors.email, look at LoginRequest.php */}
+                                {errors.username && (
+                                    <p className="text-sm text-red-500">
+                                        {/* @ts-expect-error look at LoginRequest.php */}
+                                        {errors.username}
+                                    </p>
+                                )}
+                                {/* @ts-expect-error look at LoginRequest.php */}
                                 {errors.email && (
                                     <p className="text-sm text-red-500">
+                                        {/* @ts-expect-error look at LoginRequest.php */}
                                         {errors.email}
                                     </p>
                                 )}
@@ -86,6 +98,7 @@ export default function Login({
                             <div className="flex items-center space-x-2">
                                 <Checkbox
                                     id="remember"
+                                    defaultChecked={data.remember}
                                     checked={data.remember}
                                     onCheckedChange={(remember) =>
                                         setData('remember', remember as boolean)

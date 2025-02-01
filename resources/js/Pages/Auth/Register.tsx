@@ -12,7 +12,7 @@ import { Link, useForm } from '@inertiajs/react';
 
 export default function Register() {
     const { data, setData, post, processing, errors, reset } = useForm({
-        name: '',
+        username: '',
         email: '',
         password: '',
         password_confirmation: '',
@@ -37,19 +37,20 @@ export default function Register() {
                 <CardContent>
                     <form onSubmit={handleSubmit} className="space-y-4">
                         <div className="space-y-2">
-                            <Label htmlFor="name">Name</Label>
+                            <Label htmlFor="username">Username</Label>
                             <Input
-                                id="name"
+                                id="username"
                                 type="text"
-                                value={data.name}
+                                value={data.username}
                                 onChange={(e) =>
-                                    setData('name', e.target.value)
+                                    setData('username', e.target.value)
                                 }
                                 required
+                                autoFocus
                             />
-                            {errors.name && (
+                            {errors.username && (
                                 <p className="text-sm text-red-500">
-                                    {errors.name}
+                                    {errors.username}
                                 </p>
                             )}
                         </div>

@@ -1,9 +1,22 @@
-import DangerButton from '@/components/DangerButton';
-import InputError from '@/components/InputError';
-import InputLabel from '@/components/InputLabel';
-import Modal from '@/components/Modal';
-import SecondaryButton from '@/components/SecondaryButton';
-import TextInput from '@/components/TextInput';
+'use client';
+
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import {
+    DialogStack,
+    DialogStackBody,
+    DialogStackContent,
+    DialogStackDescription,
+    DialogStackFooter,
+    DialogStackHeader,
+    DialogStackNext,
+    DialogStackOverlay,
+    DialogStackPrevious,
+    DialogStackTitle,
+    DialogStackTrigger,
+} from '@/components/ui/kibo-ui/dialog-stack';
+import { Label } from '@/components/ui/label';
 import { useForm } from '@inertiajs/react';
 import { FormEventHandler, useRef, useState } from 'react';
 
@@ -12,7 +25,7 @@ export default function DeleteUserForm({
 }: {
     className?: string;
 }) {
-    const [confirmingUserDeletion, setConfirmingUserDeletion] = useState(false);
+    const [open, setOpen] = useState(false);
     const passwordInput = useRef<HTMLInputElement>(null);
 
     const {
@@ -27,10 +40,6 @@ export default function DeleteUserForm({
         password: '',
     });
 
-    const confirmUserDeletion = () => {
-        setConfirmingUserDeletion(true);
-    };
-
     const deleteUser: FormEventHandler = (e) => {
         e.preventDefault();
 
@@ -43,8 +52,7 @@ export default function DeleteUserForm({
     };
 
     const closeModal = () => {
-        setConfirmingUserDeletion(false);
-
+        setOpen(false);
         clearErrors();
         reset();
     };
@@ -55,7 +63,6 @@ export default function DeleteUserForm({
                 <h2 className="text-lg font-medium text-gray-900 dark:text-gray-100">
                     Delete Account
                 </h2>
-
                 <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
                     Once your account is deleted, all of its resources and data
                     will be permanently deleted. Before deleting your account,
@@ -64,61 +71,93 @@ export default function DeleteUserForm({
                 </p>
             </header>
 
-            <DangerButton onClick={confirmUserDeletion}>
-                Delete Account
-            </DangerButton>
+            <DialogStack open={open} onOpenChange={setOpen}>
+                <DialogStackTrigger asChild>
+                    <Button variant="destructive">Delete Account</Button>
+                </DialogStackTrigger>
+                <DialogStackOverlay />
 
-            <Modal show={confirmingUserDeletion} onClose={closeModal}>
-                <form onSubmit={deleteUser} className="p-6">
-                    <h2 className="text-lg font-medium text-gray-900 dark:text-gray-100">
-                        Are you sure you want to delete your account?
-                    </h2>
+                <DialogStackBody>
+                    <DialogStackContent>
+                        <DialogStackHeader>
+                            <DialogStackTitle>
+                                Are you sure you want to delete your account?
+                            </DialogStackTitle>
+                            <DialogStackDescription>
+                                Once your account is deleted, all of its
+                                resources and data will be permanently deleted.
+                                This action cannot be undone.
+                            </DialogStackDescription>
+                        </DialogStackHeader>
+                        <DialogStackFooter>
+                            <DialogStackNext asChild>
+                                <Button variant="destructive">Continue</Button>
+                            </DialogStackNext>
+                        </DialogStackFooter>
+                    </DialogStackContent>
 
-                    <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
-                        Once your account is deleted, all of its resources and
-                        data will be permanently deleted. Please enter your
-                        password to confirm you would like to permanently delete
-                        your account.
-                    </p>
-
-                    <div className="mt-6">
-                        <InputLabel
-                            htmlFor="password"
-                            value="Password"
-                            className="sr-only"
-                        />
-
-                        <TextInput
-                            id="password"
-                            type="password"
-                            name="password"
-                            ref={passwordInput}
-                            value={data.password}
-                            onChange={(e) =>
-                                setData('password', e.target.value)
-                            }
-                            className="mt-1 block w-3/4"
-                            isFocused
-                            placeholder="Password"
-                        />
-
-                        <InputError
-                            message={errors.password}
-                            className="mt-2"
-                        />
-                    </div>
-
-                    <div className="mt-6 flex justify-end">
-                        <SecondaryButton onClick={closeModal}>
-                            Cancel
-                        </SecondaryButton>
-
-                        <DangerButton className="ms-3" disabled={processing}>
-                            Delete Account
-                        </DangerButton>
-                    </div>
-                </form>
-            </Modal>
+                    <DialogStackContent>
+                        <form onSubmit={deleteUser}>
+                            <DialogStackHeader>
+                                <DialogStackTitle>
+                                    Confirm account deletion
+                                </DialogStackTitle>
+                                <DialogStackDescription>
+                                    Please enter your password to confirm you
+                                    would like to permanently delete your
+                                    account.
+                                </DialogStackDescription>
+                            </DialogStackHeader>
+                            <div className="py-4">
+                                <Label htmlFor="password" className="sr-only">
+                                    Password
+                                </Label>
+                                <Input
+                                    id="password"
+                                    type="password"
+                                    ref={passwordInput}
+                                    value={data.password}
+                                    onChange={(e) =>
+                                        setData('password', e.target.value)
+                                    }
+                                    className="mt-1 block w-full"
+                                    placeholder="Password"
+                                    required
+                                />
+                                {errors.password && (
+                                    <Alert
+                                        variant="destructive"
+                                        className="mt-2"
+                                    >
+                                        <AlertDescription>
+                                            {errors.password}
+                                        </AlertDescription>
+                                    </Alert>
+                                )}
+                            </div>
+                            <DialogStackFooter className="justify-between">
+                                <DialogStackPrevious asChild>
+                                    <Button
+                                        variant="outline"
+                                        onClick={closeModal}
+                                    >
+                                        Cancel
+                                    </Button>
+                                </DialogStackPrevious>
+                                <Button
+                                    type="submit"
+                                    variant="destructive"
+                                    disabled={processing}
+                                >
+                                    {processing
+                                        ? 'Deleting...'
+                                        : 'Delete Account'}
+                                </Button>
+                            </DialogStackFooter>
+                        </form>
+                    </DialogStackContent>
+                </DialogStackBody>
+            </DialogStack>
         </section>
     );
 }

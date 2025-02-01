@@ -1,6 +1,14 @@
-import InputError from '@/components/InputError';
-import PrimaryButton from '@/components/PrimaryButton';
-import TextInput from '@/components/TextInput';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Button } from '@/components/ui/button';
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { Head, useForm } from '@inertiajs/react';
 import { FormEventHandler } from 'react';
 
@@ -19,37 +27,53 @@ export default function ForgotPassword({ status }: { status?: string }) {
         <>
             <Head title="Forgot Password" />
 
-            <div className="mb-4 text-sm text-gray-600 dark:text-gray-400">
-                Forgot your password? No problem. Just let us know your email
-                address and we will email you a password reset link that will
-                allow you to choose a new one.
+            <div className="container mx-auto flex items-center justify-center px-4 py-8">
+                <Card className="w-full max-w-md">
+                    <CardHeader>
+                        <CardTitle>Forgot Password</CardTitle>
+                        <CardDescription>
+                            Enter your email to receive a password reset link
+                        </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        {status && (
+                            <Alert className="mb-4">
+                                <AlertDescription>{status}</AlertDescription>
+                            </Alert>
+                        )}
+
+                        <form onSubmit={submit} className="space-y-4">
+                            <div className="space-y-2">
+                                <Label htmlFor="email">Email</Label>
+                                <Input
+                                    id="email"
+                                    type="email"
+                                    value={data.email}
+                                    onChange={(e) =>
+                                        setData('email', e.target.value)
+                                    }
+                                    required
+                                />
+                                {errors.email && (
+                                    <Alert variant="destructive">
+                                        <AlertDescription>
+                                            {errors.email}
+                                        </AlertDescription>
+                                    </Alert>
+                                )}
+                            </div>
+
+                            <Button
+                                type="submit"
+                                className="w-full"
+                                disabled={processing}
+                            >
+                                Email Password Reset Link
+                            </Button>
+                        </form>
+                    </CardContent>
+                </Card>
             </div>
-
-            {status && (
-                <div className="mb-4 text-sm font-medium text-green-600 dark:text-green-400">
-                    {status}
-                </div>
-            )}
-
-            <form onSubmit={submit}>
-                <TextInput
-                    id="email"
-                    type="email"
-                    name="email"
-                    value={data.email}
-                    className="mt-1 block w-full"
-                    isFocused={true}
-                    onChange={(e) => setData('email', e.target.value)}
-                />
-
-                <InputError message={errors.email} className="mt-2" />
-
-                <div className="mt-4 flex items-center justify-end">
-                    <PrimaryButton className="ms-4" disabled={processing}>
-                        Email Password Reset Link
-                    </PrimaryButton>
-                </div>
-            </form>
         </>
     );
 }

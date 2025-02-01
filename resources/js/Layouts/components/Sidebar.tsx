@@ -2,6 +2,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import {
     DropdownMenu,
+    DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
@@ -69,17 +70,19 @@ export function AppSidebar() {
                             <div className="flex cursor-pointer items-center rounded-md p-2">
                                 <Avatar>
                                     <AvatarImage
-                                        src={auth.user.avatar || ''}
-                                        alt={auth.user.name}
+                                        src={`https://api.dicebear.com/9.x/open-peeps/svg?seed=${auth.user.username}`}
+                                        alt={auth.user.username}
                                     />
                                     <AvatarFallback>
-                                        {auth.user.name.charAt(0)}
+                                        {auth.user.username.charAt(0)}
                                     </AvatarFallback>
                                 </Avatar>
-                                <span className="ml-2">{auth.user.name}</span>
+                                <span className="ml-2">
+                                    {auth.user.username}
+                                </span>
                             </div>
                         </DropdownMenuTrigger>
-                        <DropdownMenu>
+                        <DropdownMenuContent>
                             <DropdownMenuItem asChild>
                                 <Link href="/profile">Profile</Link>
                             </DropdownMenuItem>
@@ -88,7 +91,7 @@ export function AppSidebar() {
                                     Logout
                                 </Link>
                             </DropdownMenuItem>
-                        </DropdownMenu>
+                        </DropdownMenuContent>
                     </DropdownMenu>
                 ) : (
                     <div className="flex min-w-full justify-evenly gap-4">

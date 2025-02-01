@@ -12,7 +12,6 @@ import { usePage } from '@inertiajs/react';
 export default function Profile() {
     const { auth } = usePage().props;
 
-    // Placeholder data
     const projects = [
         {
             id: 1,
@@ -40,7 +39,7 @@ export default function Profile() {
     return (
         <div className="container mx-auto px-4 py-8">
             <h1 className="mb-6 text-3xl font-bold">
-                Welcome, {auth.user.name}!
+                Welcome, {auth.user.username}!
             </h1>
 
             <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
@@ -55,16 +54,16 @@ export default function Profile() {
                         <div className="mb-4 flex items-center space-x-4">
                             <Avatar className="h-20 w-20">
                                 <AvatarImage
-                                    src={`https://avatars.dicebear.com/api/initials/${auth.user.name}.svg`}
-                                    alt={auth.user.name}
+                                    src={`https://api.dicebear.com/9.x/open-peeps/svg?seed=${auth.user.username}`}
+                                    alt={auth.user.username}
                                 />
                                 <AvatarFallback>
-                                    {auth.user.name.charAt(0)}
+                                    {auth.user.username.charAt(0)}
                                 </AvatarFallback>
                             </Avatar>
                             <div>
                                 <h2 className="text-2xl font-semibold">
-                                    {auth.user.name}
+                                    {auth.user.username}
                                 </h2>
                                 <p className="text-muted-foreground">
                                     {auth.user.email}
