@@ -1,12 +1,12 @@
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Badge } from '@/components/ui/badge';
+import { Avatar, AvatarFallback, AvatarImage } from '@/Components/ui/avatar';
+import { Badge } from '@/Components/ui/badge';
 import {
     Card,
     CardContent,
     CardDescription,
     CardHeader,
     CardTitle,
-} from '@/components/ui/card';
+} from '@/Components/ui/card';
 import { usePage } from '@inertiajs/react';
 
 export default function Profile() {
@@ -36,11 +36,13 @@ export default function Profile() {
         contributions: 230,
     };
 
+    const firstName =
+        auth.user.username.split(' ')[0].charAt(0).toUpperCase() +
+        auth.user.username.split(' ')[0].slice(1);
+
     return (
         <div className="container mx-auto px-4 py-8">
-            <h1 className="mb-6 text-3xl font-bold">
-                Welcome, {auth.user.username}!
-            </h1>
+            <h1 className="mb-6 text-3xl font-bold">Welcome, {firstName}!</h1>
 
             <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
                 <Card className="md:col-span-2">
@@ -58,12 +60,12 @@ export default function Profile() {
                                     alt={auth.user.username}
                                 />
                                 <AvatarFallback>
-                                    {auth.user.username.charAt(0)}
+                                    {firstName.charAt(0)}
                                 </AvatarFallback>
                             </Avatar>
                             <div>
                                 <h2 className="text-2xl font-semibold">
-                                    {auth.user.username}
+                                    {firstName}
                                 </h2>
                                 <p className="text-muted-foreground">
                                     {auth.user.email}
