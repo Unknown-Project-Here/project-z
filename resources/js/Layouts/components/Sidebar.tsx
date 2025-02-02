@@ -16,51 +16,81 @@ import {
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { Link, usePage } from '@inertiajs/react';
-import { LayoutDashboard, Settings, UserCircle } from 'lucide-react';
+import {
+    FeatherIcon,
+    FolderGit2,
+    LayoutDashboard,
+    Settings,
+    UserCircle,
+} from 'lucide-react';
+import { NavItems } from '../config/Site';
+
+// update this with new iconto use the NavItems from the config/Site.tsx file
+const iconComponents = {
+    FolderGit2,
+    LayoutDashboard,
+    UserCircle,
+    Settings,
+};
 
 export function AppSidebar() {
     const { auth } = usePage().props;
+    const { url } = usePage();
+
+    const path = url.split('?')[0];
+
+    const isActiveLink = (href: string) => {
+        // Extract the path from the full URL if it contains http/https
+        const currentPath = path.replace(/^(?:https?:\/\/[^\/]+)?/, '');
+
+        // Handle root path separately
+        if (href === '/') {
+            return currentPath === href;
+        }
+
+        // Check if the current path starts with the href
+        // This will match both exact paths and nested routes
+        return currentPath.startsWith(href);
+    };
 
     return (
         <Sidebar>
             <SidebarHeader>
                 <SidebarMenu>
-                    <SidebarMenuItem>
-                        <SidebarMenuButton asChild>
-                            <Link href="/">
-                                <LayoutDashboard className="mr-2 h-5 w-5" />
-                                Project Hub
-                            </Link>
-                        </SidebarMenuButton>
-                    </SidebarMenuItem>
+                    <Link
+                        href="/"
+                        className="flex items-center justify-center py-1.5 text-3xl"
+                    >
+                        <FeatherIcon className="mr-2 h-8 w-8" />
+                        Project Hub
+                    </Link>
                 </SidebarMenu>
             </SidebarHeader>
             <SidebarContent>
-                <SidebarMenu>
-                    <SidebarMenuItem>
-                        <SidebarMenuButton asChild>
-                            <Link href="/projects">
-                                <LayoutDashboard className="mr-2 h-5 w-5" />
-                                Projects
-                            </Link>
-                        </SidebarMenuButton>
-                    </SidebarMenuItem>
-                    <SidebarMenuItem>
-                        <SidebarMenuButton asChild>
-                            <Link href="/profile">
-                                <UserCircle className="mr-2 h-5 w-5" />
-                                Profile
-                            </Link>
-                        </SidebarMenuButton>
-                    </SidebarMenuItem>
-                    <SidebarMenuItem>
-                        <SidebarMenuButton asChild>
-                            <Link href="/settings/account">
-                                <Settings className="mr-2 h-5 w-5" />
-                                Settings
-                            </Link>
-                        </SidebarMenuButton>
-                    </SidebarMenuItem>
+                <SidebarMenu className="px-4 py-4">
+                    {NavItems.map((item) => {
+                        const IconComponent =
+                            iconComponents[
+                                item.icon as keyof typeof iconComponents
+                            ];
+                        const isActive = isActiveLink(item.href);
+
+                        return (
+                            <SidebarMenuItem key={item.href}>
+                                <SidebarMenuButton
+                                    asChild
+                                    className={`my-1 ${isActive ? 'bg-primary hover:bg-primary' : ''}`}
+                                >
+                                    <Link href={item.href}>
+                                        <IconComponent
+                                            className={`mr-2 h-5 w-5 ${isActive ? 'text-white' : ''}`}
+                                        />
+                                        {item.name}
+                                    </Link>
+                                </SidebarMenuButton>
+                            </SidebarMenuItem>
+                        );
+                    })}
                 </SidebarMenu>
             </SidebarContent>
             <SidebarFooter>
@@ -68,7 +98,7 @@ export function AppSidebar() {
                     <DropdownMenu>
                         <DropdownMenuTrigger>
                             <div className="flex cursor-pointer items-center rounded-md p-2">
-                                <Avatar>
+                                <Avatar className="bg-primary">
                                     <AvatarImage
                                         src={`https://api.dicebear.com/9.x/open-peeps/svg?seed=${auth.user.username}`}
                                         alt={auth.user.username}
