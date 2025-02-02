@@ -88,7 +88,7 @@ export default function UpdateProfileInformation({
 
                     {mustVerifyEmail && user.email_verified_at === null && (
                         <div className="space-y-2">
-                            <p className="text-sm text-muted-foreground">
+                            <p className="text-sm">
                                 Your email address is unverified.
                                 <Link
                                     href={route('verification.send')}
@@ -118,9 +118,7 @@ export default function UpdateProfileInformation({
                         </Button>
 
                         {recentlySuccessful && (
-                            <p className="text-sm text-muted-foreground">
-                                Saved.
-                            </p>
+                            <p className="text-sm">Saved.</p>
                         )}
                     </div>
                 </form>

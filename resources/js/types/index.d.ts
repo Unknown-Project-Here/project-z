@@ -8,6 +8,44 @@ export interface User {
     avatar: string | null;
 }
 
+export interface Project {
+    id: number;
+    user_id: number;
+    title: string;
+    description: string;
+    is_active: boolean;
+    stack?: string[];
+    email: string;
+    discord: string;
+    github: string;
+    website: string;
+    created_at: string;
+    updated_at: string;
+    user: User;
+}
+
+export interface PaginationLink {
+    url: string | null;
+    label: string;
+    active: boolean;
+}
+
+export type ProjectsResponse = PageProps & {
+    data: Project[];
+    current_page: number;
+    first_page_url: string;
+    from: number;
+    last_page: number;
+    last_page_url: string;
+    links: PaginationLink[];
+    next_page_url: string | null;
+    path: string;
+    per_page: number;
+    prev_page_url: string | null;
+    to: number;
+    total: number;
+};
+
 export type PageProps<
     T extends Record<string, unknown> = Record<string, unknown>,
 > = T & {
@@ -15,4 +53,10 @@ export type PageProps<
         user: User;
     };
     ziggy: Config & { location: string };
+};
+
+export type NavItem = {
+    name: string;
+    href: string;
+    icon: string;
 };

@@ -52,7 +52,7 @@ export default function Profile() {
                     </CardHeader>
                     <CardContent>
                         <div className="mb-4 flex items-center space-x-4">
-                            <Avatar className="h-20 w-20">
+                            <Avatar className="h-20 w-20 bg-primary">
                                 <AvatarImage
                                     src={`https://api.dicebear.com/9.x/open-peeps/svg?seed=${auth.user.username}`}
                                     alt={auth.user.username}
@@ -65,10 +65,8 @@ export default function Profile() {
                                 <h2 className="text-2xl font-semibold">
                                     {auth.user.username}
                                 </h2>
-                                <p className="text-muted-foreground">
-                                    {auth.user.email}
-                                </p>
-                                <p className="text-sm text-muted-foreground">
+                                <p>{auth.user.email}</p>
+                                <p className="text-sm">
                                     Joined on {new Date().toLocaleDateString()}
                                 </p>
                             </div>
@@ -78,25 +76,19 @@ export default function Profile() {
                                 <h3 className="text-2xl font-bold">
                                     {stats.projectsCompleted}
                                 </h3>
-                                <p className="text-sm text-muted-foreground">
-                                    Projects Completed
-                                </p>
+                                <p className="text-sm">Projects Completed</p>
                             </div>
                             <div className="text-center">
                                 <h3 className="text-2xl font-bold">
                                     {stats.linesOfCode.toLocaleString()}
                                 </h3>
-                                <p className="text-sm text-muted-foreground">
-                                    Lines of Code
-                                </p>
+                                <p className="text-sm">Lines of Code</p>
                             </div>
                             <div className="text-center">
                                 <h3 className="text-2xl font-bold">
                                     {stats.contributions}
                                 </h3>
-                                <p className="text-sm text-muted-foreground">
-                                    Contributions
-                                </p>
+                                <p className="text-sm">Contributions</p>
                             </div>
                         </div>
                     </CardContent>
@@ -137,7 +129,7 @@ export default function Profile() {
                                     <CardTitle>{project.name}</CardTitle>
                                 </CardHeader>
                                 <CardContent>
-                                    <p className="text-sm text-muted-foreground">
+                                    <p className="text-sm">
                                         {project.description}
                                     </p>
                                 </CardContent>

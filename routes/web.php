@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ProjectController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -18,10 +19,29 @@ Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+// Profile routes
+Route::prefix('profile')->name('profile.')->middleware(['auth', 'verified'])->group(function () {
+    Route::get('/', [ProfileController::class, 'edit'])->name('edit');
+    Route::patch('/', [ProfileController::class, 'update'])->name('update');
+    Route::delete('/', [ProfileController::class, 'destroy'])->name('destroy');
 });
 
-require __DIR__.'/auth.php';
+// Projects routes
+Route::prefix('projects')->name('projects.')->group(function () {
+    Route::controller(ProjectController::class)->group(function () {
+        // Public routes
+        Route::get('/', 'index')->name('index');
+        Route::get('/{project}', 'show')->name('show');
+
+        // Protected routes
+        Route::middleware(['auth', 'verified'])->group(function () {
+            Route::get('/create', 'create')->name('create');
+            Route::post('/', 'store')->name('store');
+            Route::get('/{project}/edit', 'edit')->name('edit');
+            Route::patch('/{project}', 'update')->name('update');
+            Route::delete('/{project}', 'destroy')->name('destroy');
+        });
+    });
+});
+
+require __DIR__ . '/auth.php';
