@@ -30,7 +30,7 @@ export interface PaginationLink {
     active: boolean;
 }
 
-export interface ProjectsResponse {
+export type ProjectsResponse = PageProps & {
     data: Project[];
     current_page: number;
     first_page_url: string;
@@ -44,7 +44,7 @@ export interface ProjectsResponse {
     prev_page_url: string | null;
     to: number;
     total: number;
-}
+};
 
 export type PageProps<
     T extends Record<string, unknown> = Record<string, unknown>,
@@ -53,7 +53,6 @@ export type PageProps<
         user: User;
     };
     ziggy: Config & { location: string };
-    projects: ProjectsResponse[];
 };
 
 export type NavItem = {

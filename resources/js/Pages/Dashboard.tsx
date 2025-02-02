@@ -1,12 +1,12 @@
-import { Avatar, AvatarFallback, AvatarImage } from '@/Components/ui/avatar';
-import { Badge } from '@/Components/ui/badge';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Badge } from '@/components/ui/badge';
 import {
     Card,
     CardContent,
     CardDescription,
     CardHeader,
     CardTitle,
-} from '@/Components/ui/card';
+} from '@/components/ui/card';
 import { usePage } from '@inertiajs/react';
 
 export default function Profile() {
@@ -65,10 +65,8 @@ export default function Profile() {
                                 <h2 className="text-2xl font-semibold">
                                     {auth.user.username}
                                 </h2>
-                                <p className="text-muted-foreground">
-                                    {auth.user.email}
-                                </p>
-                                <p className="text-sm text-muted-foreground">
+                                <p>{auth.user.email}</p>
+                                <p className="text-sm">
                                     Joined on {new Date().toLocaleDateString()}
                                 </p>
                             </div>
@@ -78,25 +76,19 @@ export default function Profile() {
                                 <h3 className="text-2xl font-bold">
                                     {stats.projectsCompleted}
                                 </h3>
-                                <p className="text-sm text-muted-foreground">
-                                    Projects Completed
-                                </p>
+                                <p className="text-sm">Projects Completed</p>
                             </div>
                             <div className="text-center">
                                 <h3 className="text-2xl font-bold">
                                     {stats.linesOfCode.toLocaleString()}
                                 </h3>
-                                <p className="text-sm text-muted-foreground">
-                                    Lines of Code
-                                </p>
+                                <p className="text-sm">Lines of Code</p>
                             </div>
                             <div className="text-center">
                                 <h3 className="text-2xl font-bold">
                                     {stats.contributions}
                                 </h3>
-                                <p className="text-sm text-muted-foreground">
-                                    Contributions
-                                </p>
+                                <p className="text-sm">Contributions</p>
                             </div>
                         </div>
                     </CardContent>
@@ -137,7 +129,7 @@ export default function Profile() {
                                     <CardTitle>{project.name}</CardTitle>
                                 </CardHeader>
                                 <CardContent>
-                                    <p className="text-sm text-muted-foreground">
+                                    <p className="text-sm">
                                         {project.description}
                                     </p>
                                 </CardContent>

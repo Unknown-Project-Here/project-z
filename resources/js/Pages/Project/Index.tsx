@@ -1,13 +1,14 @@
-import { Button } from '@/Components/ui/button';
+import { Button } from '@/components/ui/button';
 import {
     Card,
     CardContent,
     CardFooter,
     CardHeader,
     CardTitle,
-} from '@/Components/ui/card';
-import { ProjectsResponse } from '@/types';
-import { Head, Link, usePage } from '@inertiajs/react';
+} from '@/components/ui/card';
+import { usePageProps } from '@/hooks/usePageProps';
+import { Project, ProjectsResponse } from '@/types';
+import { Head, Link } from '@inertiajs/react';
 import {
     ChevronLeft,
     ChevronRight,
@@ -17,38 +18,16 @@ import {
     MessageSquare,
 } from 'lucide-react';
 
-interface User {
-    id: number;
-    name: string;
-    email: string;
-}
-
-interface Project {
-    id: number;
-    user_id: number;
-    title: string;
-    description: string;
-    is_active: boolean;
-    stack?: string[];
-    email: string;
-    discord: string;
-    github: string;
-    website: string;
-    created_at: string;
-    updated_at: string;
-    user: User;
-}
-
-interface PaginatedData {
-    data: Project[];
-    current_page: number;
-    last_page: number;
-    per_page: number;
-    total: number;
-}
+// interface PaginatedData {
+//     data: Project[];
+//     current_page: number;
+//     last_page: number;
+//     per_page: number;
+//     total: number;
+// }
 
 export default function ProjectIndex() {
-    const { projects } = usePage().props as { projects: ProjectsResponse };
+    const { projects } = usePageProps<{ projects: ProjectsResponse }>().props;
 
     return (
         <>
@@ -59,16 +38,23 @@ export default function ProjectIndex() {
                 {/* Projects Grid */}
                 <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
                     {projects.data.length > 0 ? (
-                        projects.data.map((project) => (
+                        projects.data.map((project: Project) => (
                             <Card
                                 key={project.id}
                                 className="transition-shadow hover:shadow-lg"
                             >
                                 <CardHeader>
                                     <div className="flex items-center justify-between">
-                                        <CardTitle className="text-xl">
-                                            {project.title}
-                                        </CardTitle>
+                                        <Link
+                                            href={route(
+                                                'projects.show',
+                                                project.id,
+                                            )}
+                                        >
+                                            <CardTitle className="text-xl">
+                                                {project.title}
+                                            </CardTitle>
+                                        </Link>
                                         <span
                                             className={`rounded-full px-2 py-1 text-xs ${
                                                 project.is_active
@@ -81,12 +67,12 @@ export default function ProjectIndex() {
                                                 : 'Inactive'}
                                         </span>
                                     </div>
-                                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                                    <div className="flex items-center gap-2 text-sm">
                                         <span>By {project.user.username}</span>
                                     </div>
                                 </CardHeader>
                                 <CardContent>
-                                    <p className="mb-4 line-clamp-2 text-muted-foreground">
+                                    <p className="mb-4 line-clamp-2">
                                         {project.description}
                                     </p>
 
@@ -94,7 +80,10 @@ export default function ProjectIndex() {
                                         project.stack.length > 0 && (
                                             <div className="mb-4 flex flex-wrap gap-2">
                                                 {project.stack.map(
-                                                    (tech, index) => (
+                                                    (
+                                                        tech: string,
+                                                        index: number,
+                                                    ) => (
                                                         <span
                                                             key={index}
                                                             className="rounded-md bg-primary/10 px-2 py-1 text-xs text-primary"
@@ -109,7 +98,7 @@ export default function ProjectIndex() {
                                     <div className="space-y-2 text-sm">
                                         {project.website && (
                                             <div className="flex items-center gap-2">
-                                                <Globe className="h-4 w-4 text-muted-foreground" />
+                                                <Globe className="h-4 w-4" />
                                                 <a
                                                     href={project.website}
                                                     target="_blank"
@@ -122,7 +111,7 @@ export default function ProjectIndex() {
                                         )}
                                         {project.github && (
                                             <div className="flex items-center gap-2">
-                                                <Github className="h-4 w-4 text-muted-foreground" />
+                                                <Github className="h-4 w-4" />
                                                 <a
                                                     href={project.github}
                                                     target="_blank"
@@ -135,7 +124,7 @@ export default function ProjectIndex() {
                                         )}
                                     </div>
 
-                                    <p className="mt-4 text-xs text-muted-foreground">
+                                    <p className="mt-4 text-xs">
                                         Created:{' '}
                                         {new Date(
                                             project.created_at,
@@ -180,9 +169,7 @@ export default function ProjectIndex() {
                         ))
                     ) : (
                         <div className="col-span-full py-8 text-center">
-                            <p className="text-muted-foreground">
-                                No projects found
-                            </p>
+                            <p>No projects found</p>
                         </div>
                     )}
                 </div>
@@ -206,7 +193,7 @@ export default function ProjectIndex() {
                             </Link>
                         </Button>
 
-                        <span className="text-muted-foreground">
+                        <span>
                             Page {projects.current_page} of {projects.last_page}
                         </span>
 

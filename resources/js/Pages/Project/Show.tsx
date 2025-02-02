@@ -1,12 +1,12 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Badge } from '@/Components/ui/badge';
+import { Badge } from '@/components/ui/badge';
 import {
     Card,
     CardContent,
     CardDescription,
     CardHeader,
     CardTitle,
-} from '@/Components/ui/card';
+} from '@/components/ui/card';
 import { Project } from '@/types';
 import { Head } from '@inertiajs/react';
 import { CalendarIcon, CodeIcon, GitForkIcon } from 'lucide-react';
@@ -28,7 +28,7 @@ export default function ProjectShow({ project }: { project: Project }) {
 
     return (
         <>
-            <Head title="Project" />
+            <Head title={project.title} />
 
             <div className="container mx-auto px-4 py-8">
                 <div className="mb-6 flex items-center justify-between">
@@ -46,9 +46,7 @@ export default function ProjectShow({ project }: { project: Project }) {
                         </CardHeader>
                         <CardContent>
                             <div className="mb-6">
-                                <p className="text-muted-foreground">
-                                    {project.description}
-                                </p>
+                                <p>{project.description}</p>
                             </div>
 
                             <div className="mb-6">
@@ -69,7 +67,7 @@ export default function ProjectShow({ project }: { project: Project }) {
                                         <p className="font-medium">
                                             {project.user.username}
                                         </p>
-                                        <p className="text-sm text-muted-foreground">
+                                        <p className="text-sm">
                                             {project.user.email}
                                         </p>
                                     </div>
@@ -78,36 +76,30 @@ export default function ProjectShow({ project }: { project: Project }) {
 
                             <div className="grid grid-cols-3 gap-4">
                                 <div className="flex items-center space-x-2">
-                                    <CodeIcon className="h-4 w-4 text-muted-foreground" />
+                                    <CodeIcon className="size-4" />
                                     <div>
                                         <p className="text-2xl font-bold">
                                             {projectStats.codeLines.toLocaleString()}
                                         </p>
-                                        <p className="text-sm text-muted-foreground">
-                                            Lines of Code
-                                        </p>
+                                        <p className="text-sm">Lines of Code</p>
                                     </div>
                                 </div>
                                 <div className="flex items-center space-x-2">
-                                    <GitForkIcon className="h-4 w-4 text-muted-foreground" />
+                                    <GitForkIcon className="size-4" />
                                     <div>
                                         <p className="text-2xl font-bold">
                                             {projectStats.commits}
                                         </p>
-                                        <p className="text-sm text-muted-foreground">
-                                            Total Commits
-                                        </p>
+                                        <p className="text-sm">Total Commits</p>
                                     </div>
                                 </div>
                                 <div className="flex items-center space-x-2">
-                                    <CalendarIcon className="h-4 w-4 text-muted-foreground" />
+                                    <CalendarIcon className="size-4" />
                                     <div>
                                         <p className="text-2xl font-bold">
                                             {projectStats.contributors}
                                         </p>
-                                        <p className="text-sm text-muted-foreground">
-                                            Contributors
-                                        </p>
+                                        <p className="text-sm">Contributors</p>
                                     </div>
                                 </div>
                             </div>
@@ -146,7 +138,7 @@ export default function ProjectShow({ project }: { project: Project }) {
                                         <p className="text-sm font-medium">
                                             Created
                                         </p>
-                                        <p className="text-sm text-muted-foreground">
+                                        <p className="text-sm">
                                             {new Date(
                                                 project.created_at,
                                             ).toLocaleDateString()}
@@ -156,7 +148,7 @@ export default function ProjectShow({ project }: { project: Project }) {
                                         <p className="text-sm font-medium">
                                             Last Updated
                                         </p>
-                                        <p className="text-sm text-muted-foreground">
+                                        <p className="text-sm">
                                             {new Date(
                                                 project.updated_at,
                                             ).toLocaleDateString()}
