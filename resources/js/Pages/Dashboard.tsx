@@ -36,13 +36,11 @@ export default function Profile() {
         contributions: 230,
     };
 
-    const firstName =
-        auth.user.username.split(' ')[0].charAt(0).toUpperCase() +
-        auth.user.username.split(' ')[0].slice(1);
-
     return (
         <div className="container mx-auto px-4 py-8">
-            <h1 className="mb-6 text-3xl font-bold">Welcome, {firstName}!</h1>
+            <h1 className="mb-6 text-3xl font-bold">
+                Welcome, {auth.user.username}!
+            </h1>
 
             <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
                 <Card className="md:col-span-2">
@@ -54,18 +52,18 @@ export default function Profile() {
                     </CardHeader>
                     <CardContent>
                         <div className="mb-4 flex items-center space-x-4">
-                            <Avatar className="h-20 w-20">
+                            <Avatar className="h-20 w-20 bg-primary">
                                 <AvatarImage
                                     src={`https://api.dicebear.com/9.x/open-peeps/svg?seed=${auth.user.username}`}
                                     alt={auth.user.username}
                                 />
                                 <AvatarFallback>
-                                    {firstName.charAt(0)}
+                                    {auth.user.username.charAt(0)}
                                 </AvatarFallback>
                             </Avatar>
                             <div>
                                 <h2 className="text-2xl font-semibold">
-                                    {firstName}
+                                    {auth.user.username}
                                 </h2>
                                 <p className="text-muted-foreground">
                                     {auth.user.email}
