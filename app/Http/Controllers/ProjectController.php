@@ -25,7 +25,7 @@ class ProjectController extends Controller
             'per_page' => 'nullable|integer|min:1',
         ]);
 
-        $perPage = $request->input('per_page', 10);
+        $perPage = $request->input('per_page', 9);
         $projects = Project::with('user')
             ->latest()
             ->paginate($perPage);

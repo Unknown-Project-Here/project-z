@@ -18,14 +18,6 @@ export default function ProjectShow({ project }: { project: Project }) {
         codeLines: 12500,
     };
 
-    const technologies = [
-        'TypeScript',
-        'React',
-        'TailwindCSS',
-        'Laravel',
-        'PostgreSQL',
-    ];
-
     return (
         <>
             <Head title={project.title} />
@@ -54,7 +46,7 @@ export default function ProjectShow({ project }: { project: Project }) {
                                     Project Lead
                                 </h3>
                                 <div className="flex items-center space-x-4">
-                                    <Avatar>
+                                    <Avatar className="bg-primary">
                                         <AvatarImage
                                             src={`https://api.dicebear.com/9.x/open-peeps/svg?seed=${project.user.username}`}
                                             alt={project.user.username}
@@ -116,7 +108,7 @@ export default function ProjectShow({ project }: { project: Project }) {
                             </CardHeader>
                             <CardContent>
                                 <div className="flex flex-wrap gap-2">
-                                    {technologies.map((tech) => (
+                                    {project?.stack?.map((tech) => (
                                         <Badge key={tech} variant="secondary">
                                             {tech}
                                         </Badge>
