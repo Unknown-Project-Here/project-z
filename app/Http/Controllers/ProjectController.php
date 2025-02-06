@@ -49,7 +49,13 @@ class ProjectController extends Controller
     {
         $this->authorize('create', Project::class);
         
-        return Inertia::render('Project/Create');
+        return Inertia::render('Project/Create', [
+            'user' => Auth::user(),
+            'initialData' => [
+                'title' => '',
+                'description' => '',
+            ]
+        ]);
     }
 
     /**
@@ -102,6 +108,11 @@ class ProjectController extends Controller
      */
     public function edit(Project $project): Response
     {
+        // Check if the authenticated user is the project owner
+        if ($project->user_id !== Auth::id()) {
+            abort(403, 'Unauthorized action.');
+        }
+
         $this->authorize('update', $project);
         
         return Inertia::render('Project/Edit', [

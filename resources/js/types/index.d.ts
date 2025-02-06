@@ -10,16 +10,16 @@ export interface User {
 }
 
 export interface Project {
-    id: number;
+    id?: number;
     user_id: number;
     title: string;
     description: string;
-    is_active: boolean;
-    stack?: string[];
+    is_active?: boolean;
+    stack: string[];
     email: string;
-    discord: string;
-    github: string;
-    website: string;
+    discord?: string;
+    github?: string;
+    website?: string;
     created_at: string;
     updated_at: string;
     user: User;
