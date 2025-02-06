@@ -1,4 +1,3 @@
-import { OnboardingType } from '@/components/onboarding/types';
 import { Step } from '@/components/ui/stepper/Step';
 import { StepConnector } from '@/components/ui/stepper/StepConnector';
 import { StepperContent } from '@/components/ui/stepper/StepperContent';
@@ -18,7 +17,7 @@ interface StepperProps {
     children: React.ReactNode;
     contentClassName?: string;
     allowNext?: boolean;
-    onboardingData: OnboardingType;
+    validateStep?: (stepIndex: number) => boolean;
 }
 
 interface StepperComposition {
@@ -34,29 +33,15 @@ const Stepper: React.FC<StepperProps> & StepperComposition = ({
     contentClassName,
     children,
     allowNext = true,
-    onboardingData,
+    validateStep,
 }) => {
     const totalSteps = React.Children.count(children);
 
-    // Check if current step has at least one selection
-    const hasValidSelection = useMemo(() => {
-        if (!onboardingData) return false;
-
-        switch (activeStep) {
-            case 0: // Tech Stack
-                return onboardingData.techStack.length > 0;
-            case 1: // Languages
-                return Object.keys(onboardingData.languages).length > 0;
-            case 2: // Frameworks
-                return Object.keys(onboardingData.frameworks).length > 0;
-            case 3: // Expertise
-                return !!onboardingData.expertise;
-            case 4: // Roles
-                return onboardingData.roles.length > 0;
-            default:
-                return true;
-        }
-    }, [activeStep, onboardingData]);
+    const canMoveNext = useMemo(() => {
+        if (!allowNext) return false;
+        if (!validateStep) return true;
+        return validateStep(activeStep);
+    }, [activeStep, allowNext, validateStep]);
 
     const contextValue = useMemo(
         () => ({
@@ -64,16 +49,9 @@ const Stepper: React.FC<StepperProps> & StepperComposition = ({
             onStepChange,
             onComplete,
             totalSteps,
-            canMoveNext: allowNext && hasValidSelection,
+            canMoveNext,
         }),
-        [
-            activeStep,
-            onStepChange,
-            onComplete,
-            totalSteps,
-            allowNext,
-            hasValidSelection,
-        ],
+        [activeStep, onStepChange, onComplete, totalSteps, canMoveNext],
     );
 
     const [navigationSteps, activeContent] = React.Children.toArray(
