@@ -6,6 +6,7 @@ export interface User {
     email: string;
     email_verified_at?: string;
     avatar: string | null;
+    onboarded: boolean;
 }
 
 export interface Project {
