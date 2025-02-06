@@ -22,8 +22,27 @@ export default function OnboardingPage() {
         },
     );
 
+    const validateStep = (stepIndex: number) => {
+        if (!onboardingData) return false;
+
+        switch (stepIndex) {
+            case 0:
+                return onboardingData.techStack.length > 0;
+            case 1:
+                return onboardingData.languages.length > 0;
+            case 2:
+                return onboardingData.frameworks.length > 0;
+            case 3:
+                return !!onboardingData.expertise;
+            case 4:
+                return onboardingData.roles.length > 0;
+            default:
+                return true;
+        }
+    };
+
     const updateOnboardingData = (
-        field: keyof OnboardingType | string | number | symbol,
+        field: keyof OnboardingType,
         value: string | string[] | Record<string, string>,
     ) => {
         setOnboardingData((prev) => ({
@@ -57,8 +76,8 @@ export default function OnboardingPage() {
                     onStepChange={setCurrentStep}
                     className="min-h-[600px]"
                     contentClassName="flex flex-col sm:p-6"
-                    onboardingData={onboardingData}
                     onComplete={handleComplete}
+                    validateStep={validateStep}
                 >
                     {steps.map((step) => (
                         <Stepper.Step
