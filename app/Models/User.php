@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\ProjectPermission;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -52,5 +53,17 @@ class User extends Authenticatable implements MustVerifyEmail
             ->using(ProjectUser::class)
             ->withPivot('role')
             ->withTimestamps();
+    }
+
+    /**
+     * Determine if the user has the given permission for the project.
+     */
+    public function hasPermission(Project $project, ProjectPermission $permission): bool
+    {
+        $projectUser = $this->projects()
+            ->wherePivot('project_id', $project->id)
+            ->first();
+
+        return $projectUser?->pivot->hasPermission($permission) ?? false;
     }
 }
