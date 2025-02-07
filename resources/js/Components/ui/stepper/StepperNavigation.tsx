@@ -2,7 +2,7 @@ import { Button } from '@/components/ui/button';
 import { useStepperContext } from '@/components/ui/stepper/StepperContext';
 
 export function StepperNavigation() {
-    const { activeStep, onStepChange, onComplete, totalSteps, canMoveNext } =
+    const { activeStep, setActiveStep, onComplete, totalSteps, canMoveNext } =
         useStepperContext();
 
     const isLastStep = activeStep === totalSteps - 1;
@@ -12,15 +12,13 @@ export function StepperNavigation() {
 
         if (isLastStep && onComplete) {
             onComplete();
-        } else if (onStepChange) {
-            onStepChange(Math.min(activeStep + 1, totalSteps - 1));
+        } else {
+            setActiveStep(Math.min(activeStep + 1, totalSteps - 1));
         }
     };
 
     const handlePrev = () => {
-        if (onStepChange) {
-            onStepChange(Math.max(activeStep - 1, 0));
-        }
+        setActiveStep(Math.max(activeStep - 1, 0));
     };
 
     return (

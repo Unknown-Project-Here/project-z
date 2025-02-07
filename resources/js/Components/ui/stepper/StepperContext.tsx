@@ -2,10 +2,11 @@ import { createContext, useContext } from 'react';
 
 type StepperContextValue = {
     activeStep: number;
-    onStepChange?: (step: number) => void;
-    onComplete?: () => void;
+    setActiveStep: (step: number) => void;
     totalSteps: number;
     canMoveNext: boolean;
+    onComplete?: () => void;
+    validateStep?: (stepIndex: number) => boolean;
 };
 
 const StepperContext = createContext<StepperContextValue | undefined>(
