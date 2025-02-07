@@ -35,18 +35,10 @@ Route::prefix('projects')->name('projects.')->group(function () {
 
         // Protected routes
         Route::middleware(['auth', 'verified'])->group(function () {
-            // Project Creation
             Route::get('/create', 'create')->name('create');
             Route::post('/', 'store')->name('store');
-
-            // Project Management
-            Route::patch('/{project}/rename', 'rename')
-                ->name('rename')
-                ->middleware('can:rename,project');
-
-            Route::delete('/{project}', 'destroy')
-                ->name('destroy')
-                ->middleware('can:delete,project');
+            Route::patch('/{project}/rename', 'rename')->name('rename');
+            Route::delete('/{project}', 'destroy')->name('destroy');
         });
     });
 });

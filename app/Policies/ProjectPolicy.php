@@ -5,7 +5,6 @@ namespace App\Policies;
 use App\Models\Project;
 use App\Models\User;
 use App\Enums\ProjectPermission;
-use App\Enums\ProjectRole;
 use Illuminate\Auth\Access\Response;
 
 class ProjectPolicy

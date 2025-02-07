@@ -139,7 +139,9 @@ class ProjectController extends Controller
      */
     public function destroy(Project $project): JsonResponse
     {
-        $this->authorize('delete', $project);
+        if (request()->user()->cannot('delete', $project)) {
+            abort(403, 'You do not have permission to delete this project.');
+        }
 
         try {
             $project->delete();
@@ -162,7 +164,9 @@ class ProjectController extends Controller
      */
     public function rename(ProjectRenameRequest $request, Project $project): JsonResponse
     {
-        $this->authorize('rename', $project);
+        if ($request->user()->cannot('rename', $project)) {
+            abort(403, 'You do not have permission to rename this project.');
+        }
 
         try {
             $project->update(['title' => $request->title]);
