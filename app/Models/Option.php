@@ -31,6 +31,6 @@ class Option extends Model
 
     public function getNameAttribute($value)
     {
-        return ucfirst($value);
+        return ucwords($value);
     }
 }

@@ -17,11 +17,11 @@ return new class extends Migration
         });
 
         DB::table('categories')->insert([
-            ['name' => 'Domain'],
-            ['name' => 'Language'],
-            ['name' => 'Framework'],
-            ['name' => 'Expertise'],
-            ['name' => 'Specialization'],
+            ['name' => 'domain'],
+            ['name' => 'language'],
+            ['name' => 'framework'],
+            ['name' => 'expertise'],
+            ['name' => 'specialization'],
         ]);
 
         Schema::create('options', function (Blueprint $table) {
