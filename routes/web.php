@@ -27,7 +27,7 @@ Route::prefix('profile')->name('profile.')->middleware(['auth', 'verified'])->gr
     Route::delete('/', [ProfileController::class, 'destroy'])->name('destroy');
     Route::get('/onboarding', [OnboardingController::class, 'show'])->name('onboarding');
     Route::post('/onboarding/store', [OnboardingController::class, 'store'])
-        ->name('onboarding');
+        ->name('onboarding.store');
 });
 
 // Projects routes
