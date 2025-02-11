@@ -26,7 +26,8 @@ Route::prefix('profile')->name('profile.')->middleware(['auth', 'verified'])->gr
     Route::patch('/', [ProfileController::class, 'update'])->name('update');
     Route::delete('/', [ProfileController::class, 'destroy'])->name('destroy');
     Route::get('/onboarding', [OnboardingController::class, 'show'])->name('onboarding');
-    Route::post('/onboarding', [OnboardingController::class, 'update'])->name('onboarding.update');
+    Route::post('/onboarding/store', [OnboardingController::class, 'store'])
+        ->name('onboarding');
 });
 
 // Projects routes
@@ -40,8 +41,7 @@ Route::prefix('projects')->name('projects.')->group(function () {
         Route::middleware(['auth', 'verified'])->group(function () {
             Route::get('/create', 'create')->name('create');
             Route::post('/', 'store')->name('store');
-            Route::get('/{project}/edit', 'edit')->name('edit');
-            Route::patch('/{project}', 'update')->name('update');
+            Route::patch('/{project}/rename', 'rename')->name('rename');
             Route::delete('/{project}', 'destroy')->name('destroy');
         });
     });

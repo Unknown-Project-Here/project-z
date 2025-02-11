@@ -11,14 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('projects', function (Blueprint $table) {
+        Schema::create('user_tech_stacks', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->string('title');
-            $table->text('description');
-            $table->jsonb('contact')->nullable();
-            $table->boolean('is_active')->default(true);
+            $table->foreignId('option_id')->constrained()->onDelete('cascade');
+            $table->enum('skill_level', ['beginner', 'intermediate', 'advanced', 'expert'])->nullable();
             $table->timestamps();
+
+            $table->unique(['user_id', 'option_id']);
         });
     }
 
@@ -27,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('projects');
+        Schema::dropIfExists('user_tech_stacks');
     }
 };
