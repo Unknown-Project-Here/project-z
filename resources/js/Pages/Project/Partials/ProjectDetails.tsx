@@ -1,8 +1,10 @@
 import { Icons } from '@/components/icons';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { ProjectDetailsProps, ProjectType } from '@/types';
+import { useState } from 'react';
 
 const contactOptions = [
     {
@@ -35,19 +37,46 @@ export default function ProjectDetails({
     data,
     onChange,
 }: ProjectDetailsProps) {
+    const [errors, setErrors] = useState<Record<string, string>>({});
+
+    const validateField = (field: string, value: string) => {
+        if (!value.trim()) {
+            setErrors((prev) => ({
+                ...prev,
+                [field]: `${field.charAt(0).toUpperCase() + field.slice(1)} is required`,
+            }));
+            return false;
+        }
+        setErrors((prev) => {
+            const newErrors = { ...prev };
+            delete newErrors[field];
+            return newErrors;
+        });
+        return true;
+    };
+
     const handleFieldChange = (
         field: keyof ProjectType,
         value: string,
         contactIndex?: number,
     ) => {
         if (field === 'contact' && typeof contactIndex === 'number') {
-            const newContact = { ...data.contact };
-            newContact[
-                contactOptions[contactIndex].value as keyof typeof newContact
-            ] = value;
+            const newContact = {
+                email: data.contact.email || '',
+                discord: data.contact.discord || '',
+                github: data.contact.github || '',
+                website: data.contact.website || '',
+            };
+
+            const contactField = contactOptions[contactIndex]
+                .value as keyof typeof newContact;
+            newContact[contactField] = value;
             onChange('contact', newContact);
         } else {
             onChange(field, value);
+            if (field === 'title' || field === 'description') {
+                validateField(field, value);
+            }
         }
     };
 
@@ -130,6 +159,20 @@ export default function ProjectDetails({
                             })}
                         </div>
                     </div>
+                    {Object.keys(errors).length > 0 && (
+                        <Alert variant="destructive">
+                            <AlertDescription>
+                                Please fix the following errors:
+                                <ul className="list-disc pl-4">
+                                    {Object.values(errors).map(
+                                        (error, index) => (
+                                            <li key={index}>{error}</li>
+                                        ),
+                                    )}
+                                </ul>
+                            </AlertDescription>
+                        </Alert>
+                    )}
                 </div>
             </Card>
         </div>

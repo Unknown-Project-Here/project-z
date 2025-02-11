@@ -36,7 +36,11 @@ export default function CreateProject() {
 
         switch (stepIndex) {
             case 0:
-                return !!projectData.title && !!projectData.description;
+                return (
+                    !!projectData.title &&
+                    !!projectData.description &&
+                    Object.values(projectData.contact).some((value) => !!value)
+                );
             case 1:
                 return projectData.techStack.length > 0;
             case 2:
@@ -64,10 +68,31 @@ export default function CreateProject() {
 
     const handleComplete = async () => {
         try {
-            await router.post(route('projects.store'), {
-                project: { ...projectData },
-            });
-            localStorage.removeItem('project-creation');
+            const formData = {
+                ...projectData,
+                contact: Object.fromEntries(
+                    Object.entries(projectData.contact).filter(
+                        ([, value]) => !!value,
+                    ),
+                ),
+            };
+
+            console.log('formData', formData);
+
+            await router.post(
+                route('projects.store'),
+                {
+                    project: formData,
+                },
+                {
+                    onSuccess: () => {
+                        localStorage.removeItem('project-creation');
+                    },
+                    onError: (errors) => {
+                        console.error('Validation errors:', errors);
+                    },
+                },
+            );
         } catch (error) {
             console.error('Failed to create project:', error);
         }

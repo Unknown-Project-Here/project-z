@@ -47,15 +47,17 @@ export type ProjectsResponse = PageProps & {
     total: number;
 };
 
+export interface ProjectContact {
+    github?: string;
+    discord?: string;
+    email?: string;
+    website?: string;
+}
+
 export interface ProjectType {
     title: string;
     description: string;
-    contact: {
-        github: string;
-        discord: string;
-        email: string;
-        website: string;
-    };
+    contact: ProjectContact;
     techStack: string[];
     languages: string[];
     frameworks: string[];
@@ -65,12 +67,10 @@ export interface ProjectType {
 
 export interface ProjectDetailsProps {
     data: ProjectType;
-    onChange: {
-        (field: keyof ProjectType, value: string): void;
-        (field: keyof ProjectType, value: string[]): void;
-        (field: keyof ProjectType, value: Record<string, string>): void;
-        (field: keyof ProjectType, value: ProjectType[keyof ProjectType]): void;
-    };
+    onChange: (
+        field: keyof ProjectType,
+        value: string | string[] | Record<string, string>,
+    ) => void;
 }
 
 export type PageProps<
