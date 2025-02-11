@@ -10,22 +10,21 @@ class Project extends Model
 {
     use HasFactory;
 
+    protected $casts = [
+        'contact' => 'array',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+        'is_active' => 'boolean',
+    ];
+
     protected $fillable = [
         'user_id',
         'title',
         'description',
-        'stack',
-        'email',
-        'discord',
-        'github',
-        'website',
-    ];
-
-    protected $casts = [
-        'stack' => 'array',
-        'created_at' => 'datetime',
-        'updated_at' => 'datetime',
-        'is_active' => 'boolean',
+        'contact',
+        'is_active',
+        'created_at',
+        'updated_at',
     ];
 
     // Relationships
@@ -40,15 +39,21 @@ class Project extends Model
     protected function title(): Attribute
     {
         return new Attribute(
-            function ($value) { return ucfirst($value); },
-            function ($value) { return strtolower($value); }
+            function ($value) {
+                return ucfirst($value);
+            },
+            function ($value) {
+                return strtolower($value);
+            }
         );
     }
 
     protected function description(): Attribute
     {
         return new Attribute(
-            function ($value) { return ucfirst($value); }
+            function ($value) {
+                return ucfirst($value);
+            }
         );
     }
 
@@ -57,5 +62,4 @@ class Project extends Model
     {
         return $query->where('is_active', true);
     }
-
 }

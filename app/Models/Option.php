@@ -12,6 +12,11 @@ class Option extends Model
 
     protected $fillable = ['category_id', 'name'];
 
+    protected $casts = [
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+    ];
+
     public $timestamps = false;
 
     public function category()
