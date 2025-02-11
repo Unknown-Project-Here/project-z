@@ -35,12 +35,18 @@ Route::prefix('projects')->name('projects.')->group(function () {
     Route::controller(ProjectController::class)->group(function () {
         // Public routes
         Route::get('/', 'index')->name('index');
-        Route::get('/{project}', 'show')->name('show');
 
         // Protected routes
         Route::middleware(['auth', 'verified'])->group(function () {
             Route::get('/create', 'create')->name('create');
             Route::post('/', 'store')->name('store');
+        });
+
+        Route::get('/{project}', 'show')->name('show');
+        
+        Route::middleware(['auth', 'verified'])->group(function () {
+            Route::get('/{project}/edit', 'edit')->name('edit');
+            Route::patch('/{project}', 'update')->name('update');
             Route::patch('/{project}/rename', 'rename')->name('rename');
             Route::delete('/{project}', 'destroy')->name('destroy');
         });

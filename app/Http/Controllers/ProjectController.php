@@ -26,7 +26,7 @@ class ProjectController extends Controller
             'per_page' => 'nullable|integer|min:1',
         ]);
 
-        $perPage = $request->input('per_page', 10);
+        $perPage = $request->input('per_page', 9);
         $projects = Project::with('user')
             ->latest()
             ->paginate($perPage);
@@ -49,8 +49,14 @@ class ProjectController extends Controller
     public function create(Request $request): Response
     {
         $this->authorize('create', Project::class);
-
-        return Inertia::render('Project/Create');
+        
+        return Inertia::render('Project/Create', [
+            'user' => Auth::user(),
+            'initialData' => [
+                'title' => '',
+                'description' => '',
+            ]
+        ]);
     }
 
     /**
@@ -103,6 +109,11 @@ class ProjectController extends Controller
      */
     public function edit(Project $project): Response
     {
+        // Check if the authenticated user is the project owner
+        if ($project->user_id !== Auth::id()) {
+            abort(403, 'Unauthorized action.');
+        }
+
         $this->authorize('update', $project);
 
         return Inertia::render('Project/Edit', [

@@ -1,5 +1,6 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import {
     Card,
     CardContent,
@@ -8,7 +9,7 @@ import {
     CardTitle,
 } from '@/components/ui/card';
 import { Project } from '@/types';
-import { Head } from '@inertiajs/react';
+import { Head, Link } from '@inertiajs/react';
 import { CalendarIcon, CodeIcon, GitForkIcon } from 'lucide-react';
 
 export default function ProjectShow({ project }: { project: Project }) {
@@ -18,14 +19,6 @@ export default function ProjectShow({ project }: { project: Project }) {
         codeLines: 12500,
     };
 
-    const technologies = [
-        'TypeScript',
-        'React',
-        'TailwindCSS',
-        'Laravel',
-        'PostgreSQL',
-    ];
-
     return (
         <>
             <Head title={project.title} />
@@ -33,13 +26,22 @@ export default function ProjectShow({ project }: { project: Project }) {
             <div className="container mx-auto px-4 py-8">
                 <div className="mb-6 flex items-center justify-between">
                     <h1 className="text-3xl font-bold">{project.title}</h1>
-                    <Badge className="bg-green-500 text-sm">Active</Badge>
+                    <Button asChild>
+                        <Link href={route('projects.edit', project.id)}>
+                            Edit
+                        </Link>
+                    </Button>
                 </div>
 
                 <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
                     <Card className="md:col-span-2">
                         <CardHeader>
-                            <CardTitle>Project Overview</CardTitle>
+                            <div className="flex items-center justify-between">
+                                <CardTitle>Project Overview</CardTitle>
+                                <Badge className="bg-green-500 text-sm">
+                                    Active
+                                </Badge>
+                            </div>
                             <CardDescription>
                                 Project details and statistics
                             </CardDescription>
@@ -54,7 +56,7 @@ export default function ProjectShow({ project }: { project: Project }) {
                                     Project Lead
                                 </h3>
                                 <div className="flex items-center space-x-4">
-                                    <Avatar>
+                                    <Avatar className="bg-primary">
                                         <AvatarImage
                                             src={`https://api.dicebear.com/9.x/open-peeps/svg?seed=${project.user.username}`}
                                             alt={project.user.username}
@@ -116,7 +118,7 @@ export default function ProjectShow({ project }: { project: Project }) {
                             </CardHeader>
                             <CardContent>
                                 <div className="flex flex-wrap gap-2">
-                                    {technologies.map((tech) => (
+                                    {project?.stack?.map((tech) => (
                                         <Badge key={tech} variant="secondary">
                                             {tech}
                                         </Badge>
