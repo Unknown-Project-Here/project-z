@@ -23,4 +23,14 @@ class Option extends Model
     {
         return $this->belongsTo(Category::class);
     }
+
+    public function setNameAttribute($value)
+    {
+        $this->attributes['name'] = strtolower($value);
+    }
+
+    public function getNameAttribute($value)
+    {
+        return ucfirst($value);
+    }
 }
