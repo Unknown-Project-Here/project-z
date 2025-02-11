@@ -34,11 +34,25 @@ class ProjectFactory extends Factory
     }
 
     /**
+     * Configure the model factory to add project members with roles.
+     */
+    public function withMembers(array $members = []): static
+    {
+        return $this->afterCreating(function (Project $project) use ($members) {
+            foreach ($members as $member) {
+                $project->members()->attach($member['user'], [
+                    'role' => $member['role']
+                ]);
+            }
+        });
+    }
+
+    /**
      * Indicate that the project is active.
      */
     public function active(): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn(array $attributes) => [
             'is_active' => true,
         ]);
     }
@@ -48,7 +62,7 @@ class ProjectFactory extends Factory
      */
     public function inactive(): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn(array $attributes) => [
             'is_active' => false,
         ]);
     }
