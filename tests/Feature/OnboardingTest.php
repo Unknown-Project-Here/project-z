@@ -40,11 +40,12 @@ class OnboardingTest extends TestCase
     }
 
     public function test_unverified_users_cannot_complete_onboarding(): void
+
     {
         $user = User::factory()->unverified()->create();
 
         $response = $this->actingAs($user)
-            ->post('/profile/onboarding', $this->validOnboardingData);
+            ->post('/profile/onboarding/store', $this->validOnboardingData);
 
         $response->assertRedirectToRoute('verification.notice');
         $this->assertFalse($user->fresh()->onboarded);
@@ -54,7 +55,7 @@ class OnboardingTest extends TestCase
     {
 
         $this->actingAs($this->user)
-            ->post('/profile/onboarding', $this->validOnboardingData);
+            ->post('/profile/onboarding/store', $this->validOnboardingData);
 
         foreach ($this->validOnboardingData['skills'] as $key => $values) {
             if ($key !== 'expertise') {
@@ -73,7 +74,7 @@ class OnboardingTest extends TestCase
         $this->assertFalse($this->user->onboarded);
 
         $this->actingAs($this->user)
-            ->post('/profile/onboarding', $this->validOnboardingData);
+            ->post('/profile/onboarding/store', $this->validOnboardingData);
 
         $this->assertTrue($this->user->fresh()->onboarded);
     }
@@ -91,7 +92,7 @@ class OnboardingTest extends TestCase
         ];
 
         $response = $this->actingAs($this->user)
-            ->post('/profile/onboarding', $invalidData);
+            ->post('/profile/onboarding/store', $invalidData);
 
         $response->assertSessionHasErrors([
             'skills.domain',
@@ -103,7 +104,7 @@ class OnboardingTest extends TestCase
     public function test_onboarding_updates_user_tech_stack(): void
     {
         $response = $this->actingAs($this->user)
-            ->post('/profile/onboarding', $this->validOnboardingData);
+            ->post('/profile/onboarding/store', $this->validOnboardingData);
 
         $response->assertRedirectToRoute('profile.edit');
         $response->assertSessionHas('status', 'onboarding-completed');
@@ -133,7 +134,7 @@ class OnboardingTest extends TestCase
         $invalidData['skills']['expertise'] = 'not-a-valid-level';
 
         $response = $this->actingAs($this->user)
-            ->post('/profile/onboarding', $invalidData);
+            ->post('/profile/onboarding/store', $invalidData);
 
         $response->assertSessionHasErrors(['skills.expertise']);
     }
@@ -147,7 +148,7 @@ class OnboardingTest extends TestCase
             $invalidData['skills'][$category] = [];
 
             $response = $this->actingAs($this->user)
-                ->post('/profile/onboarding', $invalidData);
+                ->post('/profile/onboarding/store', $invalidData);
 
             $response->assertSessionHasErrors(["skills.{$category}"]);
         }

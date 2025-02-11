@@ -8,9 +8,16 @@ use App\Actions\Onboarding\UpdateUserTechStack;
 use App\Http\Requests\OnboardingRequest;
 use Illuminate\Pipeline\Pipeline;
 use Illuminate\Support\Facades\DB;
+use Inertia\Response;
 
 class OnboardingController extends Controller
 {
+
+    public function show(): Response
+    {
+        return inertia()->render('Profile/Onboarding');
+    }
+
     public function store(OnboardingRequest $request)
     {
         try {
