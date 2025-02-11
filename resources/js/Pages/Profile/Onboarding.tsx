@@ -1,9 +1,12 @@
-import { steps } from '@/components/onboarding/steps';
+import ExpertiseStep from '@/components/onboarding/ExpertiseStep';
+import FrameworksStep from '@/components/onboarding/FrameworksStep';
+import LanguagesStep from '@/components/onboarding/LanguagesStep';
+import RolesStep from '@/components/onboarding/RolesStep';
+import TechStackStep from '@/components/onboarding/TechStackStep';
 import { OnboardingType } from '@/components/onboarding/types';
 import { Stepper } from '@/components/ui/stepper/Stepper';
 import { useLocalStorage } from '@/hooks/use-local-storage';
 import { router } from '@inertiajs/react';
-import { useState } from 'react';
 
 const defaultOnboardingData: OnboardingType = {
     techStack: [],
@@ -14,7 +17,6 @@ const defaultOnboardingData: OnboardingType = {
 };
 
 export default function OnboardingPage() {
-    const [currentStep, setCurrentStep] = useState(0);
     const [onboardingData, setOnboardingData] = useLocalStorage<OnboardingType>(
         {
             key: 'onboarding',
@@ -72,30 +74,87 @@ export default function OnboardingPage() {
 
             <div className="rounded-lg">
                 <Stepper
-                    activeStep={currentStep}
-                    onStepChange={setCurrentStep}
                     className="min-h-[600px]"
                     contentClassName="flex flex-col sm:p-6"
                     onComplete={handleComplete}
                     validateStep={validateStep}
                 >
-                    {steps.map((step) => (
-                        <Stepper.Step
-                            key={step.title}
-                            title={step.title}
-                            description={step.description}
-                        >
-                            <div className="mb-4 flex flex-col gap-4">
-                                <p className="text-lg font-semibold leading-none tracking-tight">
-                                    {step.title} - {step.description}
-                                </p>
-                            </div>
-                            <step.component
-                                data={onboardingData}
-                                onChange={updateOnboardingData}
-                            />
-                        </Stepper.Step>
-                    ))}
+                    <Stepper.Step
+                        title="Tech Stack"
+                        description="What technologies do you work with?"
+                    >
+                        <div className="mb-4">
+                            <p className="text-lg font-semibold leading-none tracking-tight">
+                                Tech Stack - What technologies do you work with?
+                            </p>
+                        </div>
+                        <TechStackStep
+                            data={onboardingData}
+                            onChange={updateOnboardingData}
+                        />
+                    </Stepper.Step>
+
+                    <Stepper.Step
+                        title="Languages"
+                        description="Which programming languages do you use?"
+                    >
+                        <div className="mb-4">
+                            <p className="text-lg font-semibold leading-none tracking-tight">
+                                Languages - Which programming languages do you
+                                use?
+                            </p>
+                        </div>
+                        <LanguagesStep
+                            data={onboardingData}
+                            onChange={updateOnboardingData}
+                        />
+                    </Stepper.Step>
+
+                    <Stepper.Step
+                        title="Frameworks"
+                        description="What frameworks or libraries are you familiar with?"
+                    >
+                        <div className="mb-4">
+                            <p className="text-lg font-semibold leading-none tracking-tight">
+                                Frameworks - What frameworks or libraries are
+                                you familiar with?
+                            </p>
+                        </div>
+                        <FrameworksStep
+                            data={onboardingData}
+                            onChange={updateOnboardingData}
+                        />
+                    </Stepper.Step>
+
+                    <Stepper.Step
+                        title="Expertise"
+                        description="How would you rate your expertise?"
+                    >
+                        <div className="mb-4">
+                            <p className="text-lg font-semibold leading-none tracking-tight">
+                                Expertise - How would you rate your expertise?
+                            </p>
+                        </div>
+                        <ExpertiseStep
+                            data={onboardingData}
+                            onChange={updateOnboardingData}
+                        />
+                    </Stepper.Step>
+
+                    <Stepper.Step
+                        title="Roles"
+                        description="What roles best describe you?"
+                    >
+                        <div className="mb-4">
+                            <p className="text-lg font-semibold leading-none tracking-tight">
+                                Roles - What roles best describe you?
+                            </p>
+                        </div>
+                        <RolesStep
+                            data={onboardingData}
+                            onChange={updateOnboardingData}
+                        />
+                    </Stepper.Step>
                 </Stepper>
             </div>
         </div>

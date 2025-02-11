@@ -1,23 +1,18 @@
 import { Step } from '@/components/ui/stepper/Step';
 import { StepConnector } from '@/components/ui/stepper/StepConnector';
 import { StepperContent } from '@/components/ui/stepper/StepperContent';
-import {
-    StepperContext,
-    type StepperContextValue,
-} from '@/components/ui/stepper/StepperContext';
+import { StepperContext } from '@/components/ui/stepper/StepperContext';
 import { StepperSidebar } from '@/components/ui/stepper/StepperSidebar';
 import { cn } from '@/lib/utils';
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 
 interface StepperProps {
-    activeStep: number;
-    onStepChange?: (step: number) => void;
     onComplete?: () => void;
     className?: string;
     children: React.ReactNode;
     contentClassName?: string;
-    allowNext?: boolean;
     validateStep?: (stepIndex: number) => boolean;
+    defaultStep?: number;
 }
 
 interface StepperComposition {
@@ -26,32 +21,31 @@ interface StepperComposition {
 }
 
 const Stepper: React.FC<StepperProps> & StepperComposition = ({
-    activeStep,
-    onStepChange,
     onComplete,
     className,
     contentClassName,
     children,
-    allowNext = true,
     validateStep,
+    defaultStep = 0,
 }) => {
+    const [activeStep, setActiveStep] = useState(defaultStep);
     const totalSteps = React.Children.count(children);
 
     const canMoveNext = useMemo(() => {
-        if (!allowNext) return false;
         if (!validateStep) return true;
         return validateStep(activeStep);
-    }, [activeStep, allowNext, validateStep]);
+    }, [activeStep, validateStep]);
 
     const contextValue = useMemo(
         () => ({
             activeStep,
-            onStepChange,
-            onComplete,
+            setActiveStep,
             totalSteps,
             canMoveNext,
+            onComplete,
+            validateStep,
         }),
-        [activeStep, onStepChange, onComplete, totalSteps, canMoveNext],
+        [activeStep, totalSteps, canMoveNext, onComplete, validateStep],
     );
 
     const [navigationSteps, activeContent] = React.Children.toArray(
@@ -96,4 +90,4 @@ const Stepper: React.FC<StepperProps> & StepperComposition = ({
 Stepper.Step = Step;
 Stepper.Connector = StepConnector;
 
-export { Stepper, type StepperContextValue };
+export { Stepper };

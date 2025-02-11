@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Inertia\Response;
 use Illuminate\Http\JsonResponse;
+use App\Http\Requests\ProjectRenameRequest;
 
 class ProjectController extends Controller
 {
@@ -60,7 +61,7 @@ class ProjectController extends Controller
 
     /**
      * Display the specified resource.
-     */ 
+     */
     public function show(Request $request, Project $project): Response|JsonResponse
     {
         if ($request->wantsJson()) {
@@ -79,16 +80,16 @@ class ProjectController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(ProjectRequest $request): JsonResponse        
+    public function store(ProjectRequest $request): JsonResponse
     {
         $this->authorize('create', Project::class);
-        
+
         try {
             $project = Project::create(array_merge(
                 $request->validated(),
                 ['user_id' => Auth::id()]
             ));
-            
+
             return response()->json([
                 'success' => true,
                 'data' => $project->load('user'),
@@ -114,7 +115,7 @@ class ProjectController extends Controller
         }
 
         $this->authorize('update', $project);
-        
+
         return Inertia::render('Project/Edit', [
             'project' => $project->load('user')
         ]);
@@ -129,7 +130,7 @@ class ProjectController extends Controller
 
         try {
             $project->update($request->validated());
-            
+
             return response()->json([
                 'success' => true,
                 'data' => $project->fresh()->load('user'),
@@ -149,7 +150,9 @@ class ProjectController extends Controller
      */
     public function destroy(Project $project): JsonResponse
     {
-        $this->authorize('delete', $project);
+        if (request()->user()->cannot('delete', $project)) {
+            abort(403, 'You do not have permission to delete this project.');
+        }
 
         try {
             $project->delete();
@@ -162,6 +165,32 @@ class ProjectController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to delete project.',
+                'error' => config('app.debug') ? $e->getMessage() : null
+            ], 500);
+        }
+    }
+
+    /**
+     * Rename the specified project.
+     */
+    public function rename(ProjectRenameRequest $request, Project $project): JsonResponse
+    {
+        if ($request->user()->cannot('rename', $project)) {
+            abort(403, 'You do not have permission to rename this project.');
+        }
+
+        try {
+            $project->update(['title' => $request->title]);
+
+            return response()->json([
+                'success' => true,
+                'data' => $project->fresh(),
+                'message' => 'Project renamed successfully.'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to rename project.',
                 'error' => config('app.debug') ? $e->getMessage() : null
             ], 500);
         }
