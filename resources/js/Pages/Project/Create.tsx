@@ -1,178 +1,112 @@
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
-} from '@/components/ui/card';
 import { Stepper } from '@/components/ui/stepper/Stepper';
+import { useLocalStorage } from '@/hooks/use-local-storage';
+import { ProjectType } from '@/types';
 import { router } from '@inertiajs/react';
 import { useState } from 'react';
-import ContactDetailsForm from './Partials/ContactDetailsForm';
-import ProjectDetailsForm from './Partials/ProjectDetailsForm';
-import ProjectTechnologiesForm from './Partials/ProjectTechnologiesForm';
+import { projectSteps } from './Partials/ProjectSteps';
+
+const defaultProjectData: ProjectType = {
+    title: '',
+    description: '',
+    contact: {
+        github: '',
+        discord: '',
+        email: '',
+        website: '',
+    },
+    techStack: [],
+    languages: [],
+    frameworks: [],
+    expertise: '',
+    roles: [],
+};
 
 export default function CreateProject() {
-    const [activeStep, setActiveStep] = useState(0);
-    const [formData, setFormData] = useState({});
+    const [currentStep, setCurrentStep] = useState(0);
+    const [projectData, setProjectData] = useLocalStorage({
+        key: 'project-creation',
+        defaultValue: defaultProjectData,
+    });
 
-    const handleProjectDetails = (data: any) => {
-        setFormData((prev) => ({ ...prev, ...data }));
-        setActiveStep(1);
+    const validateStep = (stepIndex: number) => {
+        if (!projectData) {
+            setProjectData(defaultProjectData);
+            return false;
+        }
+
+        switch (stepIndex) {
+            case 0:
+                return !!projectData.title && !!projectData.description;
+            case 1:
+                return projectData.techStack.length > 0;
+            case 2:
+                return projectData.languages.length > 0;
+            case 3:
+                return projectData.frameworks.length > 0;
+            case 4:
+                return !!projectData.expertise;
+            case 5:
+                return projectData.roles.length > 0;
+            default:
+                return true;
+        }
     };
 
-    const handleTechnologies = (data: any) => {
-        setFormData((prev) => ({ ...prev, ...data }));
-        setActiveStep(2);
+    const updateProjectData = (
+        field: keyof ProjectType,
+        value: string | string[] | Record<string, string>,
+    ) => {
+        setProjectData((prev) => ({
+            ...prev,
+            [field]: value,
+        }));
     };
 
-    const handleContactDetails = (data: any) => {
-        const finalData = { ...formData, ...data };
-        router.post('/projects', finalData);
+    const handleComplete = async () => {
+        try {
+            await router.post(route('projects.store'), {
+                project: { ...projectData },
+            });
+            localStorage.removeItem('project-creation');
+        } catch (error) {
+            console.error('Failed to create project:', error);
+        }
     };
-
-    const handleStepChange = (step: number) => {
-        setActiveStep(step);
-    };
-
-    const steps = [
-        {
-            title: 'Project Details',
-            description: 'Basic information about your project',
-        },
-        {
-            title: 'Technologies',
-            description: 'Select required technologies',
-        },
-        {
-            title: 'Contact Details',
-            description: 'Your contact information',
-        },
-    ];
 
     return (
-        <div className="container mx-auto px-4 py-8">
-            <div className="mb-6 flex items-center justify-between">
-                <h1 className="text-3xl font-bold">Create New Project</h1>
-                <Badge variant="outline">Draft</Badge>
-            </div>
+        <div className="container mx-auto max-w-7xl">
+            <h1 className="text-3xl font-bold">Create New Project</h1>
+            <p className="mt-2 text-lg text-muted-foreground">
+                Fill out the details below to create your new project.
+            </p>
 
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-                <Card className="md:col-span-2">
-                    <CardHeader>
-                        <CardTitle>Project Setup</CardTitle>
-                        <CardDescription>
-                            Complete the following steps to create your project
-                        </CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                        <Stepper
-                            activeStep={activeStep}
-                            onStepChange={handleStepChange}
-                            allowNext={true}
-                            onboardingData={{} as any}
+            <div className="mt-8 rounded-lg">
+                <Stepper
+                    activeStep={currentStep}
+                    onStepChange={setCurrentStep}
+                    className="min-h-[600px]"
+                    contentClassName="flex flex-col sm:p-6"
+                    onComplete={handleComplete}
+                    validateStep={validateStep}
+                >
+                    {projectSteps.map((step) => (
+                        <Stepper.Step
+                            key={step.title}
+                            title={step.title}
+                            description={step.description}
                         >
-                            <Stepper.Step
-                                title={steps[0].title}
-                                description={steps[0].description}
-                            >
-                                <ProjectDetailsForm
-                                    onSubmit={handleProjectDetails}
-                                />
-                                <div className="mt-6 flex justify-end">
-                                    <Button onClick={() => handleStepChange(1)}>
-                                        Next
-                                    </Button>
-                                </div>
-                            </Stepper.Step>
-
-                            <Stepper.Step
-                                title={steps[1].title}
-                                description={steps[1].description}
-                            >
-                                <ProjectTechnologiesForm
-                                    onSubmit={handleTechnologies}
-                                />
-                                <div className="mt-6 flex justify-end space-x-2">
-                                    <Button
-                                        variant="outline"
-                                        onClick={() => handleStepChange(0)}
-                                    >
-                                        Previous
-                                    </Button>
-                                    <Button onClick={() => handleStepChange(2)}>
-                                        Next
-                                    </Button>
-                                </div>
-                            </Stepper.Step>
-
-                            <Stepper.Step
-                                title={steps[2].title}
-                                description={steps[2].description}
-                            >
-                                <ContactDetailsForm
-                                    onSubmit={handleContactDetails}
-                                />
-                                <div className="mt-6 flex justify-end space-x-2">
-                                    <Button
-                                        variant="outline"
-                                        onClick={() => handleStepChange(1)}
-                                    >
-                                        Previous
-                                    </Button>
-                                    <Button
-                                        onClick={handleContactDetails}
-                                        className="bg-green-600 hover:bg-green-700"
-                                    >
-                                        Create Project
-                                    </Button>
-                                </div>
-                            </Stepper.Step>
-                        </Stepper>
-                    </CardContent>
-                </Card>
-
-                <div className="space-y-6">
-                    <Card>
-                        <CardHeader>
-                            <CardTitle>Setup Progress</CardTitle>
-                            <CardDescription>
-                                Project creation status
-                            </CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                            <div className="space-y-4">
-                                {steps.map((step, index) => (
-                                    <div
-                                        key={step.title}
-                                        className="flex items-center space-x-2"
-                                    >
-                                        <Badge
-                                            variant={
-                                                activeStep >= index
-                                                    ? 'default'
-                                                    : 'secondary'
-                                            }
-                                        >
-                                            {index + 1}
-                                        </Badge>
-                                        <span
-                                            className={
-                                                activeStep >= index
-                                                    ? 'font-medium'
-                                                    : 'text-muted-foreground'
-                                            }
-                                        >
-                                            {step.title}
-                                        </span>
-                                    </div>
-                                ))}
+                            <div className="mb-4 flex flex-col gap-4">
+                                <p className="text-lg font-semibold leading-none tracking-tight">
+                                    {step.title} - {step.description}
+                                </p>
                             </div>
-                        </CardContent>
-                    </Card>
-                </div>
+                            <step.component
+                                data={projectData}
+                                onChange={updateProjectData}
+                            />
+                        </Stepper.Step>
+                    ))}
+                </Stepper>
             </div>
         </div>
     );

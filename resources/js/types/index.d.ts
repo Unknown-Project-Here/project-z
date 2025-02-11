@@ -47,6 +47,32 @@ export type ProjectsResponse = PageProps & {
     total: number;
 };
 
+export interface ProjectType {
+    title: string;
+    description: string;
+    contact: {
+        github: string;
+        discord: string;
+        email: string;
+        website: string;
+    };
+    techStack: string[];
+    languages: string[];
+    frameworks: string[];
+    expertise: string;
+    roles: string[];
+}
+
+export interface ProjectDetailsProps {
+    data: ProjectType;
+    onChange: {
+        (field: keyof ProjectType, value: string): void;
+        (field: keyof ProjectType, value: string[]): void;
+        (field: keyof ProjectType, value: Record<string, string>): void;
+        (field: keyof ProjectType, value: ProjectType[keyof ProjectType]): void;
+    };
+}
+
 export type PageProps<
     T extends Record<string, unknown> = Record<string, unknown>,
 > = T & {

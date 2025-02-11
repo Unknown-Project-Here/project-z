@@ -18,14 +18,6 @@ import {
     MessageSquare,
 } from 'lucide-react';
 
-// interface PaginatedData {
-//     data: Project[];
-//     current_page: number;
-//     last_page: number;
-//     per_page: number;
-//     total: number;
-// }
-
 export default function ProjectIndex() {
     const { projects } = usePageProps<{ projects: ProjectsResponse }>().props;
 
@@ -33,7 +25,14 @@ export default function ProjectIndex() {
         <>
             <Head title="Projects Home" />
             <div className="container mx-auto px-4 py-8">
-                <h1 className="mb-8 text-3xl font-bold">Projects</h1>
+                <div className="flex items-start justify-between">
+                    <h1 className="mb-8 text-3xl font-bold">Projects</h1>
+                    <Button asChild>
+                        <Link href={route('projects.create')}>
+                            Create Project
+                        </Link>
+                    </Button>
+                </div>
 
                 {/* Projects Grid */}
                 <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
