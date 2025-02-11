@@ -11,22 +11,21 @@ class Project extends Model
 {
     use HasFactory;
 
+    protected $casts = [
+        'contact' => 'array',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+        'is_active' => 'boolean',
+    ];
+
     protected $fillable = [
         'user_id',
         'title',
         'description',
-        'stack',
-        'email',
-        'discord',
-        'github',
-        'website',
-    ];
-
-    protected $casts = [
-        'stack' => 'array',
-        'created_at' => 'datetime',
-        'updated_at' => 'datetime',
-        'is_active' => 'boolean',
+        'contact',
+        'is_active',
+        'created_at',
+        'updated_at',
     ];
 
     // Relationships
