@@ -16,11 +16,7 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->string('title');
             $table->text('description');
-            $table->json('stack');
-            $table->string('email')->nullable();
-            $table->string('discord')->nullable();
-            $table->string('github')->nullable();
-            $table->string('website')->nullable();
+            $table->jsonb('contact')->nullable();
             $table->boolean('is_active')->default(true);
             $table->timestamps();
         });
