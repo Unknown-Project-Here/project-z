@@ -91,14 +91,20 @@ export default function ProjectDetails({
                         >
                             Project Title
                         </label>
-                        <Input
-                            id="title"
-                            value={data.title}
-                            onChange={(e) =>
-                                handleFieldChange('title', e.target.value)
-                            }
-                            placeholder="Enter project title"
-                        />
+                        <div className="relative">
+                            <Input
+                                id="title"
+                                value={data.title}
+                                onChange={(e) =>
+                                    handleFieldChange('title', e.target.value)
+                                }
+                                placeholder="Enter project title"
+                                maxLength={100}
+                            />
+                            <div className="absolute bottom-1 right-2 text-xs text-muted-foreground">
+                                {data.title.length}/100
+                            </div>
+                        </div>
                     </div>
                     <div className="space-y-2">
                         <label
@@ -107,15 +113,24 @@ export default function ProjectDetails({
                         >
                             Project Description
                         </label>
-                        <Textarea
-                            id="description"
-                            value={data.description}
-                            onChange={(e) =>
-                                handleFieldChange('description', e.target.value)
-                            }
-                            placeholder="Describe your project"
-                            rows={4}
-                        />
+                        <div className="relative">
+                            <Textarea
+                                id="description"
+                                value={data.description}
+                                onChange={(e) =>
+                                    handleFieldChange(
+                                        'description',
+                                        e.target.value,
+                                    )
+                                }
+                                placeholder="Describe your project"
+                                rows={4}
+                                maxLength={500}
+                            />
+                            <div className="absolute bottom-2 right-2 text-xs text-muted-foreground">
+                                {data.description.length}/500
+                            </div>
+                        </div>
                         <div className="space-y-2">
                             <label className="text-sm font-medium leading-none">
                                 Project Social Links
