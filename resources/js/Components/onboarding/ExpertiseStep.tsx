@@ -24,10 +24,10 @@ export default function ExpertiseStep({ data, onChange }: ExpertiseStepProps) {
                     <div key={level.id}>
                         <Card
                             className="flex cursor-pointer space-x-3 p-4 hover:bg-muted/20 [&:has([data-state=checked])]:border-2 [&:has([data-state=checked])]:border-accent"
-                            onClick={() => setExpertise(level.label)}
+                            onClick={() => setExpertise(level.id)}
                         >
                             <RadioGroupItem
-                                value={level.label}
+                                value={level.id}
                                 id={level.id}
                                 className="mt-1 data-[state=checked]:border-accent data-[state=checked]:text-accent"
                             />
