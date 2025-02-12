@@ -1,6 +1,6 @@
 import { OnboardingItem } from '@/components/onboarding/types';
 
-export const techStacks: Record<string, OnboardingItem[]> = {
+export const domains: Record<string, OnboardingItem[]> = {
     'Web Technologies': [
         {
             name: 'Frontend Development',

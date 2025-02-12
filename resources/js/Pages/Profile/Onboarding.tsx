@@ -1,19 +1,19 @@
+import DomainsStep from '@/components/onboarding/DomainsStep';
 import ExpertiseStep from '@/components/onboarding/ExpertiseStep';
 import FrameworksStep from '@/components/onboarding/FrameworksStep';
 import LanguagesStep from '@/components/onboarding/LanguagesStep';
-import RolesStep from '@/components/onboarding/RolesStep';
-import TechStackStep from '@/components/onboarding/TechStackStep';
+import SpecializationsStep from '@/components/onboarding/SpecializationsStep';
 import { OnboardingType } from '@/components/onboarding/types';
 import { Stepper } from '@/components/ui/stepper/Stepper';
 import { useLocalStorage } from '@/hooks/use-local-storage';
 import { router } from '@inertiajs/react';
 
 const defaultOnboardingData: OnboardingType = {
-    techStack: [],
-    languages: [],
-    frameworks: [],
+    domain: [],
+    language: [],
+    framework: [],
     expertise: '',
-    roles: [],
+    specialization: [],
 };
 
 export default function OnboardingPage() {
@@ -29,15 +29,15 @@ export default function OnboardingPage() {
 
         switch (stepIndex) {
             case 0:
-                return onboardingData.techStack.length > 0;
+                return onboardingData.domain.length > 0;
             case 1:
-                return onboardingData.languages.length > 0;
+                return onboardingData.language.length > 0;
             case 2:
-                return onboardingData.frameworks.length > 0;
+                return onboardingData.framework.length > 0;
             case 3:
                 return !!onboardingData.expertise;
             case 4:
-                return onboardingData.roles.length > 0;
+                return onboardingData.specialization.length > 0;
             default:
                 return true;
         }
@@ -53,14 +53,13 @@ export default function OnboardingPage() {
         }));
     };
 
-    const handleComplete = async () => {
+    const handleComplete = () => {
         try {
-            await router.post(route('profile.onboarding.update'), {
+            router.post(route('profile.onboarding.store'), {
                 skills: { ...onboardingData },
             });
-            localStorage.removeItem('onboarding');
         } catch (error) {
-            console.error('Failed to submit onboarding data:', error);
+            alert('Failed to submit onboarding data, please try again.');
         }
     };
 
@@ -80,15 +79,15 @@ export default function OnboardingPage() {
                     validateStep={validateStep}
                 >
                     <Stepper.Step
-                        title="Tech Stack"
-                        description="What technologies do you work with?"
+                        title="Domains"
+                        description="What domains do you work in?"
                     >
                         <div className="mb-4">
                             <p className="text-lg font-semibold leading-none tracking-tight">
-                                Tech Stack - What technologies do you work with?
+                                Domains - What domains do you work in?
                             </p>
                         </div>
-                        <TechStackStep
+                        <DomainsStep
                             data={onboardingData}
                             onChange={updateOnboardingData}
                         />
@@ -147,10 +146,11 @@ export default function OnboardingPage() {
                     >
                         <div className="mb-4">
                             <p className="text-lg font-semibold leading-none tracking-tight">
-                                Roles - What roles best describe you?
+                                Specializations - What specializations best
+                                describe you?
                             </p>
                         </div>
-                        <RolesStep
+                        <SpecializationsStep
                             data={onboardingData}
                             onChange={updateOnboardingData}
                         />
