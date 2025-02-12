@@ -1,6 +1,6 @@
 import { OnboardingItem } from '@/components/onboarding/types';
 
-export const roles: Record<string, OnboardingItem[]> = {
+export const specializations: Record<string, OnboardingItem[]> = {
     Development: [
         {
             name: 'Frontend Developer',

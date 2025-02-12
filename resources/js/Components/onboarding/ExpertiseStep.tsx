@@ -9,9 +9,9 @@ interface ExpertiseStepProps {
 }
 
 export default function ExpertiseStep({ data, onChange }: ExpertiseStepProps) {
-    const setExpertise = (expertise: string) => {
+    function setExpertise(expertise: string) {
         onChange('expertise', expertise);
-    };
+    }
 
     return (
         <div className="space-y-4">

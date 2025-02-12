@@ -31,7 +31,7 @@ export default function FrameworksStep({
         filteredItems: filteredFrameworks,
     } = useOnboarding({
         data,
-        field: 'frameworks',
+        field: 'framework',
         onChange,
         items: frameworks,
     });
@@ -56,7 +56,7 @@ export default function FrameworksStep({
                                 <Badge
                                     key={fw.name}
                                     variant={
-                                        data.frameworks.includes(fw.name)
+                                        data.framework.includes(fw.name)
                                             ? 'default'
                                             : 'outline'
                                     }
@@ -124,7 +124,7 @@ export default function FrameworksStep({
             )}
 
             <FloatingSelections
-                items={data.frameworks}
+                items={data.framework}
                 onRemove={toggleFramework}
                 onClearAll={clearAllFrameworks}
                 label="Selected Frameworks"
