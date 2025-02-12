@@ -55,25 +55,21 @@ export default function OnboardingPage() {
 
     const handleComplete = () => {
         try {
-            const mappedData = {
-                skills: {
-                    domain: onboardingData.domain,
-                    language: onboardingData.language,
-                    framework: onboardingData.framework,
-                    specialization: onboardingData.specialization,
-                    expertise: onboardingData.expertise,
+            router.post(
+                route('profile.onboarding.store'),
+                {
+                    skills: { ...onboardingData },
                 },
-            };
-
-            router.post(route('profile.onboarding.store'), mappedData, {
-                onSuccess: () => {
-                    localStorage.removeItem('onboarding');
+                {
+                    onSuccess: () => {
+                        localStorage.removeItem('onboarding');
+                    },
+                    onError: (errors) => {
+                        console.error('Onboarding failed:', errors);
+                    },
+                    preserveScroll: true,
                 },
-                onError: (errors) => {
-                    console.error('Onboarding failed:', errors);
-                },
-                preserveScroll: true,
-            });
+            );
         } catch (error) {
             alert('Failed to submit onboarding data, please try again.');
         }
