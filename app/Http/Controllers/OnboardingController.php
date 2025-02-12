@@ -22,7 +22,6 @@ class OnboardingController extends Controller
     {
         try {
             DB::transaction(function () use ($request) {
-
                 app(Pipeline::class)
                     ->send($request->validated())
                     ->through([
@@ -36,7 +35,7 @@ class OnboardingController extends Controller
             return redirect()->route('profile.edit')
                 ->with('status', 'onboarding-completed');
         } catch (\Exception $e) {
-            return back()->withErrors(['error' => 'Failed to complete onboarding.']);
+            return back()->withErrors(['error' => 'Failed to complete onboarding: ' . $e->getMessage()]);
         }
     }
 }

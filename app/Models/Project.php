@@ -49,18 +49,13 @@ class Project extends Model
             ->wherePivot('role', $role)
             ->exists();
     }
-
-    // protected $with = ['user'];
-
+    
     // Accessors & Mutators
     protected function title(): Attribute
     {
         return new Attribute(
             function ($value) {
-                return ucfirst($value);
-            },
-            function ($value) {
-                return strtolower($value);
+                return ucwords($value);
             }
         );
     }

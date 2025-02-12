@@ -11,6 +11,7 @@ use Inertia\Inertia;
 use Inertia\Response;
 use Illuminate\Http\JsonResponse;
 use App\Http\Requests\ProjectRenameRequest;
+use App\Enums\ProjectRole;
 
 class ProjectController extends Controller
 {
@@ -55,6 +56,7 @@ class ProjectController extends Controller
             'initialData' => [
                 'title' => '',
                 'description' => '',
+                'role' => ProjectRole::CREATOR->value,
             ]
         ]);
     }
@@ -87,12 +89,19 @@ class ProjectController extends Controller
         try {
             $project = Project::create(array_merge(
                 $request->validated(),
-                ['user_id' => Auth::id()]
+                [
+                    'user_id' => Auth::id(),
+                    'role' => ProjectRole::CREATOR->value,
+                ]
             ));
+
+            $project->members()->attach(Auth::id(), [
+                'role' => ProjectRole::CREATOR->value
+            ]);
 
             return response()->json([
                 'success' => true,
-                'data' => $project->load('user'),
+                'data' => $project->load(['user', 'members']),
                 'message' => 'Project created successfully.'
             ], 201);
         } catch (\Exception $e) {
