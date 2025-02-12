@@ -2,7 +2,6 @@ import { Stepper } from '@/components/ui/stepper/Stepper';
 import { useLocalStorage } from '@/hooks/use-local-storage';
 import { ProjectType } from '@/types';
 import { router } from '@inertiajs/react';
-import { useState } from 'react';
 import { projectSteps } from './Partials/ProjectSteps';
 
 const defaultProjectData: ProjectType = {
@@ -22,7 +21,6 @@ const defaultProjectData: ProjectType = {
 };
 
 export default function CreateProject() {
-    const [currentStep, setCurrentStep] = useState(0);
     const [projectData, setProjectData] = useLocalStorage({
         key: 'project-creation',
         defaultValue: defaultProjectData,
@@ -107,8 +105,8 @@ export default function CreateProject() {
 
             <div className="mt-8 rounded-lg">
                 <Stepper
-                    activeStep={currentStep}
-                    onStepChange={setCurrentStep}
+                    // currentStep={currentStep}
+                    // onStepChange={setCurrentStep}
                     className="min-h-[600px]"
                     contentClassName="flex flex-col sm:p-6"
                     onComplete={handleComplete}
