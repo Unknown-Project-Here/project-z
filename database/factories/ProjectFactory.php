@@ -12,23 +12,18 @@ class ProjectFactory extends Factory
 
     public function definition(): array
     {
-        $techStacks = [
-            ['React', 'TypeScript', 'Tailwind'],
-            ['Vue', 'JavaScript', 'SCSS'],
-            ['Next.js', 'TypeScript', 'Prisma'],
-            ['Laravel', 'PHP', 'MySQL'],
-            ['Node.js', 'Express', 'MongoDB'],
+        $contacts = [
+            ['email' => fake()->safeEmail()],
+            ['discord' => fake()->userName() . '#' . fake()->numberBetween(1000, 9999)],
+            ['github' => 'https://github.com/' . fake()->userName()],
+            ['website' => fake()->url()],
         ];
 
         return [
             'user_id' => User::factory(),
             'title' => fake()->catchPhrase(),
             'description' => fake()->paragraph(3),
-            'stack' => fake()->randomElement($techStacks),
-            'email' => fake()->safeEmail(),
-            'discord' => fake()->userName() . '#' . fake()->numberBetween(1000, 9999),
-            'github' => 'https://github.com/' . fake()->userName(),
-            'website' => fake()->url(),
+            'contact' => fake()->randomElement($contacts),
             'is_active' => fake()->boolean(80), // 80% chance of being active
         ];
     }
