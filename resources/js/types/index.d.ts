@@ -58,11 +58,11 @@ export interface ProjectType {
     title: string;
     description: string;
     contact: ProjectContact;
-    techStack: string[];
-    languages: string[];
-    frameworks: string[];
+    domain: string[];
+    language: string[];
+    framework: string[];
     expertise: string;
-    roles: string[];
+    specialization: string[];
 }
 
 export interface ProjectDetailsProps {
