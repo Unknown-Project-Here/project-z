@@ -55,10 +55,25 @@ export default function OnboardingPage() {
 
     const handleComplete = async () => {
         try {
-            await router.post(route('profile.onboarding.update'), {
-                skills: { ...onboardingData },
+            const mappedData = {
+                skills: {
+                    domain: onboardingData.techStack,
+                    language: onboardingData.languages,
+                    framework: onboardingData.frameworks,
+                    specialization: onboardingData.roles,
+                    expertise: onboardingData.expertise,
+                },
+            };
+
+            router.post(route('profile.onboarding.store'), mappedData, {
+                onSuccess: () => {
+                    localStorage.removeItem('onboarding');
+                },
+                onError: (errors) => {
+                    console.error('Onboarding failed:', errors);
+                },
+                preserveScroll: true,
             });
-            localStorage.removeItem('onboarding');
         } catch (error) {
             console.error('Failed to submit onboarding data:', error);
         }
