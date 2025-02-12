@@ -13,19 +13,10 @@ class UpdateUserTechStack
         $user = request()->user();
         $expertise = $data['skills']['expertise'];
 
-        $categoryMapping = [
-            'domain' => $data['skills']['domain'] ?? [],
-            'language' => $data['skills']['language'] ?? [],
-            'framework' => $data['skills']['framework'] ?? [],
-            'specialization' => $data['skills']['specialization'] ?? [],
-        ];
-
-        foreach ($categoryMapping as $category => $items) {
-            if (empty($items)) continue;
-
+        foreach (['domain', 'language', 'framework', 'specialization'] as $category) {
             $options = Option::query()
                 ->whereHas('category', fn($query) => $query->where('name', $category))
-                ->whereIn('name', array_map('strtolower', $items))
+                ->whereIn('name', array_map('strtolower', $data['skills'][$category]))
                 ->get();
 
             foreach ($options as $option) {

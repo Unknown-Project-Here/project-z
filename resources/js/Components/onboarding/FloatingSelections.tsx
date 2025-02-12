@@ -17,7 +17,7 @@ interface AnimatedItem {
 }
 
 export function FloatingSelections({
-    items,
+    items = [],
     onRemove,
     onClearAll,
     label,
@@ -58,7 +58,7 @@ export function FloatingSelections({
         }, 50);
     };
 
-    if (!isVisible && items.length === 0) return null;
+    if (!items?.length && !isVisible) return null;
 
     return (
         <div

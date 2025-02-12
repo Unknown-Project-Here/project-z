@@ -55,7 +55,7 @@ export default function LanguagesStep({ data, onChange }: LanguagesStepProps) {
                                         <Badge
                                             key={lang.name}
                                             variant={
-                                                data.language.includes(
+                                                (data.language || []).includes(
                                                     lang.name,
                                                 )
                                                     ? 'default'

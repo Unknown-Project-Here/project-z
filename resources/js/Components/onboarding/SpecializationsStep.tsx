@@ -59,7 +59,10 @@ export default function SpecializationsStep({
                                             <Badge
                                                 key={specialization.name}
                                                 variant={
-                                                    data.specialization.includes(
+                                                    (
+                                                        data.specialization ||
+                                                        []
+                                                    ).includes(
                                                         specialization.name,
                                                     )
                                                         ? 'default'

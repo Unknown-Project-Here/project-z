@@ -56,7 +56,7 @@ export default function FrameworksStep({
                                 <Badge
                                     key={fw.name}
                                     variant={
-                                        data.framework.includes(fw.name)
+                                        (data.framework || []).includes(fw.name)
                                             ? 'default'
                                             : 'outline'
                                     }

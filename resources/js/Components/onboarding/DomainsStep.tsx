@@ -58,7 +58,7 @@ export default function DomainsStep({ data, onChange }: DomainProps) {
                                         <Badge
                                             key={domain.name}
                                             variant={
-                                                data.domain.includes(
+                                                (data.domain || []).includes(
                                                     domain.name,
                                                 )
                                                     ? 'default'

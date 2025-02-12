@@ -21,7 +21,7 @@ export function useOnboarding({
     const [customName, setCustomName] = useState('');
     const [showCustomForm, setShowCustomForm] = useState(false);
 
-    const currentValues = data[field] as string[];
+    const currentValues = (data[field] as string[]) ?? [];
 
     const toggleItem = (item: string) => {
         const newItems = currentValues.includes(item)

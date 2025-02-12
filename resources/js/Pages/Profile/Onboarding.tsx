@@ -29,15 +29,15 @@ export default function OnboardingPage() {
 
         switch (stepIndex) {
             case 0:
-                return onboardingData.domain.length > 0;
+                return onboardingData?.domain?.length > 0;
             case 1:
-                return onboardingData.language.length > 0;
+                return onboardingData?.language?.length > 0;
             case 2:
-                return onboardingData.framework.length > 0;
+                return onboardingData?.framework?.length > 0;
             case 3:
-                return !!onboardingData.expertise;
+                return Boolean(onboardingData?.expertise);
             case 4:
-                return onboardingData.specialization.length > 0;
+                return onboardingData?.specialization?.length > 0;
             default:
                 return true;
         }
