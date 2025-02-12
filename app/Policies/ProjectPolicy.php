@@ -12,10 +12,8 @@ class ProjectPolicy
 {
     public function create(User $user): Response
     {
-        // Check if user has the PROJECT_CREATE permission
-        return $user->hasRole(ProjectRole::CREATOR) || $user->hasRole(ProjectRole::ADMIN)
-            ? Response::allow()
-            : Response::deny('You do not have permission to create a project.');
+        // Allow any authenticated user to create a project
+        return Response::allow();
     }
 
     /**

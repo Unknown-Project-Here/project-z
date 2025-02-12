@@ -7,6 +7,7 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use App\Enums\ProjectRole;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
@@ -70,5 +71,26 @@ class User extends Authenticatable implements MustVerifyEmail
             ->first();
 
         return $projectUser?->pivot->hasPermission($permission) ?? false;
+    }
+
+    /**
+     * Check if the user has a specific role in any project
+     */
+    public function hasGlobalRole(ProjectRole $role): bool
+    {
+        return $this->projects()
+            ->wherePivot('role', $role->value)
+            ->exists();
+    }
+
+    /**
+     * Check if the user has a specific role in a project
+     */
+    public function hasRole(Project $project, ProjectRole $role): bool
+    {
+        return $this->projects()
+            ->wherePivot('project_id', $project->id)
+            ->wherePivot('role', $role->value)
+            ->exists();
     }
 }
