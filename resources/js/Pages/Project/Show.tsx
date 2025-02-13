@@ -9,7 +9,7 @@ import {
     CardTitle,
 } from '@/components/ui/card';
 import { Project } from '@/types';
-import { Head, Link } from '@inertiajs/react';
+import { Head, Link, router } from '@inertiajs/react';
 import dayjs from 'dayjs';
 import advancedFormat from 'dayjs/plugin/advancedFormat';
 import relativeTime from 'dayjs/plugin/relativeTime';
@@ -32,11 +32,24 @@ export default function ProjectShow({ project }: { project: Project }) {
             <div className="container mx-auto px-4 py-8">
                 <div className="mb-6 flex items-center justify-between">
                     <h1 className="text-3xl font-bold">{project.title}</h1>
-                    <Button asChild>
-                        <Link href={route('projects.edit', project.id)}>
-                            Edit
-                        </Link>
-                    </Button>
+                    <div className="flex items-center gap-2">
+                        <Button
+                            onClick={() => {
+                                router.post(
+                                    route('projects.invite', {
+                                        project: project.id,
+                                    }),
+                                );
+                            }}
+                        >
+                            Invite
+                        </Button>
+                        <Button asChild>
+                            <Link href={route('projects.edit', project.id)}>
+                                Edit
+                            </Link>
+                        </Button>
+                    </div>
                 </div>
 
                 <div className="grid grid-cols-1 gap-6 md:grid-cols-3">

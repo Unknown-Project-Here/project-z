@@ -16,6 +16,7 @@ use App\Actions\Project\CreateProject;
 use App\Actions\Project\CreateProjectTechStack;
 use App\Actions\Project\AssignCreatorRole;
 use App\Actions\Options\CreateMissingOptions;
+use App\Enums\ProjectRole;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Pipeline;
@@ -231,6 +232,67 @@ class ProjectController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to rename project.',
+                'error' => config('app.debug') ? $e->getMessage() : null
+            ], 500);
+        }
+    }
+
+    /**
+     * Invite a user to the project.
+     * 
+     * @param Project $project
+     * @return JsonResponse
+     */
+    public function invite(Request $request, Project $project): JsonResponse
+    {
+        logger($request->all());
+        // For now using hardcoded values as requested
+        $inviteeId = 2; // Hardcoded invitee ID
+        $inviterId = $request->user()->id;
+        $role = ProjectRole::CONTRIBUTOR;
+
+        try {
+            // Check if invitation already exists
+            $existingInvitation = $project->invitations()
+                ->where('invitee_id', $inviteeId)
+                ->where('expires_at', '>', now())
+                ->first();
+
+            if ($existingInvitation) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'An active invitation already exists for this user.'
+                ], 422);
+            }
+
+            // Check if user is already a member
+            if ($project->members()->where('user_id', $inviteeId)->exists()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'User is already a member of this project.'
+                ], 422);
+            }
+
+            $invitation = $project->invitations()->create([
+                'inviter_id' => $inviterId,
+                'invitee_id' => $inviteeId,
+                'role' => $role
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'data' => $invitation,
+                'message' => 'Invitation sent successfully.'
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Project invitation failed:', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to send invitation.',
                 'error' => config('app.debug') ? $e->getMessage() : null
             ], 500);
         }
