@@ -32,14 +32,14 @@ class OnboardingRequest extends FormRequest
         return [
             'skills' => ['required', 'array'],
             'skills.domain' => ['required', 'array', 'min:1'],
-            'skills.domain.*' => ['required', 'string', 'min:3'],
+            'skills.domain.*' => ['required', 'string', 'min:1'],
             'skills.language' => ['required', 'array', 'min:1'],
-            'skills.language.*' => ['required', 'string', 'min:3'],
+            'skills.language.*' => ['required', 'string', 'min:1'],
             'skills.framework' => ['required', 'array', 'min:1'],
-            'skills.framework.*' => ['required', 'string', 'min:3'],
+            'skills.framework.*' => ['required', 'string', 'min:1'],
             'skills.expertise' => ['required', 'string', new Enum(SkillLevelEnum::class)],
             'skills.specialization' => ['required', 'array', 'min:1'],
-            'skills.specialization.*' => ['required', 'string', 'min:3'],
+            'skills.specialization.*' => ['required', 'string', 'min:1'],
         ];
     }
 
@@ -54,21 +54,21 @@ class OnboardingRequest extends FormRequest
             'skills.domain.min' => 'Please select at least one domain.',
             'skills.domain.*.required' => 'Each domain must be specified.',
             'skills.domain.*.string' => 'Each domain must be text.',
-            'skills.domain.*.min' => 'Each domain must be at least 3 characters.',
+            'skills.domain.*.min' => 'Each domain must be at least 1 character.',
 
             'skills.language.required' => 'Please select at least one programming language.',
             'skills.language.array' => 'Language must be provided as a list.',
             'skills.language.min' => 'Please select at least one programming language.',
             'skills.language.*.required' => 'Each language must be specified.',
             'skills.language.*.string' => 'Each language must be text.',
-            'skills.language.*.min' => 'Each language must be at least 3 characters.',
+            'skills.language.*.min' => 'Each language must be at least 1 character.',
 
             'skills.framework.required' => 'Please select at least one framework.',
             'skills.framework.array' => 'Framework must be provided as a list.',
             'skills.framework.min' => 'Please select at least one framework.',
             'skills.framework.*.required' => 'Each framework must be specified.',
             'skills.framework.*.string' => 'Each framework must be text.',
-            'skills.framework.*.min' => 'Each framework must be at least 3 characters.',
+            'skills.framework.*.min' => 'Each framework must be at least 1 character.',
 
             'skills.expertise.required' => 'Please select your skill level.',
             'skills.expertise.string' => 'Skill level must be text.',
@@ -79,7 +79,7 @@ class OnboardingRequest extends FormRequest
             'skills.specialization.min' => 'Please select at least one specialization.',
             'skills.specialization.*.required' => 'Each specialization must be specified.',
             'skills.specialization.*.string' => 'Each specialization must be text.',
-            'skills.specialization.*.min' => 'Each specialization must be at least 3 characters.',
+            'skills.specialization.*.min' => 'Each specialization must be at least 1 character.',
         ];
     }
 }
