@@ -118,7 +118,10 @@ export default function ProjectShow({ project }: { project: Project }) {
                             </CardHeader>
                             <CardContent>
                                 <div className="flex flex-wrap gap-2">
-                                    {project?.stack?.map((tech) => (
+                                    {(Array.isArray(project.stack)
+                                        ? project.stack
+                                        : JSON.parse(project.stack as string)
+                                    ).map((tech: string) => (
                                         <Badge key={tech} variant="secondary">
                                             {tech}
                                         </Badge>

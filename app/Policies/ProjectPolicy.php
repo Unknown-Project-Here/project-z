@@ -5,10 +5,23 @@ namespace App\Policies;
 use App\Models\Project;
 use App\Models\User;
 use App\Enums\ProjectPermission;
+use App\Enums\ProjectRole;
 use Illuminate\Auth\Access\Response;
 
 class ProjectPolicy
 {
+    public function create(User $user): Response
+    {
+        if (is_null($user->email_verified_at)) {
+            return Response::deny('You must verify your email to create a project.');
+        }
+
+        if ($user->onboarded === false) {
+            return Response::deny('You must complete your onboarding to create a project.');
+        }
+
+        return Response::allow();
+    }
 
     /**
      * Determine if the user can rename the project. Only the creator can rename the project.

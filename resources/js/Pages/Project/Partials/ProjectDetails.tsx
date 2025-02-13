@@ -22,7 +22,7 @@ const contactOptions = [
     {
         label: 'GitHub',
         value: 'github',
-        icon: 'github',
+        icon: 'githubIcon',
         placeholder: 'Enter github username',
     },
     {
@@ -125,10 +125,10 @@ export default function ProjectDetails({
                                 }
                                 placeholder="Describe your project"
                                 rows={4}
-                                maxLength={500}
+                                maxLength={5000}
                             />
                             <div className="absolute bottom-2 right-2 text-xs text-muted-foreground">
-                                {data.description.length}/500
+                                {data.description.length}/5000
                             </div>
                         </div>
                         <div className="space-y-2">

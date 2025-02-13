@@ -37,6 +37,8 @@ export default function Dashboard() {
         contributions: 230,
     };
 
+    const isOnboardingComplete = auth.user.onboarded;
+
     return (
         <>
             <div className="container mx-auto px-4 py-8">
@@ -50,7 +52,9 @@ export default function Dashboard() {
                         }
                         variant="outline"
                     >
-                        Complete Profile
+                        {isOnboardingComplete
+                            ? 'Edit Profile'
+                            : 'Complete Profile'}
                     </Button>
                 </div>
 

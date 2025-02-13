@@ -28,7 +28,7 @@ export default function LanguagesStep({ data, onChange }: LanguagesStepProps) {
         filteredItems: filteredLanguages,
     } = useOnboarding({
         data,
-        field: 'languages',
+        field: 'language',
         onChange,
         items: languages,
     });
@@ -55,7 +55,7 @@ export default function LanguagesStep({ data, onChange }: LanguagesStepProps) {
                                         <Badge
                                             key={lang.name}
                                             variant={
-                                                data.languages.includes(
+                                                (data.language || []).includes(
                                                     lang.name,
                                                 )
                                                     ? 'default'
@@ -131,7 +131,7 @@ export default function LanguagesStep({ data, onChange }: LanguagesStepProps) {
             </div>
 
             <FloatingSelections
-                items={data.languages}
+                items={data.language}
                 onRemove={toggleLanguage}
                 onClearAll={clearAllLanguages}
                 label="Selected Languages"

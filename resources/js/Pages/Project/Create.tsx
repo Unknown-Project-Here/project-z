@@ -2,7 +2,6 @@ import { Stepper } from '@/components/ui/stepper/Stepper';
 import { useLocalStorage } from '@/hooks/use-local-storage';
 import { ProjectType } from '@/types';
 import { router } from '@inertiajs/react';
-import { useState } from 'react';
 import { projectSteps } from './Partials/ProjectSteps';
 
 const defaultProjectData: ProjectType = {
@@ -14,15 +13,14 @@ const defaultProjectData: ProjectType = {
         email: '',
         website: '',
     },
-    techStack: [],
-    languages: [],
-    frameworks: [],
+    domain: [],
+    language: [],
+    framework: [],
     expertise: '',
-    roles: [],
+    specialization: [],
 };
 
 export default function CreateProject() {
-    const [currentStep, setCurrentStep] = useState(0);
     const [projectData, setProjectData] = useLocalStorage({
         key: 'project-creation',
         defaultValue: defaultProjectData,
@@ -42,15 +40,15 @@ export default function CreateProject() {
                     Object.values(projectData.contact).some((value) => !!value)
                 );
             case 1:
-                return projectData.techStack.length > 0;
+                return projectData?.domain?.length > 0;
             case 2:
-                return projectData.languages.length > 0;
+                return projectData?.language?.length > 0;
             case 3:
-                return projectData.frameworks.length > 0;
+                return projectData?.framework?.length > 0;
             case 4:
-                return !!projectData.expertise;
+                return !!projectData?.expertise;
             case 5:
-                return projectData.roles.length > 0;
+                return projectData?.specialization?.length > 0;
             default:
                 return true;
         }
@@ -69,17 +67,25 @@ export default function CreateProject() {
     const handleComplete = async () => {
         try {
             const formData = {
-                ...projectData,
+                title: projectData.title,
+                description: projectData.description,
                 contact: Object.fromEntries(
                     Object.entries(projectData.contact).filter(
                         ([, value]) => !!value,
                     ),
                 ),
+                skills: {
+                    expertise: projectData.expertise,
+                    domain: projectData.domain,
+                    language: projectData.language,
+                    framework: projectData.framework,
+                    specialization: projectData.specialization,
+                },
             };
 
             console.log('formData', formData);
 
-            await router.post(
+            router.post(
                 route('projects.store'),
                 {
                     project: formData,
@@ -107,8 +113,6 @@ export default function CreateProject() {
 
             <div className="mt-8 rounded-lg">
                 <Stepper
-                    activeStep={currentStep}
-                    onStepChange={setCurrentStep}
                     className="min-h-[600px]"
                     contentClassName="flex flex-col sm:p-6"
                     onComplete={handleComplete}

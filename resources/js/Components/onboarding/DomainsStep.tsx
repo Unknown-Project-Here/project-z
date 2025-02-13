@@ -1,12 +1,12 @@
+import { domains } from '@/components/onboarding/domains';
 import { FloatingSelections } from '@/components/onboarding/FloatingSelections';
-import { roles } from '@/components/onboarding/roles';
 import { OnboardingType } from '@/components/onboarding/types';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useOnboarding } from '@/hooks/useOnboarding';
 
-interface RolesStepProps {
+interface DomainProps {
     data: OnboardingType;
     onChange: (
         field: keyof OnboardingType,
@@ -14,7 +14,7 @@ interface RolesStepProps {
     ) => void;
 }
 
-export default function RolesStep({ data, onChange }: RolesStepProps) {
+export default function DomainsStep({ data, onChange }: DomainProps) {
     const {
         search,
         setSearch,
@@ -22,60 +22,66 @@ export default function RolesStep({ data, onChange }: RolesStepProps) {
         setCustomName,
         showCustomForm,
         setShowCustomForm,
-        toggleItem: toggleRole,
-        addCustomItem: addCustomRole,
-        clearAll: clearAllRoles,
-        filteredItems: filteredRoles,
+        toggleItem: toggleDomain,
+        addCustomItem: addCustomDomain,
+        filteredItems: filteredDomains,
     } = useOnboarding({
         data,
-        field: 'roles',
+        field: 'domain',
         onChange,
-        items: roles,
+        items: domains,
     });
+
+    const clearAllDomain = () => {
+        onChange('domain', []);
+    };
 
     return (
         <>
             <div className="space-y-6">
                 <Input
                     type="search"
-                    placeholder="Search roles..."
+                    placeholder="Search domains..."
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
                 />
 
                 <div className="space-y-6">
-                    {Object.entries(filteredRoles).map(
-                        ([category, roleList]) => (
+                    {Object.entries(filteredDomains).map(
+                        ([category, domains]) => (
                             <div key={category}>
                                 <h3 className="mb-3 text-lg font-semibold">
                                     {category}
                                 </h3>
                                 <div className="flex flex-wrap gap-3">
-                                    {roleList.map((role) => (
+                                    {domains.map((domain) => (
                                         <Badge
-                                            key={role.name}
+                                            key={domain.name}
                                             variant={
-                                                data.roles.includes(role.name)
+                                                (data.domain || []).includes(
+                                                    domain.name,
+                                                )
                                                     ? 'default'
                                                     : 'outline'
                                             }
-                                            className="cursor-pointer px-3 py-1 text-base"
-                                            onClick={() =>
-                                                toggleRole(role.name)
-                                            }
+                                            className="group cursor-pointer px-3 py-1 text-base"
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                toggleDomain(domain.name);
+                                            }}
                                         >
-                                            {role.logo ? (
+                                            {domain.logo ? (
                                                 <img
-                                                    src={role.logo}
-                                                    alt={role.name}
-                                                    className={`mr-2 h-4 w-4 dark:invert`}
+                                                    src={domain.logo}
+                                                    alt={domain.name}
+                                                    className="mr-2 h-4 w-4 dark:invert"
                                                 />
                                             ) : (
                                                 <span className="mr-2">
-                                                    {role.icon}
+                                                    {domain.icon}
                                                 </span>
                                             )}
-                                            {role.name}
+                                            {domain.name}
                                         </Badge>
                                     ))}
                                 </div>
@@ -90,13 +96,13 @@ export default function RolesStep({ data, onChange }: RolesStepProps) {
                         variant="outline"
                         className="w-full"
                     >
-                        Add Custom Role
+                        Add Custom Domain
                     </Button>
                 ) : (
                     <div className="space-y-4 rounded-lg border p-4">
                         <div className="flex items-center justify-between">
                             <h3 className="text-lg font-semibold">
-                                Add Custom Role
+                                Add Custom Domain
                             </h3>
                             <Button
                                 variant="ghost"
@@ -111,17 +117,17 @@ export default function RolesStep({ data, onChange }: RolesStepProps) {
                         </div>
                         <div className="flex flex-col gap-4">
                             <Input
-                                placeholder="Role name"
+                                placeholder="Domain name"
                                 value={customName}
                                 onChange={(e) => setCustomName(e.target.value)}
                             />
                             <Button
-                                onClick={addCustomRole}
+                                onClick={addCustomDomain}
                                 disabled={!customName}
                                 variant="outline"
                                 className="w-full"
                             >
-                                Add Role
+                                Add Domain
                             </Button>
                         </div>
                     </div>
@@ -129,10 +135,10 @@ export default function RolesStep({ data, onChange }: RolesStepProps) {
             </div>
 
             <FloatingSelections
-                items={data.roles}
-                onRemove={toggleRole}
-                onClearAll={clearAllRoles}
-                label="Selected Roles"
+                items={data.domain}
+                onRemove={toggleDomain}
+                onClearAll={clearAllDomain}
+                label="Selected Domains"
             />
         </>
     );

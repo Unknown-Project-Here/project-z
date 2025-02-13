@@ -1,8 +1,9 @@
-import { GlobeIcon, MailIcon } from 'lucide-react';
+import { GithubIcon, GlobeIcon, MailIcon } from 'lucide-react';
 
 export const Icons = {
     mail: MailIcon,
     globe: GlobeIcon,
+    githubIcon: GithubIcon,
     github: ({ ...props }) => (
         <svg
             width="24"

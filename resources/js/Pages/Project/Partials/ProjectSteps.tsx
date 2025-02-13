@@ -1,8 +1,8 @@
+import DomainsStep from '@/components/onboarding/DomainsStep';
 import ExpertiseStep from '@/components/onboarding/ExpertiseStep';
 import FrameworksStep from '@/components/onboarding/FrameworksStep';
 import LanguagesStep from '@/components/onboarding/LanguagesStep';
-import RolesStep from '@/components/onboarding/RolesStep';
-import TechStackStep from '@/components/onboarding/TechStackStep';
+import SpecializationsStep from '@/components/onboarding/SpecializationsStep';
 import ProjectDetails from './ProjectDetails';
 
 export const projectSteps = [
@@ -13,10 +13,10 @@ export const projectSteps = [
         component: ProjectDetails,
     },
     {
-        title: 'Tech Stack',
-        description: 'What technologies would you use for this project?',
-        field: 'techStack',
-        component: TechStackStep,
+        title: 'Domains',
+        description: 'What domains does your project belong to?',
+        field: 'domains',
+        component: DomainsStep,
     },
     {
         title: 'Languages',
@@ -38,9 +38,9 @@ export const projectSteps = [
         component: ExpertiseStep,
     },
     {
-        title: 'Roles',
-        description: 'What roles does your project need?',
-        field: 'roles',
-        component: RolesStep,
+        title: 'Specializations',
+        description: 'What specializations does your project need?',
+        field: 'specializations',
+        component: SpecializationsStep,
     },
 ];

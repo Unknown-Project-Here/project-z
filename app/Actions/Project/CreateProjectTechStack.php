@@ -1,30 +1,28 @@
 <?php
 
-namespace App\Actions\Onboarding;
+namespace App\Actions\Project;
 
 use App\Models\Option;
-use App\Models\UserTechStack;
+use App\Models\ProjectTechStack;
 use Closure;
 
-class UpdateUserTechStack
+class CreateProjectTechStack
 {
-    public function handle($data, Closure $next)
+    public function handle($pipeline, Closure $next)
     {
-        $userId = request()->user()->id;
-
-        UserTechStack::where('user_id', $userId)->delete();
-
+        $project = $pipeline['project'];
+        $data = $pipeline['data'];
         $insertData = [];
 
         foreach (['domain', 'language', 'framework', 'specialization'] as $category) {
             $options = Option::query()
                 ->whereHas('category', fn($query) => $query->where('name', $category))
-                ->whereIn('name', array_map('strtolower', $data['skills'][$category] ?? []))
+                ->whereIn('name', array_map('strtolower', $data['project']['skills'][$category]))
                 ->get();
 
             foreach ($options as $option) {
                 $insertData[] = [
-                    'user_id' => $userId,
+                    'project_id' => $project->id,
                     'option_id' => $option->id,
                     'created_at' => now(),
                     'updated_at' => now()
@@ -33,9 +31,9 @@ class UpdateUserTechStack
         }
 
         if (!empty($insertData)) {
-            UserTechStack::insert($insertData);
+            ProjectTechStack::insert($insertData);
         }
 
-        return $next($data);
+        return $next($pipeline);
     }
 }
