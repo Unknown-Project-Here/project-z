@@ -14,8 +14,8 @@ use App\Http\Requests\ProjectRenameRequest;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Pipeline\Pipeline;
 use App\Actions\Project\UpdateProjectTechStack;
-use App\Actions\Onboarding\CreateMissingOptions;
-use App\Actions\Project\AddMembersToProject; 
+use App\Actions\Options\CreateMissingOptions;
+use App\Actions\Project\AddMembersToProject;
 use Illuminate\Support\Facades\Log;
 
 class ProjectController extends Controller
@@ -55,7 +55,7 @@ class ProjectController extends Controller
     public function create(Request $request): Response
     {
         $this->authorize('create', Project::class);
-        
+
         return Inertia::render('Project/Create', [
             'user' => Auth::user()
         ]);
@@ -90,13 +90,13 @@ class ProjectController extends Controller
             return DB::transaction(function () use ($request) {
                 // Convert contact object to JSON string before validation/processing
                 $validatedData = $request->validated();
-                
+
                 // Debug log
                 Log::info('Validated data before processing:', $validatedData);
-                
+
                 // Ensure project data exists
                 $validatedData['project'] = $validatedData['project'] ?? [];
-                
+
                 // Debug log after modifications
                 Log::info('Validated data after processing:', $validatedData);
 
@@ -123,7 +123,7 @@ class ProjectController extends Controller
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString()
             ]);
-            
+
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to create project.',

@@ -6,7 +6,7 @@ use Illuminate\Foundation\Http\FormRequest;
 use App\Enums\SkillLevelEnum;
 use Illuminate\Validation\Rules\Enum;
 
-class ProjectRequest extends FormRequest 
+class ProjectRequest extends FormRequest
 {
     public function authorize()
     {
@@ -21,14 +21,14 @@ class ProjectRequest extends FormRequest
             'project.contact' => ['required', 'array', 'min:1'],
             'project.contact.*' => ['required', 'string', 'min:3'],
             'project.skills.domain' => ['required', 'array', 'min:1'],
-            'project.skills.domain.*' => ['required', 'string', 'min:3'],
+            'project.skills.domain.*' => ['required', 'string', 'min:1'],
             'project.skills.language' => ['required', 'array', 'min:1'],
-            'project.skills.language.*' => ['required', 'string', 'min:3'],
+            'project.skills.language.*' => ['required', 'string', 'min:1'],
             'project.skills.framework' => ['required', 'array', 'min:1'],
-            'project.skills.framework.*' => ['required', 'string', 'min:3'],
+            'project.skills.framework.*' => ['required', 'string', 'min:1'],
             'project.skills.expertise' => ['required', 'string', new Enum(SkillLevelEnum::class)],
             'project.skills.specialization' => ['required', 'array', 'min:1'],
-            'project.skills.specialization.*' => ['required', 'string', 'min:3'],
+            'project.skills.specialization.*' => ['required', 'string', 'min:1'],
         ];
     }
 

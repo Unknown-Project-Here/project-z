@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Actions\Onboarding\CreateMissingOptions;
+use App\Actions\Options\CreateMissingOptions;
 use App\Actions\Onboarding\MarkUserAsOnboarded;
 use App\Actions\Onboarding\UpdateUserTechStack;
 use App\Http\Requests\OnboardingRequest;

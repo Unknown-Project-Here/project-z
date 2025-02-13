@@ -18,6 +18,7 @@ return new class extends Migration
             $table->text('description');
             $table->jsonb('contact')->nullable();
             $table->boolean('is_active')->default(true);
+            $table->enum('skill_level', ['beginner', 'intermediate', 'advanced', 'expert'])->nullable();
             $table->timestamps();
         });
     }
