@@ -12,7 +12,14 @@ class ProjectPolicy
 {
     public function create(User $user): Response
     {
-        // Allow any authenticated user to create a project
+        if (is_null($user->email_verified_at)) {
+            return Response::deny('You must verify your email to create a project.');
+        }
+
+        if ($user->onboarded === false) {
+            return Response::deny('You must complete your onboarding to create a project.');
+        }
+
         return Response::allow();
     }
 
