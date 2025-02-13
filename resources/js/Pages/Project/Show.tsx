@@ -58,19 +58,19 @@ export default function ProjectShow({ project }: { project: Project }) {
                                 <div className="flex items-center space-x-4">
                                     <Avatar className="bg-primary">
                                         <AvatarImage
-                                            src={`https://api.dicebear.com/9.x/open-peeps/svg?seed=${project.user.username}`}
-                                            alt={project.user.username}
+                                            src={`https://api.dicebear.com/9.x/open-peeps/svg?seed=${project.creator.username}`}
+                                            alt={project.creator.username}
                                         />
                                         <AvatarFallback>
-                                            {project.user.username[0]}
+                                            {project.creator.username}
                                         </AvatarFallback>
                                     </Avatar>
                                     <div>
                                         <p className="font-medium">
-                                            {project.user.username}
+                                            {project.creator.username}
                                         </p>
                                         <p className="text-sm">
-                                            {project.user.email}
+                                            Joined {project.creator.created_at}
                                         </p>
                                     </div>
                                 </div>
@@ -117,15 +117,46 @@ export default function ProjectShow({ project }: { project: Project }) {
                                 </CardDescription>
                             </CardHeader>
                             <CardContent>
-                                <div className="flex flex-wrap gap-2">
-                                    {(Array.isArray(project.stack)
-                                        ? project.stack
-                                        : JSON.parse(project.stack as string)
-                                    ).map((tech: string) => (
-                                        <Badge key={tech} variant="secondary">
-                                            {tech}
-                                        </Badge>
-                                    ))}
+                                <div className="space-y-4">
+                                    {Object.entries(project.stack).map(
+                                        ([category, technologies]) => (
+                                            <div
+                                                key={category}
+                                                className="space-y-2"
+                                            >
+                                                <h3 className="font-medium capitalize">
+                                                    {category}
+                                                </h3>
+                                                <div className="flex flex-wrap gap-2">
+                                                    {technologies.map(
+                                                        (tech: {
+                                                            id: number;
+                                                            name: string;
+                                                            skill_level:
+                                                                | string
+                                                                | null;
+                                                        }) => (
+                                                            <Badge
+                                                                key={tech.id}
+                                                                variant="secondary"
+                                                            >
+                                                                {tech.name}
+                                                                {tech.skill_level && (
+                                                                    <span className="ml-1 text-xs opacity-70">
+                                                                        (
+                                                                        {
+                                                                            tech.skill_level
+                                                                        }
+                                                                        )
+                                                                    </span>
+                                                                )}
+                                                            </Badge>
+                                                        ),
+                                                    )}
+                                                </div>
+                                            </div>
+                                        ),
+                                    )}
                                 </div>
                             </CardContent>
                         </Card>
@@ -144,9 +175,7 @@ export default function ProjectShow({ project }: { project: Project }) {
                                             Created
                                         </p>
                                         <p className="text-sm">
-                                            {new Date(
-                                                project.created_at,
-                                            ).toLocaleDateString()}
+                                            {project.created_at}
                                         </p>
                                     </div>
                                     <div>
@@ -154,9 +183,7 @@ export default function ProjectShow({ project }: { project: Project }) {
                                             Last Updated
                                         </p>
                                         <p className="text-sm">
-                                            {new Date(
-                                                project.updated_at,
-                                            ).toLocaleDateString()}
+                                            {project.updated_at}
                                         </p>
                                     </div>
                                 </div>

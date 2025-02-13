@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use App\Enums\ProjectRole;
+use Carbon\Carbon;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
@@ -93,5 +94,11 @@ class User extends Authenticatable implements MustVerifyEmail
             ->wherePivot('project_id', $project->id)
             ->wherePivot('role', $role->value)
             ->exists();
+    }
+
+
+    public function getCreatedAtAttribute($value)
+    {
+        return Carbon::parse($value)->format('jS F, Y');
     }
 }

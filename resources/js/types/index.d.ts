@@ -15,14 +15,20 @@ export interface Project {
     title: string;
     description: string;
     is_active?: boolean;
-    stack: string[];
-    email: string;
-    discord?: string;
-    github?: string;
-    website?: string;
+    stack: {
+        [key: string]: Array<{
+            id: number;
+            name: string;
+            skill_level: string | null;
+        }>;
+    };
+    contact: Record<string, string>;
     created_at: string;
     updated_at: string;
-    user: User;
+    creator: {
+        username: string;
+        created_at: string;
+    };
 }
 
 export interface PaginationLink {
