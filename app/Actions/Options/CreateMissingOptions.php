@@ -12,7 +12,7 @@ class CreateMissingOptions
     {
         foreach (['domain', 'language', 'framework', 'specialization'] as $categoryName) {
             if ($category = Category::where('name', $categoryName)->first()) {
-                collect($data['skills'][$categoryName] ?? [])->each(
+                collect($data['skills'][$categoryName])->each(
                     fn($optionName) =>
                     Option::firstOrCreate([
                         'name' => strtolower($optionName),

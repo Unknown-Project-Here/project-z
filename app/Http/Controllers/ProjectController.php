@@ -12,11 +12,13 @@ use Inertia\Response;
 use Illuminate\Http\JsonResponse;
 use App\Http\Requests\ProjectRenameRequest;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Pipeline\Pipeline;
-use App\Actions\Project\UpdateProjectTechStack;
+use App\Actions\Project\CreateProject;
+use App\Actions\Project\CreateProjectTechStack;
+use App\Actions\Project\AssignCreatorRole;
 use App\Actions\Options\CreateMissingOptions;
-use App\Actions\Project\AddMembersToProject;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Pipeline;
 
 class ProjectController extends Controller
 {
@@ -82,41 +84,33 @@ class ProjectController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(ProjectRequest $request): JsonResponse
+    public function store(ProjectRequest $request): RedirectResponse
     {
         $this->authorize('create', Project::class);
 
         try {
             return DB::transaction(function () use ($request) {
-                // Convert contact object to JSON string before validation/processing
                 $validatedData = $request->validated();
 
-                // Debug log
-                Log::info('Validated data before processing:', $validatedData);
-
-                // Ensure project data exists
-                $validatedData['project'] = $validatedData['project'] ?? [];
-
-                // Debug log after modifications
-                Log::info('Validated data after processing:', $validatedData);
-
-                $project = app(Pipeline::class)
-                    ->send($validatedData)
-                    ->through([
-                        CreateMissingOptions::class,
-                        UpdateProjectTechStack::class,
-                        AddMembersToProject::class,
-                    ])
-                    ->then(function ($data) {
-                        Log::info('Pipeline result:', ['data' => $data]);
+                // Create missing options
+                $options = ['skills' => $validatedData['project']['skills']];
+                app()->make(CreateMissingOptions::class)
+                    ->handle($options, function ($data) {
                         return $data;
                     });
 
-                return response()->json([
-                    'success' => true,
-                    'data' => $project->load(['user', 'members']),
-                    'message' => 'Project created successfully.'
-                ], 201);
+                // Create project and related data
+                $pipeline = Pipeline::send($validatedData)
+                    ->through([
+                        CreateProject::class,
+                        CreateProjectTechStack::class,
+                        AssignCreatorRole::class,
+                    ])
+                    ->then(function ($data) {
+                        return $data['project'];
+                    });
+
+                return redirect()->route('projects.show', $pipeline->id)->with(['success' => true, 'message' => 'Project created successfully.']);
             });
         } catch (\Exception $e) {
             Log::error('Project creation failed:', [

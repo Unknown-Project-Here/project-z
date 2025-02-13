@@ -26,6 +26,7 @@ class Project extends Model
         'is_active',
         'created_at',
         'updated_at',
+        'skill_level',
     ];
 
     // Relationships
@@ -42,6 +43,11 @@ class Project extends Model
             ->withTimestamps();
     }
 
+    public function techStack()
+    {
+        return $this->hasMany(ProjectTechStack::class);
+    }
+
     public function hasUserWithRole(User $user, ProjectRole $role): bool
     {
         return $this->members()
@@ -49,7 +55,7 @@ class Project extends Model
             ->wherePivot('role', $role)
             ->exists();
     }
-    
+
     // Accessors & Mutators
     protected function title(): Attribute
     {

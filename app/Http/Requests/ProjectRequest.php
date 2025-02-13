@@ -44,6 +44,13 @@ class ProjectRequest extends FormRequest
             'project.description.max' => 'The project description cannot be longer than 5000 characters.',
             'project.contact.required' => 'A project contact is required.',
             'project.contact.array' => 'The project contact must be an array.',
+            'project.skills.domain.required' => 'A project domain is required.',
+            'project.skills.domain.array' => 'The project domain must be an array.',
+            'project.skills.language.required' => 'A project language is required.',
+            'project.skills.language.array' => 'The project language must be an array.',
+            'project.skills.framework.required' => 'A project framework is required.',
+            'project.skills.framework.array' => 'The project framework must be an array.',
+            'project.skills.expertise.required' => 'A project expertise is required.'
         ];
     }
 }
