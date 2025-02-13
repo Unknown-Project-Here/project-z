@@ -98,15 +98,4 @@ class Project extends Model
     {
         return $query->where('is_active', true);
     }
-
-    // Accessors
-    public function getCreatedAtAttribute($value)
-    {
-        return Carbon::parse($value)->format('jS F, Y');
-    }
-
-    public function getUpdatedAtAttribute($value)
-    {
-        return Carbon::parse($value)->format('jS F, Y');
-    }
 }

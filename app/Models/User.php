@@ -95,10 +95,4 @@ class User extends Authenticatable implements MustVerifyEmail
             ->wherePivot('role', $role->value)
             ->exists();
     }
-
-
-    public function getCreatedAtAttribute($value)
-    {
-        return Carbon::parse($value)->format('jS F, Y');
-    }
 }

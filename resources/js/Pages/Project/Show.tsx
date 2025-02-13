@@ -10,7 +10,13 @@ import {
 } from '@/components/ui/card';
 import { Project } from '@/types';
 import { Head, Link } from '@inertiajs/react';
+import dayjs from 'dayjs';
+import advancedFormat from 'dayjs/plugin/advancedFormat';
+import relativeTime from 'dayjs/plugin/relativeTime';
 import { CalendarIcon, CodeIcon, GitForkIcon } from 'lucide-react';
+
+dayjs.extend(advancedFormat);
+dayjs.extend(relativeTime);
 
 export default function ProjectShow({ project }: { project: Project }) {
     const projectStats = {
@@ -70,7 +76,10 @@ export default function ProjectShow({ project }: { project: Project }) {
                                             {project.creator.username}
                                         </p>
                                         <p className="text-sm">
-                                            Joined {project.creator.created_at}
+                                            Joined{' '}
+                                            {dayjs(
+                                                project.creator.created_at,
+                                            ).format('Do MMMM YYYY')}
                                         </p>
                                     </div>
                                 </div>
@@ -175,7 +184,9 @@ export default function ProjectShow({ project }: { project: Project }) {
                                             Created
                                         </p>
                                         <p className="text-sm">
-                                            {project.created_at}
+                                            {dayjs(project.created_at).format(
+                                                'Do MMMM YYYY',
+                                            )}
                                         </p>
                                     </div>
                                     <div>
@@ -183,7 +194,16 @@ export default function ProjectShow({ project }: { project: Project }) {
                                             Last Updated
                                         </p>
                                         <p className="text-sm">
-                                            {project.updated_at}
+                                            {dayjs(project.updated_at).format(
+                                                'Do MMMM YYYY',
+                                            )}{' '}
+                                            (
+                                            <i>
+                                                {dayjs(
+                                                    project.updated_at,
+                                                ).fromNow()}
+                                            </i>
+                                            )
                                         </p>
                                     </div>
                                 </div>
