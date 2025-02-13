@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use App\Enums\ProjectRole;
+use Carbon\Carbon;
 
 class User extends Authenticatable implements MustVerifyEmail
 {

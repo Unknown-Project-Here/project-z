@@ -66,25 +66,43 @@ class ProjectController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Request $request, Project $project): Response|JsonResponse
+    public function show(Project $project): Response|JsonResponse
     {
-        if ($request->wantsJson()) {
-            return response()->json([
-                'success' => true,
-                'data' => $project->load('user'),
-                'message' => 'Project retrieved successfully.'
-            ]);
-        }
+        try {
+            $project->load(['stack.option.category', 'members']);
 
-        return Inertia::render('Project/Show', [
-            'project' => $project->load('user')
-        ]);
+            // Organize stack by categories
+            $stackByCategory = collect($project->stack)
+                ->groupBy(fn($stack) => $stack->option->category->name)
+                ->map(fn($items) => $items->map(fn($item) => [
+                    'id' => $item->option->id,
+                    'name' => $item->option->name,
+                    'skill_level' => $item->skill_level
+                ]));
+
+            $projectArray = $project->toArray();
+            $projectArray['stack'] = $stackByCategory;
+            $projectArray['creator'] = $project->creator;
+
+            return Inertia::render('Project/Show', [
+                'project' => $projectArray
+            ]);
+        } catch (\Exception $e) {
+            logger($e->getMessage());
+            logger($e->getTraceAsString());
+
+            return back()->with([
+                'success' => false,
+                'message' => 'Failed to retrieve project.',
+                'error' => config('app.debug') ? $e->getMessage() : null
+            ], 500);
+        }
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(ProjectRequest $request): RedirectResponse
+    public function store(ProjectRequest $request): RedirectResponse|JsonResponse
     {
         $this->authorize('create', Project::class);
 

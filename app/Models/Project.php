@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\ProjectRole;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -30,10 +31,6 @@ class Project extends Model
     ];
 
     // Relationships
-    public function user()
-    {
-        return $this->belongsTo(User::class);
-    }
 
     public function members()
     {
@@ -43,9 +40,30 @@ class Project extends Model
             ->withTimestamps();
     }
 
-    public function techStack()
+    public function stack()
     {
         return $this->hasMany(ProjectTechStack::class);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    protected function creator(): Attribute
+    {
+        return Attribute::make(
+            get: function () {
+                $creator = $this->members()
+                    ->wherePivot('role', ProjectRole::CREATOR)
+                    ->first();
+
+                return $creator ? [
+                    'username' => $creator->username,
+                    'created_at' => $creator->created_at
+                ] : null;
+            }
+        );
     }
 
     public function hasUserWithRole(User $user, ProjectRole $role): bool
