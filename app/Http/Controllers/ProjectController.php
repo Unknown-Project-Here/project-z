@@ -245,8 +245,10 @@ class ProjectController extends Controller
      */
     public function invite(Request $request, Project $project): JsonResponse
     {
-        logger($request->all());
-        // For now using hardcoded values as requested
+        if ($request->user()->cannot('invite', $project)) {
+            abort(403, 'You do not have permission to invite users to this project.');
+        }
+
         $inviteeId = 2; // Hardcoded invitee ID
         $inviterId = $request->user()->id;
         $role = ProjectRole::CONTRIBUTOR;

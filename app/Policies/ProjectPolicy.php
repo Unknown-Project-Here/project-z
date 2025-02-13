@@ -42,4 +42,14 @@ class ProjectPolicy
             ? Response::allow()
             : Response::deny('You do not have permission to delete this project.');
     }
+
+    /**
+     * Determine if the user can invite a user to the project. Only the creator and admins can invite users to the project.
+     */
+    public function invite(User $user, Project $project): Response
+    {
+        return $user->hasPermission($project, ProjectPermission::MEMBER_INVITE)
+            ? Response::allow()
+            : Response::deny('You do not have permission to invite users to this project.');
+    }
 }
