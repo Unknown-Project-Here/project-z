@@ -26,7 +26,6 @@ class UpdateUserTechStack
                 $insertData[] = [
                     'user_id' => $userId,
                     'option_id' => $option->id,
-                    'skill_level' => null,
                     'created_at' => now(),
                     'updated_at' => now()
                 ];

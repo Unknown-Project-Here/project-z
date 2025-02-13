@@ -18,6 +18,7 @@ return new class extends Migration
             $table->boolean('onboarded')->default(false);
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->enum('skill_level', ['beginner', 'intermediate', 'advanced', 'expert'])->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

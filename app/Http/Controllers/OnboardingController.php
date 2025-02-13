@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Actions\Options\CreateMissingOptions;
 use App\Actions\Onboarding\MarkUserAsOnboarded;
+use App\Actions\Onboarding\UpdateUserSkillLevel;
 use App\Actions\Onboarding\UpdateUserTechStack;
 use App\Http\Requests\OnboardingRequest;
 use Illuminate\Pipeline\Pipeline;
@@ -27,6 +28,7 @@ class OnboardingController extends Controller
                     ->through([
                         CreateMissingOptions::class,
                         UpdateUserTechStack::class,
+                        UpdateUserSkillLevel::class,
                         MarkUserAsOnboarded::class,
                     ])
                     ->then(fn($data) => $data);
