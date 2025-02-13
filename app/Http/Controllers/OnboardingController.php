@@ -7,8 +7,8 @@ use App\Actions\Onboarding\MarkUserAsOnboarded;
 use App\Actions\Onboarding\UpdateUserSkillLevel;
 use App\Actions\Onboarding\UpdateUserTechStack;
 use App\Http\Requests\OnboardingRequest;
-use Illuminate\Pipeline\Pipeline;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Pipeline;
 use Inertia\Response;
 
 class OnboardingController extends Controller
@@ -23,8 +23,7 @@ class OnboardingController extends Controller
     {
         try {
             DB::transaction(function () use ($request) {
-                app(Pipeline::class)
-                    ->send($request->validated())
+                Pipeline::send($request->validated())
                     ->through([
                         CreateMissingOptions::class,
                         UpdateUserTechStack::class,
