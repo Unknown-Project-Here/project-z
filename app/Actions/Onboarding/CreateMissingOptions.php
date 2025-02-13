@@ -14,7 +14,10 @@ class CreateMissingOptions
             if ($category = Category::where('name', $categoryName)->first()) {
                 collect($data['skills'][$categoryName])->each(
                     fn($optionName) =>
-                    Option::firstOrCreate(['name' => $optionName, 'category_id' => $category->id])
+                    Option::firstOrCreate([
+                        'name' => strtolower($optionName),
+                        'category_id' => $category->id
+                    ])
                 );
             }
         }
