@@ -13,7 +13,7 @@ return new class extends Migration
             $table->foreignId('project_id')->constrained()->cascadeOnDelete();
             $table->foreignId('inviter_id')->constrained('users')->cascadeOnDelete();
             $table->foreignId('invitee_id')->constrained('users')->cascadeOnDelete();
-            $table->enum('role', ['admin', 'contributor'])->default('contributor');
+            $table->enum('role', ['creator', 'admin', 'contributor'])->default('contributor');
             $table->string('token')->unique();
             $table->timestamp('expires_at');
             $table->timestamps();

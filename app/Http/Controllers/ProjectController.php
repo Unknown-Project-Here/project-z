@@ -2,24 +2,23 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Project;
-use App\Http\Requests\ProjectRequest;
-use Illuminate\Http\Request;
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
-use Illuminate\Support\Facades\Auth;
-use Inertia\Inertia;
-use Inertia\Response;
-use Illuminate\Http\JsonResponse;
-use App\Http\Requests\ProjectRenameRequest;
-use Illuminate\Support\Facades\DB;
+use App\Actions\Options\CreateMissingOptions;
+use App\Actions\Project\AssignCreatorRole;
 use App\Actions\Project\CreateProject;
 use App\Actions\Project\CreateProjectTechStack;
-use App\Actions\Project\AssignCreatorRole;
-use App\Actions\Options\CreateMissingOptions;
-use App\Enums\ProjectRole;
+use App\Http\Requests\ProjectRenameRequest;
+use App\Http\Requests\ProjectRequest;
+use App\Models\Project;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Pipeline;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class ProjectController extends Controller
 {
@@ -43,12 +42,12 @@ class ProjectController extends Controller
         if ($request->wantsJson()) {
             return response()->json([
                 'data' => $projects,
-                'message' => 'Projects retrieved successfully.'
+                'message' => 'Projects retrieved successfully.',
             ]);
         }
 
         return Inertia::render('Project/Index', [
-            'projects' => $projects
+            'projects' => $projects,
         ]);
     }
 
@@ -60,7 +59,7 @@ class ProjectController extends Controller
         $this->authorize('create', Project::class);
 
         return Inertia::render('Project/Create', [
-            'user' => Auth::user()
+            'user' => Auth::user(),
         ]);
     }
 
@@ -78,7 +77,7 @@ class ProjectController extends Controller
                 ->map(fn($items) => $items->map(fn($item) => [
                     'id' => $item->option->id,
                     'name' => $item->option->name,
-                    'skill_level' => $item->skill_level
+                    'skill_level' => $item->skill_level,
                 ]));
 
             $projectArray = $project->toArray();
@@ -86,7 +85,7 @@ class ProjectController extends Controller
             $projectArray['creator'] = $project->creator;
 
             return Inertia::render('Project/Show', [
-                'project' => $projectArray
+                'project' => $projectArray,
             ]);
         } catch (\Exception $e) {
             logger($e->getMessage());
@@ -95,7 +94,7 @@ class ProjectController extends Controller
             return back()->with([
                 'success' => false,
                 'message' => 'Failed to retrieve project.',
-                'error' => config('app.debug') ? $e->getMessage() : null
+                'error' => config('app.debug') ? $e->getMessage() : null,
             ], 500);
         }
     }
@@ -134,13 +133,13 @@ class ProjectController extends Controller
         } catch (\Exception $e) {
             Log::error('Project creation failed:', [
                 'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
+                'trace' => $e->getTraceAsString(),
             ]);
 
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to create project.',
-                'error' => config('app.debug') ? $e->getMessage() : null
+                'error' => config('app.debug') ? $e->getMessage() : null,
             ], 500);
         }
     }
@@ -158,7 +157,7 @@ class ProjectController extends Controller
         $this->authorize('update', $project);
 
         return Inertia::render('Project/Edit', [
-            'project' => $project->load('user')
+            'project' => $project->load('user'),
         ]);
     }
 
@@ -175,13 +174,13 @@ class ProjectController extends Controller
             return response()->json([
                 'success' => true,
                 'data' => $project->fresh()->load('user'),
-                'message' => 'Project updated successfully.'
+                'message' => 'Project updated successfully.',
             ]);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to update project.',
-                'error' => config('app.debug') ? $e->getMessage() : null
+                'error' => config('app.debug') ? $e->getMessage() : null,
             ], 500);
         }
     }
@@ -200,13 +199,13 @@ class ProjectController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Project deleted successfully.'
+                'message' => 'Project deleted successfully.',
             ], 204);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to delete project.',
-                'error' => config('app.debug') ? $e->getMessage() : null
+                'error' => config('app.debug') ? $e->getMessage() : null,
             ], 500);
         }
     }
@@ -226,76 +225,13 @@ class ProjectController extends Controller
             return response()->json([
                 'success' => true,
                 'data' => $project->fresh(),
-                'message' => 'Project renamed successfully.'
+                'message' => 'Project renamed successfully.',
             ]);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to rename project.',
-                'error' => config('app.debug') ? $e->getMessage() : null
-            ], 500);
-        }
-    }
-
-    /**
-     * Invite a user to the project.
-     * 
-     * @param Project $project
-     * @return JsonResponse
-     */
-    public function invite(Request $request, Project $project): JsonResponse
-    {
-        if ($request->user()->cannot('invite', $project)) {
-            abort(403, 'You do not have permission to invite users to this project.');
-        }
-
-        $inviteeId = 2; // Hardcoded invitee ID
-        $inviterId = $request->user()->id;
-        $role = ProjectRole::CONTRIBUTOR;
-
-        try {
-            // Check if invitation already exists
-            $existingInvitation = $project->invitations()
-                ->where('invitee_id', $inviteeId)
-                ->where('expires_at', '>', now())
-                ->first();
-
-            if ($existingInvitation) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'An active invitation already exists for this user.'
-                ], 422);
-            }
-
-            // Check if user is already a member
-            if ($project->members()->where('user_id', $inviteeId)->exists()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'User is already a member of this project.'
-                ], 422);
-            }
-
-            $invitation = $project->invitations()->create([
-                'inviter_id' => $inviterId,
-                'invitee_id' => $inviteeId,
-                'role' => $role
-            ]);
-
-            return response()->json([
-                'success' => true,
-                'data' => $invitation,
-                'message' => 'Invitation sent successfully.'
-            ]);
-        } catch (\Exception $e) {
-            Log::error('Project invitation failed:', [
-                'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
-            ]);
-
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to send invitation.',
-                'error' => config('app.debug') ? $e->getMessage() : null
+                'error' => config('app.debug') ? $e->getMessage() : null,
             ], 500);
         }
     }

@@ -1,3 +1,4 @@
+import ProjectInviteDialogButton from '@/components/projects/invite/components/ProjectInviteDialogButton';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -9,7 +10,7 @@ import {
     CardTitle,
 } from '@/components/ui/card';
 import { Project } from '@/types';
-import { Head, Link, router } from '@inertiajs/react';
+import { Head, Link } from '@inertiajs/react';
 import dayjs from 'dayjs';
 import advancedFormat from 'dayjs/plugin/advancedFormat';
 import relativeTime from 'dayjs/plugin/relativeTime';
@@ -33,17 +34,7 @@ export default function ProjectShow({ project }: { project: Project }) {
                 <div className="mb-6 flex items-center justify-between">
                     <h1 className="text-3xl font-bold">{project.title}</h1>
                     <div className="flex items-center gap-2">
-                        <Button
-                            onClick={() => {
-                                router.post(
-                                    route('projects.invite', {
-                                        project: project.id,
-                                    }),
-                                );
-                            }}
-                        >
-                            Invite
-                        </Button>
+                        <ProjectInviteDialogButton project={project} />
                         <Button asChild>
                             <Link href={route('projects.edit', project.id)}>
                                 Edit

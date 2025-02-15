@@ -3,6 +3,7 @@
 use App\Http\Controllers\OnboardingController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProjectController;
+use App\Http\Controllers\ProjectInvitationController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -49,8 +50,12 @@ Route::prefix('projects')->name('projects.')->group(function () {
             Route::patch('/{project}', 'update')->name('update');
             Route::patch('/{project}/rename', 'rename')->name('rename');
             Route::delete('/{project}', 'destroy')->name('destroy');
-            Route::post('/{project}/invite', 'invite')->name('invite');
         });
+    });
+
+    Route::controller(ProjectInvitationController::class)->group(function () {
+        Route::get('/{project}/search-users', 'index')->name('search-users');
+        Route::post('/{project}/invite', 'store')->name('invite');
     });
 });
 
