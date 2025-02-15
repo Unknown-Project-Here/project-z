@@ -19,7 +19,13 @@ import { CalendarIcon, CodeIcon, GitForkIcon } from 'lucide-react';
 dayjs.extend(advancedFormat);
 dayjs.extend(relativeTime);
 
-export default function ProjectShow({ project }: { project: Project }) {
+export default function ProjectShow({
+    project,
+    permissions,
+}: {
+    project: Project;
+    permissions: { project: { invite: boolean; edit: boolean } };
+}) {
     const projectStats = {
         commits: 156,
         contributors: 4,
@@ -34,12 +40,16 @@ export default function ProjectShow({ project }: { project: Project }) {
                 <div className="mb-6 flex items-center justify-between">
                     <h1 className="text-3xl font-bold">{project.title}</h1>
                     <div className="flex items-center gap-2">
-                        <ProjectInviteDialogButton project={project} />
-                        <Button asChild>
-                            <Link href={route('projects.edit', project.id)}>
-                                Edit
-                            </Link>
-                        </Button>
+                        {permissions.project.invite && (
+                            <ProjectInviteDialogButton project={project} />
+                        )}
+                        {permissions.project.edit && (
+                            <Button asChild>
+                                <Link href={route('projects.edit', project.id)}>
+                                    Edit
+                                </Link>
+                            </Button>
+                        )}
                     </div>
                 </div>
 

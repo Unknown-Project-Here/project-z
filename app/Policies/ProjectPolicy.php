@@ -52,4 +52,11 @@ class ProjectPolicy
             ? Response::allow()
             : Response::deny('You do not have permission to invite users to this project.');
     }
+
+    public function edit(User $user, Project $project): Response
+    {
+        return $user->hasPermission($project, ProjectPermission::PROJECT_EDIT)
+            ? Response::allow()
+            : Response::deny('You do not have permission to edit this project.');
+    }
 }

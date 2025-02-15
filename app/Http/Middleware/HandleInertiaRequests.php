@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Project;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 use Tighten\Ziggy\Ziggy;
@@ -39,10 +40,15 @@ class HandleInertiaRequests extends Middleware
                 ...(new Ziggy)->toArray(),
                 'location' => $request->url(),
             ],
-            'project' => $request->route('project'),
             'flash' => [
                 'success' => fn() => $request->session()->get('success'),
                 'message' => fn() => $request->session()->get('message'),
+            ],
+            'permissions' => [
+                'project' => [
+                    'invite' => $request->user()?->can('invite', $request->route('project')) ?? false,
+                    'edit' => $request->user()?->can('edit', $request->route('project')) ?? false,
+                ],
             ],
         ];
     }

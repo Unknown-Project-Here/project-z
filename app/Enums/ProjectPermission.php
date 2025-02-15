@@ -8,7 +8,7 @@ enum ProjectPermission: string
     case PROJECT_RENAME = 'project.rename';
     case PROJECT_DELETE = 'project.delete';
     case PROJECT_UPDATE_STATUS = 'project.update_status';
-    case PROJECT_EDIT_DETAILS = 'project.edit_details';
+    case PROJECT_EDIT = 'project.edit';
     case PROJECT_ARCHIVE = 'project.archive';
 
         // Member Management
