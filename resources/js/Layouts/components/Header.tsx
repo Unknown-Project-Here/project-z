@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ThemeToggle } from '@/components/ThemeToggle';
 import {
     Breadcrumb,
@@ -9,12 +10,16 @@ import {
 } from '@/components/ui/breadcrumb';
 import { Button } from '@/components/ui/button';
 import { SidebarTrigger, useSidebar } from '@/components/ui/sidebar';
+import { usePageProps } from '@/hooks/usePageProps';
+import NotificationBellDropdown from '@/Layouts/components/notifications/NotificationBellDropdown';
 import { Link, usePage } from '@inertiajs/react';
 import React from 'react';
 
 export function Header() {
     const { open } = useSidebar();
     const { url } = usePage();
+    const { user } = usePage().props.auth;
+    const { notifications } = usePageProps<{ notifications: any }>().props;
 
     const getBreadcrumbItems = () => {
         const path = url.split('?')[0];
@@ -110,7 +115,14 @@ export function Header() {
                         </Button>
                     </>
                 )}
-                <ThemeToggle />
+                <div className="flex items-center gap-2">
+                    {user && (
+                        <NotificationBellDropdown
+                            notifications={notifications}
+                        />
+                    )}
+                    <ThemeToggle />
+                </div>
             </div>
         </header>
     );

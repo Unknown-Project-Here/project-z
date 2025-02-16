@@ -83,8 +83,6 @@ export default function CreateProject() {
                 },
             };
 
-            console.log('formData', formData);
-
             router.post(
                 route('projects.store'),
                 {

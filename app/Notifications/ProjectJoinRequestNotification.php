@@ -21,6 +21,11 @@ class ProjectJoinRequestNotification extends Notification implements ShouldQueue
         return ['mail', 'database'];
     }
 
+    public function databaseType(object $notifiable): string
+    {
+        return 'project_request';
+    }
+
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)

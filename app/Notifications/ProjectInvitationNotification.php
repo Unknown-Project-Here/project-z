@@ -23,6 +23,11 @@ class ProjectInvitationNotification extends Notification
         return ['mail', 'database'];
     }
 
+    public function databaseType(object $notifiable): string
+    {
+        return 'project_invitation';
+    }
+
 
     public function toMail(object $notifiable): MailMessage
     {
