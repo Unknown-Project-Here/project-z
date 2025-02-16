@@ -63,6 +63,11 @@ class User extends Authenticatable implements MustVerifyEmail
             ->withTimestamps();
     }
 
+    public function projectRequests()
+    {
+        return $this->hasMany(ProjectRequest::class);
+    }
+
     /**
      * Determine if the user has the given permission for the project.
      */

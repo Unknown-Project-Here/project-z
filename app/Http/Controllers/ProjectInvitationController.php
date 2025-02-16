@@ -5,8 +5,11 @@ namespace App\Http\Controllers;
 use App\Actions\Project\Invite\GetEligibleUsers;
 use App\Actions\Project\Invite\InviteUserToProject;
 use App\Models\Project;
+use App\Models\ProjectRequest;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 
 class ProjectInvitationController extends Controller
 {
@@ -88,6 +91,39 @@ class ProjectInvitationController extends Controller
                 'message' => 'Failed to send invitation.',
                 'error' => config('app.debug') ? $e->getMessage() : null,
             ], 500);
+        }
+    }
+
+    /**
+     * Create a request to join the project.
+     */
+    public function request(Request $request, Project $project): RedirectResponse
+    {
+        $response = Gate::inspect('request', $project);
+
+        if ($response->denied()) {
+            return back()->withErrors([
+                'success' => false,
+                'message' => $response->message(),
+            ]);
+        }
+
+        try {
+            ProjectRequest::create([
+                'project_id' => $project->id,
+                'user_id' => $request->user()->id,
+            ]);
+
+            return back()->with([
+                'success' => true,
+                'message' => 'Your request to join the project has been sent.',
+            ]);
+        } catch (\Exception $e) {
+            return back()->withErrors([
+                'success' => false,
+                'message' => 'Failed to send join request.',
+                'debug' => config('app.debug') ? $e->getMessage() : null,
+            ]);
         }
     }
 }

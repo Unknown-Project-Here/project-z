@@ -48,6 +48,7 @@ class HandleInertiaRequests extends Middleware
                 'project' => [
                     'invite' => $request->user()?->can('invite', $request->route('project')) ?? false,
                     'edit' => $request->user()?->can('edit', $request->route('project')) ?? false,
+                    'request' => $request->user()?->can('request', $request->route('project')) ?? false,
                 ],
             ],
         ];

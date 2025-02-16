@@ -1,4 +1,5 @@
 import ProjectInviteDialogButton from '@/components/projects/invite/components/ProjectInviteDialogButton';
+import ProjectRequestDialog from '@/components/projects/request/ProjectRequestDialog';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -24,7 +25,9 @@ export default function ProjectShow({
     permissions,
 }: {
     project: Project;
-    permissions: { project: { invite: boolean; edit: boolean } };
+    permissions: {
+        project: { invite: boolean; edit: boolean; request: boolean };
+    };
 }) {
     const projectStats = {
         commits: 156,
@@ -42,6 +45,9 @@ export default function ProjectShow({
                     <div className="flex items-center gap-2">
                         {permissions.project.invite && (
                             <ProjectInviteDialogButton project={project} />
+                        )}
+                        {permissions.project.request && (
+                            <ProjectRequestDialog project={project} />
                         )}
                         {permissions.project.edit && (
                             <Button asChild>

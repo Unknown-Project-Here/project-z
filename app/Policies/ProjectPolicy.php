@@ -59,4 +59,21 @@ class ProjectPolicy
             ? Response::allow()
             : Response::deny('You do not have permission to edit this project.');
     }
+
+    public function request(User $user, Project $project): Response
+    {
+        if ($user->onboarded === false) {
+            return Response::deny('You must complete your onboarding to request to join a project.');
+        }
+
+        if ($user->projects()->where('project_id', $project->id)->exists()) {
+            return Response::deny('You are already a member of this project.');
+        }
+
+        if ($user->projectRequests()->where('project_id', $project->id)->exists()) {
+            return Response::deny('You have already requested to join this project.');
+        }
+
+        return Response::allow();
+    }
 }
