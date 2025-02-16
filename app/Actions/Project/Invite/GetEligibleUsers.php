@@ -19,7 +19,7 @@ class GetEligibleUsers
      *
      * @throws \Exception If fetching users fails
      */
-    public function __invoke(Project $project, ?string $search = null): Collection
+    public function __invoke(Project $project, string $search): Collection
     {
         try {
             $memberIds = $project->members()->pluck('users.id');

@@ -23,7 +23,7 @@ class ProjectInvitationController extends Controller
      *
      * Excludes current project members and users with pending invitations.
      */
-    public function index(Request $request, Project $project): JsonResponse
+    public function getUsers(Request $request, Project $project): JsonResponse
     {
         if ($request->user()->cannot('invite', $project)) {
             abort(403, 'You do not have permission to invite users to this project.');
@@ -31,12 +31,12 @@ class ProjectInvitationController extends Controller
 
         try {
             $validated = $request->validate([
-                'search' => 'nullable|string|min:2|max:16',
+                'search' => 'required|string|min:2|max:16',
             ]);
 
             $users = ($this->getEligibleUsers)(
                 $project,
-                $validated['search'] ?? null
+                $validated['search']
             );
 
             return response()->json([
