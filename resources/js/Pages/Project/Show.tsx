@@ -1,3 +1,5 @@
+import ProjectInviteDialogButton from '@/components/projects/invite/components/ProjectInviteDialogButton';
+import ProjectRequestDialog from '@/components/projects/request/ProjectRequestDialog';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -18,7 +20,15 @@ import { CalendarIcon, CodeIcon, GitForkIcon } from 'lucide-react';
 dayjs.extend(advancedFormat);
 dayjs.extend(relativeTime);
 
-export default function ProjectShow({ project }: { project: Project }) {
+export default function ProjectShow({
+    project,
+    permissions,
+}: {
+    project: Project;
+    permissions: {
+        project: { invite: boolean; edit: boolean; request: boolean };
+    };
+}) {
     const projectStats = {
         commits: 156,
         contributors: 4,
@@ -32,11 +42,21 @@ export default function ProjectShow({ project }: { project: Project }) {
             <div className="container mx-auto px-4 py-8">
                 <div className="mb-6 flex items-center justify-between">
                     <h1 className="text-3xl font-bold">{project.title}</h1>
-                    <Button asChild>
-                        <Link href={route('projects.edit', project.id)}>
-                            Edit
-                        </Link>
-                    </Button>
+                    <div className="flex items-center gap-2">
+                        {permissions.project.invite && (
+                            <ProjectInviteDialogButton project={project} />
+                        )}
+                        {permissions.project.request && (
+                            <ProjectRequestDialog project={project} />
+                        )}
+                        {permissions.project.edit && (
+                            <Button asChild>
+                                <Link href={route('projects.edit', project.id)}>
+                                    Edit
+                                </Link>
+                            </Button>
+                        )}
+                    </div>
                 </div>
 
                 <div className="grid grid-cols-1 gap-6 md:grid-cols-3">

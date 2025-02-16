@@ -3,12 +3,11 @@
 namespace App\Models;
 
 use App\Enums\ProjectPermission;
+use App\Enums\ProjectRole;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use App\Enums\ProjectRole;
-use Carbon\Carbon;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
@@ -45,8 +44,9 @@ class User extends Authenticatable implements MustVerifyEmail
     protected $casts = [
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
-        'onboarded' => 'boolean'
+        'onboarded' => 'boolean',
     ];
+
     protected function casts(): array
     {
         return [
@@ -61,6 +61,11 @@ class User extends Authenticatable implements MustVerifyEmail
             ->using(ProjectUser::class)
             ->withPivot('role')
             ->withTimestamps();
+    }
+
+    public function projectRequests()
+    {
+        return $this->hasMany(ProjectRequest::class);
     }
 
     /**
@@ -94,5 +99,10 @@ class User extends Authenticatable implements MustVerifyEmail
             ->wherePivot('project_id', $project->id)
             ->wherePivot('role', $role->value)
             ->exists();
+    }
+
+    public function techStack()
+    {
+        return $this->hasMany(UserTechStack::class);
     }
 }

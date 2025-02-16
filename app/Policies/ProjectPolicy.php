@@ -42,4 +42,38 @@ class ProjectPolicy
             ? Response::allow()
             : Response::deny('You do not have permission to delete this project.');
     }
+
+    /**
+     * Determine if the user can invite a user to the project. Only the creator and admins can invite users to the project.
+     */
+    public function invite(User $user, Project $project): Response
+    {
+        return $user->hasPermission($project, ProjectPermission::MEMBER_INVITE)
+            ? Response::allow()
+            : Response::deny('You do not have permission to invite users to this project.');
+    }
+
+    public function edit(User $user, Project $project): Response
+    {
+        return $user->hasPermission($project, ProjectPermission::PROJECT_EDIT)
+            ? Response::allow()
+            : Response::deny('You do not have permission to edit this project.');
+    }
+
+    public function request(User $user, Project $project): Response
+    {
+        if ($user->onboarded === false) {
+            return Response::deny('You must complete your onboarding to request to join a project.');
+        }
+
+        if ($user->projects()->where('project_id', $project->id)->exists()) {
+            return Response::deny('You are already a member of this project.');
+        }
+
+        if ($user->projectRequests()->where('project_id', $project->id)->exists()) {
+            return Response::deny('You have already requested to join this project.');
+        }
+
+        return Response::allow();
+    }
 }
