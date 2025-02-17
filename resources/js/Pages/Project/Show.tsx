@@ -146,8 +146,8 @@ export default function ProjectShow({
                                 </CardDescription>
                             </CardHeader>
                             <CardContent>
-                                <div className="space-y-4">
-                                    {Object.entries(project.stack).map(
+                                {Object.keys(project.stack).length > 0 ? (
+                                    Object.entries(project.stack).map(
                                         ([category, technologies]) => (
                                             <div
                                                 key={category}
@@ -185,8 +185,41 @@ export default function ProjectShow({
                                                 </div>
                                             </div>
                                         ),
-                                    )}
-                                </div>
+                                    )
+                                ) : permissions.project.edit ? (
+                                    <div className="flex flex-col items-center justify-center space-y-4 rounded-lg border border-dashed border-gray-300 bg-gray-50/50 px-6 py-8 text-center">
+                                        <div className="space-y-2">
+                                            <h3 className="font-medium text-gray-900">
+                                                No tech stack defined
+                                            </h3>
+                                            <p className="text-sm text-gray-500">
+                                                Add technologies to showcase the
+                                                tools and frameworks used in
+                                                this project.
+                                            </p>
+                                        </div>
+                                        <Button asChild variant="default">
+                                            <Link
+                                                href={route(
+                                                    'projects.edit',
+                                                    project.id,
+                                                )}
+                                            >
+                                                Complete Project Profile
+                                            </Link>
+                                        </Button>
+                                    </div>
+                                ) : (
+                                    <div className="flex flex-col items-center justify-center space-y-2 rounded-lg border border-dashed border-gray-300 bg-gray-50/50 px-6 py-8 text-center">
+                                        <h3 className="font-medium text-gray-900">
+                                            No technologies defined
+                                        </h3>
+                                        <p className="text-sm text-gray-500">
+                                            The project owner hasn't added any
+                                            technologies or tools yet.
+                                        </p>
+                                    </div>
+                                )}
                             </CardContent>
                         </Card>
 
