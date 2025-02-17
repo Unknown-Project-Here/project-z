@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ThemeToggle } from '@/components/ThemeToggle';
 import {
     Breadcrumb,
@@ -12,6 +11,7 @@ import { Button } from '@/components/ui/button';
 import { SidebarTrigger, useSidebar } from '@/components/ui/sidebar';
 import { usePageProps } from '@/hooks/usePageProps';
 import NotificationBellDropdown from '@/Layouts/components/notifications/NotificationBellDropdown';
+import { Notification } from '@/Layouts/components/notifications/types';
 import { Link, usePage } from '@inertiajs/react';
 import React from 'react';
 
@@ -19,7 +19,8 @@ export function Header() {
     const { open } = useSidebar();
     const { url } = usePage();
     const { user } = usePage().props.auth;
-    const { notifications } = usePageProps<{ notifications: any }>().props;
+    const { notifications } = usePageProps<{ notifications: Notification[] }>()
+        .props;
 
     const getBreadcrumbItems = () => {
         const path = url.split('?')[0];

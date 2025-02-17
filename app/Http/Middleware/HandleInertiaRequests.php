@@ -56,6 +56,7 @@ class HandleInertiaRequests extends Middleware
                     'id' => $notification->id,
                     'type' => $notification->type,
                     'data' => $notification->data,
+                    'read_at' => $notification->read_at,
                 ];
             }) ?? [],
         ];

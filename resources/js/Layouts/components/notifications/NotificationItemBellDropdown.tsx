@@ -16,14 +16,16 @@ export default function NotificationItemBellDropdown({
     onMarkAsRead,
     shouldShowLink = true,
 }: NotificationItemBellDropdownProps) {
-    const { id, type, read_at } = notification;
-
     const handleClick = () => {
-        if (read_at) return;
+        if (notification.read_at) return;
         axios
-            .post(route('notifications.markAsRead', { notification: id }))
+            .post(
+                route('notifications.markAsRead', {
+                    notification: notification.id,
+                }),
+            )
             .then(() => {
-                onMarkAsRead(id);
+                onMarkAsRead(notification.id);
             });
     };
 
@@ -31,14 +33,14 @@ export default function NotificationItemBellDropdown({
         <DropdownMenuItem
             className={cn(
                 'flex cursor-pointer items-start px-4 py-2',
-                !read_at && 'font-semibold',
+                !notification.read_at && 'font-semibold',
             )}
             onClick={handleClick}
         >
             <div className="relative">
-                {getIcon(type)}
-                {!read_at && (
-                    <div className="absolute -right-1 -top-1 h-2 w-2 rounded-full bg-primary" />
+                {getIcon(notification.type)}
+                {!notification.read_at && (
+                    <div className="absolute -left-1 -top-1 h-2 w-2 rounded-full bg-primary" />
                 )}
             </div>
             <div className="min-w-0 flex-1">

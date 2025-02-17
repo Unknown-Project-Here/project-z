@@ -9,8 +9,8 @@ import axios from 'axios';
 import { toast } from 'sonner';
 
 export default function Notifications() {
-    const { notifications, shouldShowMarkAllAsRead } = usePageProps<{
-        notifications: Notification[];
+    const { allNotifications, shouldShowMarkAllAsRead } = usePageProps<{
+        allNotifications: Notification[];
         shouldShowMarkAllAsRead: boolean;
     }>().props;
 
@@ -46,8 +46,8 @@ export default function Notifications() {
                         </Button>
                     )}
                 </div>
-                {notifications.length > 0 ? (
-                    notifications.map((notification) => (
+                {allNotifications.length > 0 ? (
+                    allNotifications.map((notification) => (
                         <NotificationItemPage
                             key={notification.id}
                             notification={notification}

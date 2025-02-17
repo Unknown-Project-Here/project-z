@@ -42,7 +42,7 @@ export default function NotificationItemPage({
                 <div className="relative mr-4 mt-1">
                     {getIcon(type)}
                     {!read_at && (
-                        <div className="absolute -right-1 -top-1 h-2 w-2 rounded-full bg-primary" />
+                        <div className="absolute -left-1 -top-1 h-2 w-2 rounded-full bg-primary" />
                     )}
                 </div>
                 <div className="flex-1">

@@ -12,7 +12,7 @@ class NotificationController extends Controller
     public function index(Request $request): Response
     {
         return inertia()->render('Notifications', [
-            'notifications' => $request->user()?->notifications,
+            'allNotifications' => $request->user()?->notifications,
             'shouldShowMarkAllAsRead' => $request->user()?->unreadNotifications->count() > 0,
         ]);
     }
