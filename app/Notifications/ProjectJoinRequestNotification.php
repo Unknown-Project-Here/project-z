@@ -5,6 +5,7 @@ namespace App\Notifications;
 use App\Models\ProjectRequest;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Notifications\Messages\BroadcastMessage;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
@@ -18,12 +19,7 @@ class ProjectJoinRequestNotification extends Notification implements ShouldQueue
 
     public function via(object $notifiable): array
     {
-        return ['mail', 'database'];
-    }
-
-    public function databaseType(object $notifiable): string
-    {
-        return 'project_request';
+        return ['mail', 'database', 'broadcast'];
     }
 
     public function toMail(object $notifiable): MailMessage
@@ -46,5 +42,18 @@ class ProjectJoinRequestNotification extends Notification implements ShouldQueue
             'requester_name' => $this->request->user->username,
             'requester_id' => $this->request->user_id,
         ];
+    }
+
+    public function toBroadcast(object $notifiable): BroadcastMessage
+    {
+        return new BroadcastMessage([
+            'type' => 'project_request',
+            'request_id' => $this->request->id,
+            'project_id' => $this->request->project_id,
+            'project_title' => $this->request->project->title,
+            'requester_name' => $this->request->user->username,
+            'requester_id' => $this->request->user_id,
+            'created_at' => $this->request->created_at,
+        ]);
     }
 }

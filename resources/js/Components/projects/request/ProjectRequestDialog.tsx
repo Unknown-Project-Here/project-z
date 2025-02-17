@@ -26,7 +26,7 @@ export default function ProjectRequestDialog({
         form.post(route('projects.request', { project: project.id }), {
             preserveScroll: true,
             preserveState: true,
-            only: ['permissions'],
+            only: ['permissions', 'flash'],
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             onSuccess: ({ props }: { props: any }) => {
                 if (props.flash.message) {

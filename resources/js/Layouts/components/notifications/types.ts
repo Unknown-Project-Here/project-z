@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export enum NotificationType {
-    PROJECT_REQUEST = 'project_request',
-    PROJECT_INVITATION = 'project_invitation',
+    PROJECT_REQUEST = 'App\\Notifications\\ProjectJoinRequestNotification',
+    PROJECT_INVITATION = 'App\\Notifications\\ProjectInvitationNotification',
 }
 
 export interface BaseNotification {
@@ -15,7 +15,7 @@ export interface BaseNotification {
 export interface ProjectRequestNotification extends BaseNotification {
     type: NotificationType.PROJECT_REQUEST;
     data: {
-        type: 'project_request';
+        type: 'App\\Notifications\\ProjectJoinRequestNotification';
         request_id: number;
         project_id: number;
         project_title: string;
@@ -27,7 +27,7 @@ export interface ProjectRequestNotification extends BaseNotification {
 export interface ProjectInvitationNotification extends BaseNotification {
     type: NotificationType.PROJECT_INVITATION;
     data: {
-        type: 'project_invitation';
+        type: 'App\\Notifications\\ProjectInvitationNotification';
         invitation_id: number;
         project_id: number;
         project_title: string;

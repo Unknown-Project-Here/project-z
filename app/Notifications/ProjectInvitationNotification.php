@@ -5,6 +5,7 @@ namespace App\Notifications;
 use App\Models\ProjectInvitation;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Notifications\Messages\BroadcastMessage;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
@@ -20,14 +21,8 @@ class ProjectInvitationNotification extends Notification
 
     public function via(object $notifiable): array
     {
-        return ['mail', 'database'];
+        return ['mail', 'database', 'broadcast'];
     }
-
-    public function databaseType(object $notifiable): string
-    {
-        return 'project_invitation';
-    }
-
 
     public function toMail(object $notifiable): MailMessage
     {
@@ -48,7 +43,19 @@ class ProjectInvitationNotification extends Notification
             'project_title' => $this->invitation->project->title,
             'inviter_name' => $this->invitation->inviter->username,
             'role' => $this->invitation->role,
-            'expires_at' => $this->invitation->expires_at,
         ];
+    }
+
+    public function toBroadcast(object $notifiable): BroadcastMessage
+    {
+        return new BroadcastMessage([
+            'type' => 'project_invitation',
+            'invitation_id' => $this->invitation->id,
+            'project_id' => $this->invitation->project_id,
+            'project_title' => $this->invitation->project->title,
+            'inviter_name' => $this->invitation->inviter->username,
+            'role' => $this->invitation->role,
+            'created_at' => $this->invitation->created_at,
+        ]);
     }
 }

@@ -69,7 +69,7 @@ export default function ProjectIndex() {
                                         </div>
                                         <div className="flex items-center gap-2 text-sm">
                                             <span>
-                                                By {project.user.username}
+                                                By {project.creator.username}
                                             </span>
                                         </div>
                                     </CardHeader>
@@ -83,7 +83,7 @@ export default function ProjectIndex() {
                                                 {(Array.isArray(project.stack)
                                                     ? project.stack
                                                     : JSON.parse(
-                                                          project.stack as string,
+                                                          project.stack as unknown as string,
                                                       )
                                                 ).map(
                                                     (
@@ -102,11 +102,14 @@ export default function ProjectIndex() {
                                         )}
 
                                         <div className="space-y-2 text-sm">
-                                            {project.website && (
+                                            {project.contact.website && (
                                                 <div className="flex items-center gap-2">
                                                     <Globe className="h-4 w-4" />
                                                     <a
-                                                        href={project.website}
+                                                        href={
+                                                            project.contact
+                                                                .website
+                                                        }
                                                         target="_blank"
                                                         rel="noopener noreferrer"
                                                         className="text-primary hover:underline"
@@ -115,11 +118,14 @@ export default function ProjectIndex() {
                                                     </a>
                                                 </div>
                                             )}
-                                            {project.github && (
+                                            {project.contact.github && (
                                                 <div className="flex items-center gap-2">
                                                     <Github className="h-4 w-4" />
                                                     <a
-                                                        href={project.github}
+                                                        href={
+                                                            project.contact
+                                                                .github
+                                                        }
                                                         target="_blank"
                                                         rel="noopener noreferrer"
                                                         className="text-primary hover:underline"
@@ -138,14 +144,16 @@ export default function ProjectIndex() {
                                         </p>
                                     </CardContent>
                                     <CardFooter className="flex justify-end gap-4">
-                                        {project.discord && (
+                                        {project.contact.discord && (
                                             <Button
                                                 variant="outline"
                                                 size="sm"
                                                 asChild
                                             >
                                                 <a
-                                                    href={project.discord}
+                                                    href={
+                                                        project.contact.discord
+                                                    }
                                                     target="_blank"
                                                     rel="noopener noreferrer"
                                                     className="flex items-center gap-2"
