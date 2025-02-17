@@ -10,62 +10,67 @@ export default function NotificationMessage({
     notification,
     shouldShowLink = true,
 }: NotificationMessageProps) {
-    const { type, data } = notification;
+    const { type } = notification;
 
     switch (type) {
-        case NotificationType.PROJECT_REQUEST:
+        case NotificationType.PROJECT_REQUEST: {
+            const { requester_name, project_title, project_id } = notification;
             return (
                 <span>
                     {shouldShowLink ? (
                         <Link
-                            href={`/users/${data.requester_name}`}
+                            href={`/users/${requester_name}`}
                             className="font-medium text-primary hover:underline"
                         >
-                            {data.requester_name + ' '}
+                            {requester_name + ' '}
                         </Link>
                     ) : (
-                        `${data.requester_name} `
+                        `${requester_name} `
                     )}
                     requested to join{' '}
                     {shouldShowLink ? (
                         <Link
-                            href={route('projects.show', data.project_id)}
+                            href={route('projects.show', project_id)}
                             className="font-medium text-primary hover:underline"
                         >
-                            "{data.project_title} "
+                            "{project_title} "
                         </Link>
                     ) : (
-                        `"${data.project_title}" `
+                        `"${project_title}" `
                     )}
                 </span>
             );
-        case NotificationType.PROJECT_INVITATION:
+        }
+        case NotificationType.PROJECT_INVITATION: {
+            const { inviter_name, project_title, project_id, role } =
+                notification;
             return (
                 <span>
                     {shouldShowLink ? (
                         <Link
-                            href={`/users/${data.inviter_name}`}
+                            href={`/users/${inviter_name}`}
                             className="font-medium text-primary hover:underline"
                         >
-                            {data.inviter_name + ' '}
+                            {inviter_name + ' '}
                         </Link>
                     ) : (
-                        `${data.inviter_name} `
+                        `${inviter_name} `
                     )}
                     invited you to{' '}
                     {shouldShowLink ? (
                         <Link
-                            href={route('projects.show', data.project_id)}
+                            href={route('projects.show', project_id)}
                             className="font-medium text-primary hover:underline"
                         >
-                            {data.project_title + ' '}
+                            {project_title + ' '}
                         </Link>
                     ) : (
-                        `${data.project_title} `
+                        `${project_title} `
                     )}
-                    as {data.role}
+                    as {role}
                 </span>
             );
+        }
         default:
             return <span>Unknown notification type</span>;
     }

@@ -1,32 +1,24 @@
 import { DropdownMenuItem } from '@/components/ui/dropdown-menu';
+import { useNotificationStore } from '@/Layouts/components/notifications/store/notifications';
 import { Notification } from '@/Layouts/components/notifications/types';
 import { getIcon } from '@/Layouts/components/notifications/utils';
 import { cn } from '@/lib/utils';
-import axios from 'axios';
 import NotificationMessage from './NotificationMessage';
 
 interface NotificationItemBellDropdownProps {
     notification: Notification;
-    onMarkAsRead: (id: string) => void;
     shouldShowLink?: boolean;
 }
 
 export default function NotificationItemBellDropdown({
     notification,
-    onMarkAsRead,
     shouldShowLink = true,
 }: NotificationItemBellDropdownProps) {
+    const { markAsRead } = useNotificationStore();
+
     const handleClick = () => {
         if (notification.read_at) return;
-        axios
-            .post(
-                route('notifications.markAsRead', {
-                    notification: notification.id,
-                }),
-            )
-            .then(() => {
-                onMarkAsRead(notification.id);
-            });
+        markAsRead(notification.id);
     };
 
     return (

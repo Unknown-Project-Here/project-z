@@ -37,7 +37,6 @@ class ProjectInvitationNotification extends Notification
     public function toDatabase(object $notifiable): array
     {
         return [
-            'type' => 'project_invitation',
             'invitation_id' => $this->invitation->id,
             'project_id' => $this->invitation->project_id,
             'project_title' => $this->invitation->project->title,
@@ -49,7 +48,6 @@ class ProjectInvitationNotification extends Notification
     public function toBroadcast(object $notifiable): BroadcastMessage
     {
         return new BroadcastMessage([
-            'type' => 'project_invitation',
             'invitation_id' => $this->invitation->id,
             'project_id' => $this->invitation->project_id,
             'project_title' => $this->invitation->project->title,

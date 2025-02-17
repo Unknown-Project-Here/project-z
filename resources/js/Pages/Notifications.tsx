@@ -3,36 +3,37 @@ import { Card, CardContent } from '@/components/ui/card';
 import H3 from '@/components/ui/typography/H3';
 import { usePageProps } from '@/hooks/usePageProps';
 import NotificationItemPage from '@/Layouts/components/notifications/NotificationItemPage';
+import { useNotificationStore } from '@/Layouts/components/notifications/store/notifications';
 import { Notification } from '@/Layouts/components/notifications/types';
 import { Head, router, usePage } from '@inertiajs/react';
-import axios from 'axios';
-import { toast } from 'sonner';
+import { useEffect } from 'react';
 
 export default function Notifications() {
-    const { allNotifications, shouldShowMarkAllAsRead } = usePageProps<{
-        allNotifications: Notification[];
-        shouldShowMarkAllAsRead: boolean;
-    }>().props;
+    const { allNotifications: initialNotifications, shouldShowMarkAllAsRead } =
+        usePageProps<{
+            allNotifications: Notification[];
+            shouldShowMarkAllAsRead: boolean;
+        }>().props;
 
     const { user } = usePage().props.auth;
+    const {
+        allNotifications,
+        setAllNotifications,
+        markAllAsRead,
+        subscribeToNotifications,
+    } = useNotificationStore();
+
+    useEffect(() => {
+        setAllNotifications(initialNotifications);
+    }, [initialNotifications, setAllNotifications]);
+
+    useEffect(() => {
+        if (!user) return;
+        const unsubscribe = subscribeToNotifications(user.id);
+        return () => unsubscribe();
+    }, [user, subscribeToNotifications]);
 
     if (!user) return router.visit(route('login'));
-
-    const handleMarkAllAsRead = () => {
-        axios
-            .post(route('notifications.markAllAsRead'))
-            .then(() => {
-                router.visit(route('notifications.index'), {
-                    only: ['notifications', 'shouldShowMarkAllAsRead'],
-                });
-            })
-            .catch(() => {
-                toast.error('Error marking notifications as read.');
-            })
-            .finally(() => {
-                toast.success('All notifications marked as read');
-            });
-    };
 
     return (
         <>
@@ -41,7 +42,7 @@ export default function Notifications() {
                 <div className="mb-6 flex items-center justify-between">
                     <H3>Notifications</H3>
                     {shouldShowMarkAllAsRead && (
-                        <Button variant="outline" onClick={handleMarkAllAsRead}>
+                        <Button variant="outline" onClick={markAllAsRead}>
                             Mark all as read
                         </Button>
                     )}

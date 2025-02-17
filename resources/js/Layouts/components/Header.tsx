@@ -17,7 +17,7 @@ import React from 'react';
 
 export function Header() {
     const { open } = useSidebar();
-    const { url } = usePage();
+    const { url, component } = usePage();
     const { user } = usePage().props.auth;
     const { notifications } = usePageProps<{ notifications: Notification[] }>()
         .props;
@@ -117,7 +117,7 @@ export function Header() {
                     </>
                 )}
                 <div className="flex items-center gap-2">
-                    {user && (
+                    {user && component !== 'Notifications' && (
                         <NotificationBellDropdown
                             notifications={notifications}
                         />

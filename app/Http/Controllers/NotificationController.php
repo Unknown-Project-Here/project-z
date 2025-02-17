@@ -4,15 +4,23 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Notifications\Notification;
 use Inertia\Response;
 
 class NotificationController extends Controller
 {
     public function index(Request $request): Response
     {
+        $notifications = $request->user()?->notifications->map(function ($notification) {
+            return array_merge([
+                'id' => $notification->id,
+                'type' => $notification->type,
+                'created_at' => $notification->created_at,
+                'read_at' => $notification->read_at,
+            ], $notification->data);
+        });
+
         return inertia()->render('Notifications', [
-            'allNotifications' => $request->user()?->notifications,
+            'allNotifications' => $notifications,
             'shouldShowMarkAllAsRead' => $request->user()?->unreadNotifications->count() > 0,
         ]);
     }
