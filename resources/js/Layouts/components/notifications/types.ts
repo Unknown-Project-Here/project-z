@@ -8,6 +8,7 @@ export interface BaseNotification {
     id: string;
     type: NotificationType;
     data: Record<string, any>;
+    created_at: string;
 }
 
 export interface ProjectRequestNotification extends BaseNotification {

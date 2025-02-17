@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\OnboardingController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProjectController;
@@ -58,6 +59,10 @@ Route::prefix('projects')->name('projects.')->group(function () {
         Route::post('/{project}/invite', 'store')->name('invite');
         Route::post('/{project}/request', 'request')->name('request');
     });
+});
+
+Route::controller(NotificationController::class)->group(function () {
+    Route::get('/notifications', 'index')->name('notifications');
 });
 
 require __DIR__ . '/auth.php';

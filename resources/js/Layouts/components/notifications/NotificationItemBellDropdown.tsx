@@ -1,16 +1,19 @@
 import { DropdownMenuItem } from '@/components/ui/dropdown-menu';
 import { Notification } from '@/Layouts/components/notifications/types';
-import { getIcon, getMessage } from '@/Layouts/components/notifications/utils';
+import { getIcon } from '@/Layouts/components/notifications/utils';
+import NotificationMessage from './NotificationMessage';
 
-interface NotificationItemProps {
+interface NotificationItemBellDropdownProps {
     notification: Notification;
     onRead: (id: string) => void;
+    shouldShowLink?: boolean;
 }
 
-export default function NotificationItem({
+export default function NotificationItemBellDropdown({
     notification,
     onRead,
-}: NotificationItemProps) {
+    shouldShowLink = true,
+}: NotificationItemBellDropdownProps) {
     const { id, type } = notification;
 
     return (
@@ -21,7 +24,10 @@ export default function NotificationItem({
             {getIcon(type)}
             <div className="min-w-0 flex-1">
                 <p className="text-sm font-medium">
-                    {getMessage(notification)}
+                    <NotificationMessage
+                        notification={notification}
+                        shouldShowLink={shouldShowLink}
+                    />
                 </p>
             </div>
         </DropdownMenuItem>

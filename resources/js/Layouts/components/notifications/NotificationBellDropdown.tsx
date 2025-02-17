@@ -8,7 +8,8 @@ import {
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import H3 from '@/components/ui/typography/H3';
-import NotificationItem from '@/Layouts/components/notifications/NotificationItem';
+import NotificationItemBellDropdown from '@/Layouts/components/notifications/NotificationItemBellDropdown';
+import { Link } from '@inertiajs/react';
 import { Bell } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
@@ -18,6 +19,7 @@ export default function NotificationBellDropdown({
     notifications: any;
 }) {
     const [unreadCount, setUnreadCount] = useState(0);
+    const [isOpen, setIsOpen] = useState(false);
 
     useEffect(() => {
         setUnreadCount(notifications?.length || 0);
@@ -28,8 +30,12 @@ export default function NotificationBellDropdown({
         setUnreadCount((prev) => Math.max(0, prev - 1));
     };
 
+    const closeDropdown = () => {
+        setIsOpen(false);
+    };
+
     return (
-        <DropdownMenu>
+        <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
             <DropdownMenuTrigger asChild>
                 <Button variant="ghost">
                     <Bell className="h-4 w-4" />
@@ -40,10 +46,11 @@ export default function NotificationBellDropdown({
                 <div className="max-h-[300px] overflow-y-auto">
                     {notifications && notifications.length > 0 ? (
                         notifications.map((notification: any) => (
-                            <NotificationItem
+                            <NotificationItemBellDropdown
                                 key={notification.id}
                                 notification={notification}
                                 onRead={handleReadNotification}
+                                shouldShowLink={false}
                             />
                         ))
                     ) : (
@@ -52,6 +59,9 @@ export default function NotificationBellDropdown({
                         </DropdownMenuItem>
                     )}
                 </div>
+                <Button asChild className="mt-4 w-full" onClick={closeDropdown}>
+                    <Link href="/notifications">View all notifications</Link>
+                </Button>
             </DropdownMenuContent>
         </DropdownMenu>
     );
