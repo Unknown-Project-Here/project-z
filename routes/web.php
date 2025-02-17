@@ -61,8 +61,12 @@ Route::prefix('projects')->name('projects.')->group(function () {
     });
 });
 
-Route::controller(NotificationController::class)->group(function () {
-    Route::get('/notifications', 'index')->name('notifications');
+Route::prefix('notifications')->name('notifications.')->group(function () {
+    Route::controller(NotificationController::class)->group(function () {
+        Route::get('/', 'index')->name('index');
+        Route::post('/markAllAsRead', 'markAllAsRead')->name('markAllAsRead');
+        Route::post('/{notification}/markAsRead', 'markNotificationAsRead')->name('markAsRead');
+    });
 });
 
 require __DIR__ . '/auth.php';

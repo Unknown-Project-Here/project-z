@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Button } from '@/components/ui/button';
 import {
     DropdownMenu,
@@ -9,25 +7,27 @@ import {
 } from '@/components/ui/dropdown-menu';
 import H3 from '@/components/ui/typography/H3';
 import NotificationItemBellDropdown from '@/Layouts/components/notifications/NotificationItemBellDropdown';
+import { Notification } from '@/Layouts/components/notifications/types';
 import { Link } from '@inertiajs/react';
 import { Bell } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 export default function NotificationBellDropdown({
-    notifications,
+    notifications: initialNotifications,
 }: {
-    notifications: any;
+    notifications: Notification[];
 }) {
-    const [unreadCount, setUnreadCount] = useState(0);
+    const [notifications, setNotifications] = useState(initialNotifications);
     const [isOpen, setIsOpen] = useState(false);
 
-    useEffect(() => {
-        setUnreadCount(notifications?.length || 0);
-    }, [notifications]);
-
-    const handleReadNotification = (id: string) => {
-        console.log(`Marking notification ${id} as read`);
-        setUnreadCount((prev) => Math.max(0, prev - 1));
+    const handleMarkAsRead = (id: string) => {
+        setNotifications((prevNotifications) =>
+            prevNotifications.map((notification) =>
+                notification.id === id
+                    ? { ...notification, read_at: new Date().toISOString() }
+                    : notification,
+            ),
+        );
     };
 
     const closeDropdown = () => {
@@ -45,11 +45,11 @@ export default function NotificationBellDropdown({
                 <H3>Notifications</H3>
                 <div className="max-h-[300px] overflow-y-auto">
                     {notifications && notifications.length > 0 ? (
-                        notifications.map((notification: any) => (
+                        notifications.map((notification) => (
                             <NotificationItemBellDropdown
                                 key={notification.id}
                                 notification={notification}
-                                onRead={handleReadNotification}
+                                onMarkAsRead={handleMarkAsRead}
                                 shouldShowLink={false}
                             />
                         ))

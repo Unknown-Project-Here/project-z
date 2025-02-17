@@ -9,6 +9,7 @@ export interface BaseNotification {
     type: NotificationType;
     data: Record<string, any>;
     created_at: string;
+    read_at: string | null;
 }
 
 export interface ProjectRequestNotification extends BaseNotification {
