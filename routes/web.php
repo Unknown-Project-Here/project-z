@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\OnboardingController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProjectController;
@@ -57,6 +58,14 @@ Route::prefix('projects')->name('projects.')->group(function () {
         Route::get('/{project}/search-users', 'getUsers')->name('search-users');
         Route::post('/{project}/invite', 'store')->name('invite');
         Route::post('/{project}/request', 'request')->name('request');
+    });
+});
+
+Route::prefix('notifications')->name('notifications.')->group(function () {
+    Route::controller(NotificationController::class)->group(function () {
+        Route::get('/', 'index')->name('index');
+        Route::post('/markAllAsRead', 'markAllAsRead')->name('markAllAsRead');
+        Route::post('/{notification}/markAsRead', 'markNotificationAsRead')->name('markAsRead');
     });
 });
 

@@ -4,6 +4,7 @@ namespace App\Actions\Project\Invite;
 
 use App\Models\Project;
 use App\Models\User;
+use App\Notifications\ProjectInvitationNotification;
 use Illuminate\Support\Facades\Log;
 
 class InviteUserToProject
@@ -41,11 +42,14 @@ class InviteUserToProject
                 ];
             }
 
-            $project->invitations()->create([
+            $invitation = $project->invitations()->create([
                 'inviter_id' => $inviter->id,
                 'invitee_id' => $invitee_id,
                 'role' => $role,
             ]);
+
+            $invitee = User::find($invitee_id);
+            $invitee->notify(new ProjectInvitationNotification($invitation));
 
             return [
                 'success' => true,

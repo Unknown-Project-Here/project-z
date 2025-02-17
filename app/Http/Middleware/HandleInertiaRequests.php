@@ -51,6 +51,14 @@ class HandleInertiaRequests extends Middleware
                     'request' => $request->user()?->can('request', $request->route('project')) ?? false,
                 ],
             ],
+            'notifications' => $request->user()?->notifications->take(5)->map(function ($notification) {
+                return array_merge([
+                    'id' => $notification->id,
+                    'type' => $notification->type,
+                    'created_at' => $notification->created_at,
+                    'read_at' => $notification->read_at
+                ], $notification->data);
+            }) ?? [],
         ];
     }
 }
