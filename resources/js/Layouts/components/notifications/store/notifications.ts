@@ -43,9 +43,6 @@ export const useNotificationStore = create<NotificationStore>((set) => ({
                         state.allNotifications.map(updateNotification),
                 };
             });
-            router.reload({
-                only: ['notifications', 'shouldShowMarkAllAsRead'],
-            });
         } catch (error) {
             console.error('Failed to mark notification as read:', error);
         }
