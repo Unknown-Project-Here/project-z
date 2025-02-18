@@ -18,26 +18,43 @@ export interface User {
     skill_level: SkillLevel;
 }
 
-export interface Project {
+export interface Member {
     id: number;
-    user_id: number;
+    username: string;
+    created_at: string;
+}
+
+export interface ProjectStack {
+    id: number;
+    name: string;
+    skill_level: string | null;
+}
+
+export interface BaseProject {
+    id: number;
     title: string;
     description: string;
-    contact: string[];
     is_active: boolean;
-    skill_level: string;
     created_at: string;
     updated_at: string;
-    user: {
+    creator: {
         id: number;
         username: string;
-        email: string;
-        onboarded: boolean;
-        email_verified_at: string;
-        skill_level: string | null;
         created_at: string;
-        updated_at: string;
     };
+    contact?: string[];
+    skill_level: string;
+}
+
+export interface IndexProject extends BaseProject {
+    stack: ProjectStack[];
+}
+
+export interface Project extends BaseProject {
+    stack: {
+        [category: string]: ProjectStack[];
+    };
+    members: Member[];
 }
 
 export interface PaginationLink {
