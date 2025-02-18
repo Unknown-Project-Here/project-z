@@ -35,7 +35,6 @@ class ProjectJoinRequestNotification extends Notification implements ShouldQueue
     public function toDatabase(object $notifiable): array
     {
         return [
-            'type' => 'project_request',
             'request_id' => $this->request->id,
             'project_id' => $this->request->project_id,
             'project_title' => $this->request->project->title,
