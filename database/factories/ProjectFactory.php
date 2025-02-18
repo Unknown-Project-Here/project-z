@@ -17,9 +17,9 @@ class ProjectFactory extends Factory
             'title' => fake()->catchPhrase(),
             'description' => fake()->paragraph(3),
             'contact' => [
-                fake()->safeEmail(),
-                'https://github.com/' . fake()->userName(),
-                'https://discord.com/' . fake()->userName(),
+                'email' => fake()->safeEmail(),
+                'github' => 'https://github.com/' . fake()->userName(),
+                'discord' => 'https://discord.com/' . fake()->userName(),
             ],
             'skill_level' => fake()->randomElement(['beginner', 'intermediate', 'expert']),
             'is_active' => fake()->boolean(80),

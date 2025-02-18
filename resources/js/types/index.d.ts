@@ -42,7 +42,7 @@ export interface BaseProject {
         username: string;
         created_at: string;
     };
-    contact?: string[];
+    contact?: ProjectContact;
     skill_level: string;
 }
 

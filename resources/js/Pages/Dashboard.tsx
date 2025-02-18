@@ -19,8 +19,6 @@ export default function Dashboard() {
 
     const isOnboardingComplete = auth.user.onboarded;
 
-    console.log('auth.user', auth);
-
     const skills: string[] = [];
 
     const projects: IndexProject[] = [];
