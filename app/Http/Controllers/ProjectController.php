@@ -35,19 +35,36 @@ class ProjectController extends Controller
         ]);
 
         $perPage = $request->input('per_page', 9);
-        $projects = Project::with('user')
+        $projects = Project::with(['user', 'stack.option.category', 'members'])
             ->latest()
             ->paginate($perPage);
 
+        $transformed = collect($projects->items())->map(function ($project) {
+            $projectArray = $project->toArray();
+            
+            // Transform stack into flat array
+            $stackArray = collect($project->stack)
+                ->map(fn($item) => [
+                    'id' => $item->option->id,
+                    'name' => $item->option->name,
+                    'skill_level' => $item->skill_level,
+                ]);
+
+            $projectArray['stack'] = $stackArray;
+            $projectArray['creator'] = $project->creator;
+            
+            return $projectArray;
+        });
+
         if ($request->wantsJson()) {
             return response()->json([
-                'data' => $projects,
+                'data' => $transformed,
                 'message' => 'Projects retrieved successfully.',
             ]);
         }
 
         return Inertia::render('Project/Index', [
-            'projects' => $projects,
+            'projects' => $transformed,
         ]);
     }
 
