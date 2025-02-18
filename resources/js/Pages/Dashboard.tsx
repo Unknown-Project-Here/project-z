@@ -8,36 +8,22 @@ import {
     CardHeader,
     CardTitle,
 } from '@/components/ui/card';
-import { router, usePage } from '@inertiajs/react';
+import { Link, router, usePage } from '@inertiajs/react';
 
 export default function Dashboard() {
     const { auth } = usePage().props;
 
-    const projects = [
-        {
-            id: 1,
-            name: 'Project Alpha',
-            description: 'A revolutionary AI-powered code generator',
-        },
-        {
-            id: 2,
-            name: 'Beta Framework',
-            description: 'Lightweight and fast web framework',
-        },
-        {
-            id: 3,
-            name: 'Gamma Analytics',
-            description: 'Real-time data analytics platform',
-        },
-    ];
-
-    const stats = {
-        projectsCompleted: 15,
-        linesOfCode: 50000,
-        contributions: 230,
-    };
+    const formattedJoinDate = new Date(
+        auth.user.created_at,
+    ).toLocaleDateString();
 
     const isOnboardingComplete = auth.user.onboarded;
+
+    console.log('auth.user', auth);
+
+    const skills = [];
+
+    const projects = [];
 
     return (
         <>
@@ -83,30 +69,23 @@ export default function Dashboard() {
                                     </h2>
                                     <p>{auth.user.email}</p>
                                     <p className="text-sm">
-                                        Joined on{' '}
-                                        {new Date().toLocaleDateString()}
+                                        Joined on {formattedJoinDate}
                                     </p>
                                 </div>
                             </div>
                             <div className="mt-6 grid grid-cols-3 gap-4">
                                 <div className="text-center">
-                                    <h3 className="text-2xl font-bold">
-                                        {stats.projectsCompleted}
-                                    </h3>
+                                    <h3 className="text-2xl font-bold">0</h3>
                                     <p className="text-sm">
                                         Projects Completed
                                     </p>
                                 </div>
                                 <div className="text-center">
-                                    <h3 className="text-2xl font-bold">
-                                        {stats.linesOfCode.toLocaleString()}
-                                    </h3>
+                                    <h3 className="text-2xl font-bold">0</h3>
                                     <p className="text-sm">Lines of Code</p>
                                 </div>
                                 <div className="text-center">
-                                    <h3 className="text-2xl font-bold">
-                                        {stats.contributions}
-                                    </h3>
+                                    <h3 className="text-2xl font-bold">0</h3>
                                     <p className="text-sm">Contributions</p>
                                 </div>
                             </div>
@@ -122,12 +101,24 @@ export default function Dashboard() {
                         </CardHeader>
                         <CardContent>
                             <div className="flex flex-wrap gap-2">
-                                <Badge>JavaScript</Badge>
-                                <Badge>React</Badge>
-                                <Badge>Node.js</Badge>
-                                <Badge>Python</Badge>
-                                <Badge>Git</Badge>
-                                <Badge>SQL</Badge>
+                                {skills.length > 0 ? (
+                                    skills.map((skill) => (
+                                        <Badge key={skill}>{skill}</Badge>
+                                    ))
+                                ) : (
+                                    <div className="flex w-full flex-col items-center justify-center space-y-4 rounded-lg border border-dashed border-gray-300 bg-gray-50/50 px-6 py-8 text-center">
+                                        <div className="space-y-2">
+                                            <h3 className="font-medium text-gray-900">
+                                                No skills added
+                                            </h3>
+                                            <p className="text-sm text-gray-500">
+                                                Complete your profile to add
+                                                your programming skills and
+                                                expertise.
+                                            </p>
+                                        </div>
+                                    </div>
+                                )}
                             </div>
                         </CardContent>
                     </Card>
@@ -142,18 +133,58 @@ export default function Dashboard() {
                     </CardHeader>
                     <CardContent>
                         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-                            {projects.map((project) => (
-                                <Card key={project.id}>
-                                    <CardHeader>
-                                        <CardTitle>{project.name}</CardTitle>
-                                    </CardHeader>
-                                    <CardContent>
-                                        <p className="text-sm">
-                                            {project.description}
+                            {projects?.length > 0 ? (
+                                projects.map((project) => (
+                                    <Card key={project.id}>
+                                        <CardHeader>
+                                            <CardTitle>
+                                                {project.name}
+                                            </CardTitle>
+                                        </CardHeader>
+                                        <CardContent>
+                                            <p className="text-sm">
+                                                {project.description}
+                                            </p>
+                                            {project.status && (
+                                                <Badge
+                                                    className="mt-2"
+                                                    variant={
+                                                        project.status ===
+                                                        'completed'
+                                                            ? 'success'
+                                                            : 'secondary'
+                                                    }
+                                                >
+                                                    {project.status}
+                                                </Badge>
+                                            )}
+                                        </CardContent>
+                                    </Card>
+                                ))
+                            ) : (
+                                <div className="col-span-full flex flex-col items-center justify-center space-y-4 rounded-lg border border-dashed border-gray-300 bg-gray-50/50 px-6 py-8 text-center">
+                                    <div className="space-y-2">
+                                        <h3 className="font-medium text-gray-900">
+                                            No projects found
+                                        </h3>
+                                        <p className="pb-2 text-sm text-gray-500">
+                                            Start creating your first project to
+                                            showcase your work.
                                         </p>
-                                    </CardContent>
-                                </Card>
-                            ))}
+                                        <Button
+                                            asChild
+                                            variant="default"
+                                            className="w-fit"
+                                        >
+                                            <Link
+                                                href={route('projects.create')}
+                                            >
+                                                Create Project
+                                            </Link>
+                                        </Button>
+                                    </div>
+                                </div>
+                            )}
                         </div>
                     </CardContent>
                 </Card>

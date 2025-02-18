@@ -14,12 +14,13 @@ import {
     ChevronRight,
     Eye,
     Github,
-    Globe,
     MessageSquare,
 } from 'lucide-react';
 
 export default function ProjectIndex() {
     const { projects } = usePageProps<{ projects: ProjectsResponse }>().props;
+
+    console.log('projects', projects);
 
     return (
         <>
@@ -41,17 +42,17 @@ export default function ProjectIndex() {
                             return (
                                 <Card
                                     key={project.id}
-                                    className="transition-shadow hover:shadow-lg"
+                                    className="flex h-[420px] flex-col transition-shadow hover:shadow-lg"
                                 >
-                                    <CardHeader>
-                                        <div className="flex items-center justify-between">
+                                    <CardHeader className="h-28 flex-none">
+                                        <div className="flex items-start justify-between gap-2">
                                             <Link
                                                 href={route(
                                                     'projects.show',
                                                     project.id,
                                                 )}
                                             >
-                                                <CardTitle className="text-xl">
+                                                <CardTitle className="line-clamp-3 text-xl">
                                                     {project.title}
                                                 </CardTitle>
                                             </Link>
@@ -67,16 +68,16 @@ export default function ProjectIndex() {
                                                     : 'Inactive'}
                                             </span>
                                         </div>
-                                        <div className="flex items-center gap-2 text-sm">
-                                            <span>
+                                    </CardHeader>
+                                    <CardContent className="flex-1 overflow-y-auto px-6 pt-4">
+                                        <div className="flex flex-col gap-2 text-sm">
+                                            <span className="line-clamp-1">
                                                 By {project.user.username}
                                             </span>
+                                            <p className="mb-4 line-clamp-2">
+                                                {project.description}
+                                            </p>
                                         </div>
-                                    </CardHeader>
-                                    <CardContent>
-                                        <p className="mb-4 line-clamp-2">
-                                            {project.description}
-                                        </p>
 
                                         {project.stack && (
                                             <div className="mb-4 flex flex-wrap gap-2">
@@ -102,74 +103,96 @@ export default function ProjectIndex() {
                                         )}
 
                                         <div className="space-y-2 text-sm">
-                                            {project.website && (
-                                                <div className="flex items-center gap-2">
-                                                    <Globe className="h-4 w-4" />
-                                                    <a
-                                                        href={project.website}
-                                                        target="_blank"
-                                                        rel="noopener noreferrer"
-                                                        className="text-primary hover:underline"
-                                                    >
-                                                        Website
-                                                    </a>
-                                                </div>
-                                            )}
-                                            {project.github && (
-                                                <div className="flex items-center gap-2">
-                                                    <Github className="h-4 w-4" />
-                                                    <a
-                                                        href={project.github}
-                                                        target="_blank"
-                                                        rel="noopener noreferrer"
-                                                        className="text-primary hover:underline"
-                                                    >
-                                                        GitHub
-                                                    </a>
-                                                </div>
+                                            {project.contact?.map(
+                                                (contact, index) => {
+                                                    if (
+                                                        contact.includes(
+                                                            'github.com',
+                                                        )
+                                                    ) {
+                                                        return (
+                                                            <div
+                                                                key={index}
+                                                                className="flex items-center gap-2"
+                                                            >
+                                                                <Github className="h-4 w-4" />
+                                                                <a
+                                                                    href={
+                                                                        contact
+                                                                    }
+                                                                    target="_blank"
+                                                                    rel="noopener noreferrer"
+                                                                    className="text-primary hover:underline"
+                                                                >
+                                                                    GitHub
+                                                                </a>
+                                                            </div>
+                                                        );
+                                                    }
+                                                    if (
+                                                        contact.includes(
+                                                            'discord.com',
+                                                        )
+                                                    ) {
+                                                        return (
+                                                            <div
+                                                                key={index}
+                                                                className="flex items-center gap-2"
+                                                            >
+                                                                <MessageSquare className="h-4 w-4" />
+                                                                <a
+                                                                    href={
+                                                                        contact
+                                                                    }
+                                                                    target="_blank"
+                                                                    rel="noopener noreferrer"
+                                                                    className="text-primary hover:underline"
+                                                                >
+                                                                    Discord
+                                                                </a>
+                                                            </div>
+                                                        );
+                                                    }
+                                                    return null;
+                                                },
                                             )}
                                         </div>
 
-                                        <p className="mt-4 text-xs">
-                                            Created:{' '}
-                                            {new Date(
-                                                project.created_at,
-                                            ).toLocaleDateString()}
-                                        </p>
+                                        <div className="">
+                                            <div className="mt-4 flex items-center gap-2 text-sm">
+                                                <span className="text-muted-foreground">
+                                                    Project Skill Level:
+                                                </span>
+                                                <span className="capitalize text-primary">
+                                                    {project.skill_level}
+                                                </span>
+                                            </div>
+                                            <p className="mt-4 text-xs">
+                                                Created:{' '}
+                                                {new Date(
+                                                    project.created_at,
+                                                ).toLocaleDateString()}
+                                            </p>
+                                        </div>
                                     </CardContent>
-                                    <CardFooter className="flex justify-end gap-4">
-                                        {project.discord && (
+                                    <CardFooter className="h-16 flex-none px-6">
+                                        <div className="flex w-full justify-end">
                                             <Button
-                                                variant="outline"
-                                                size="sm"
                                                 asChild
+                                                variant="default"
+                                                className="flex items-center gap-2"
                                             >
-                                                <a
-                                                    href={project.discord}
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                    className="flex items-center gap-2"
+                                                <Link
+                                                    href={route(
+                                                        'projects.show',
+                                                        project.id,
+                                                    )}
                                                 >
-                                                    <MessageSquare className="h-4 w-4" />
-                                                    Discord
-                                                </a>
+                                                    <Eye className="h-4 w-4" />
+                                                    View Project
+                                                </Link>
                                             </Button>
-                                        )}
-                                        <Button
-                                            asChild
-                                            variant="default"
-                                            className="flex items-center gap-2"
-                                        >
-                                            <Link
-                                                href={route(
-                                                    'projects.show',
-                                                    project.id,
-                                                )}
-                                            >
-                                                <Eye className="h-4 w-4" />
-                                                View Project
-                                            </Link>
-                                        </Button>
+                                        </div>
                                     </CardFooter>
                                 </Card>
                             );
