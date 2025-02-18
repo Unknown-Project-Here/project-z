@@ -1,3 +1,4 @@
+import { Icons } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import {
     Card,
@@ -7,20 +8,12 @@ import {
     CardTitle,
 } from '@/components/ui/card';
 import { usePageProps } from '@/hooks/usePageProps';
-import { Project, ProjectsResponse } from '@/types';
+import { IndexProject } from '@/types';
 import { Head, Link } from '@inertiajs/react';
-import {
-    ChevronLeft,
-    ChevronRight,
-    Eye,
-    Github,
-    MessageSquare,
-} from 'lucide-react';
+import { ChevronLeft, ChevronRight, Eye, Github } from 'lucide-react';
 
 export default function ProjectIndex() {
-    const { projects } = usePageProps<{ projects: ProjectsResponse }>().props;
-
-    console.log('projects', projects);
+    const { projects } = usePageProps<{ projects: IndexProject[] }>().props;
 
     return (
         <>
@@ -28,21 +21,23 @@ export default function ProjectIndex() {
             <div className="container mx-auto px-4 py-8">
                 <div className="flex items-start justify-between">
                     <h1 className="mb-8 text-3xl font-bold">Projects</h1>
-                    <Button asChild>
-                        <Link href={route('projects.create')}>
-                            Create Project
-                        </Link>
-                    </Button>
+                    {projects.length > 0 && (
+                        <Button asChild>
+                            <Link href={route('projects.create')}>
+                                Create Project
+                            </Link>
+                        </Button>
+                    )}
                 </div>
 
                 {/* Projects Grid */}
                 <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-                    {projects.data.length > 0 ? (
-                        projects.data.map((project: Project) => {
+                    {projects.length > 0 ? (
+                        projects.map((project) => {
                             return (
                                 <Card
                                     key={project.id}
-                                    className="flex h-[420px] flex-col transition-shadow hover:shadow-lg"
+                                    className="flex h-[450px] flex-col transition-shadow hover:shadow-lg"
                                 >
                                     <CardHeader className="h-28 flex-none">
                                         <div className="flex items-start justify-between gap-2">
@@ -72,37 +67,55 @@ export default function ProjectIndex() {
                                     <CardContent className="flex-1 overflow-y-auto px-6 pt-4">
                                         <div className="flex flex-col gap-2 text-sm">
                                             <span className="line-clamp-1">
-                                                By {project.user.username}
+                                                By {project.creator.username}
                                             </span>
                                             <p className="mb-4 line-clamp-2">
                                                 {project.description}
                                             </p>
                                         </div>
 
-                                        {project.stack && (
-                                            <div className="mb-4 flex flex-wrap gap-2">
-                                                {(Array.isArray(project.stack)
-                                                    ? project.stack
-                                                    : JSON.parse(
-                                                          project.stack as string,
-                                                      )
-                                                ).map(
-                                                    (
-                                                        tech: string,
-                                                        index: number,
-                                                    ) => (
-                                                        <span
-                                                            key={index}
-                                                            className="rounded-md bg-primary/10 px-2 py-1 text-xs text-primary"
-                                                        >
-                                                            {tech}
+                                        <div className="mt-4 flex flex-col gap-2">
+                                            {project.stack && (
+                                                <div className="flex flex-wrap items-center gap-2">
+                                                    {project.stack
+                                                        .slice(0, 3)
+                                                        .map((tech) => (
+                                                            <span
+                                                                key={tech.id}
+                                                                className="rounded-md bg-primary/10 px-2 py-1 text-xs text-primary"
+                                                            >
+                                                                {tech.name}
+                                                            </span>
+                                                        ))}
+                                                    {project.stack.length >
+                                                        3 && (
+                                                        <span className="rounded-md bg-secondary px-2 py-1 text-xs">
+                                                            +
+                                                            {project.stack
+                                                                .length - 3}
                                                         </span>
-                                                    ),
-                                                )}
-                                            </div>
-                                        )}
+                                                    )}
+                                                </div>
+                                            )}
 
-                                        <div className="space-y-2 text-sm">
+                                            <div className="flex items-center gap-2 text-sm">
+                                                <span className="text-muted-foreground">
+                                                    Project Skill Level:
+                                                </span>
+                                                <span className="capitalize text-primary">
+                                                    {project.skill_level}
+                                                </span>
+                                            </div>
+
+                                            <p className="mt-2 text-xs">
+                                                Created:{' '}
+                                                {new Date(
+                                                    project.created_at,
+                                                ).toLocaleDateString()}
+                                            </p>
+                                        </div>
+
+                                        <div className="mt-4 space-y-2 text-sm">
                                             {project.contact?.map(
                                                 (contact, index) => {
                                                     if (
@@ -139,7 +152,7 @@ export default function ProjectIndex() {
                                                                 key={index}
                                                                 className="flex items-center gap-2"
                                                             >
-                                                                <MessageSquare className="h-4 w-4" />
+                                                                <Icons.discord className="h-4 w-4" />
                                                                 <a
                                                                     href={
                                                                         contact
@@ -156,23 +169,6 @@ export default function ProjectIndex() {
                                                     return null;
                                                 },
                                             )}
-                                        </div>
-
-                                        <div className="">
-                                            <div className="mt-4 flex items-center gap-2 text-sm">
-                                                <span className="text-muted-foreground">
-                                                    Project Skill Level:
-                                                </span>
-                                                <span className="capitalize text-primary">
-                                                    {project.skill_level}
-                                                </span>
-                                            </div>
-                                            <p className="mt-4 text-xs">
-                                                Created:{' '}
-                                                {new Date(
-                                                    project.created_at,
-                                                ).toLocaleDateString()}
-                                            </p>
                                         </div>
                                     </CardContent>
                                     <CardFooter className="h-16 flex-none px-6">
@@ -198,23 +194,43 @@ export default function ProjectIndex() {
                             );
                         })
                     ) : (
-                        <div className="col-span-full py-8 text-center">
-                            <p>No projects found</p>
+                        <div className="col-span-full">
+                            <div className="flex flex-col items-center justify-center space-y-4 rounded-lg border border-dashed border-gray-300 bg-gray-50/50 px-6 py-8 text-center">
+                                <div className="space-y-2">
+                                    <h3 className="font-medium text-gray-900">
+                                        No projects found
+                                    </h3>
+                                    <p className="text-sm text-gray-500">
+                                        Get started by creating your first
+                                        project to collaborate with others.
+                                    </p>
+                                </div>
+                                <Button asChild variant="default">
+                                    <Link href={route('projects.create')}>
+                                        Create Project
+                                    </Link>
+                                </Button>
+                            </div>
                         </div>
                     )}
                 </div>
 
-                {/* Pagination */}
-                {projects.last_page > 1 && (
+                {/* Update Pagination */}
+                {projects.length > 0 && (
                     <div className="mt-8 flex items-center justify-center gap-4">
                         <Button
                             variant="outline"
-                            disabled={projects.current_page === 1}
+                            disabled={!projects.length}
                             asChild
                         >
                             <Link
                                 href={route('projects.index', {
-                                    page: projects.current_page - 1,
+                                    page:
+                                        Number(
+                                            new URL(
+                                                window.location.href,
+                                            ).searchParams.get('page') || 1,
+                                        ) - 1,
                                 })}
                                 preserveScroll
                             >
@@ -223,20 +239,19 @@ export default function ProjectIndex() {
                             </Link>
                         </Button>
 
-                        <span>
-                            Page {projects.current_page} of {projects.last_page}
-                        </span>
-
                         <Button
                             variant="outline"
-                            disabled={
-                                projects.current_page === projects.last_page
-                            }
+                            disabled={projects.length < 9}
                             asChild
                         >
                             <Link
                                 href={route('projects.index', {
-                                    page: projects.current_page + 1,
+                                    page:
+                                        Number(
+                                            new URL(
+                                                window.location.href,
+                                            ).searchParams.get('page') || 1,
+                                        ) + 1,
                                 })}
                                 preserveScroll
                             >

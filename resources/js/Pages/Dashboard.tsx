@@ -8,8 +8,8 @@ import {
     CardHeader,
     CardTitle,
 } from '@/components/ui/card';
+import { IndexProject } from '@/types';
 import { Link, router, usePage } from '@inertiajs/react';
-
 export default function Dashboard() {
     const { auth } = usePage().props;
 
@@ -21,9 +21,9 @@ export default function Dashboard() {
 
     console.log('auth.user', auth);
 
-    const skills = [];
+    const skills: string[] = [];
 
-    const projects = [];
+    const projects: IndexProject[] = [];
 
     return (
         <>
@@ -138,24 +138,24 @@ export default function Dashboard() {
                                     <Card key={project.id}>
                                         <CardHeader>
                                             <CardTitle>
-                                                {project.name}
+                                                {project.title}
                                             </CardTitle>
                                         </CardHeader>
                                         <CardContent>
                                             <p className="text-sm">
                                                 {project.description}
                                             </p>
-                                            {project.status && (
+                                            {project.skill_level && (
                                                 <Badge
                                                     className="mt-2"
                                                     variant={
-                                                        project.status ===
-                                                        'completed'
+                                                        project.skill_level ===
+                                                        'beginner'
                                                             ? 'success'
                                                             : 'secondary'
                                                     }
                                                 >
-                                                    {project.status}
+                                                    {project.skill_level}
                                                 </Badge>
                                             )}
                                         </CardContent>

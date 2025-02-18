@@ -20,18 +20,19 @@ import { CalendarIcon, CodeIcon, GitForkIcon } from 'lucide-react';
 dayjs.extend(advancedFormat);
 dayjs.extend(relativeTime);
 
-export default function ProjectShow({
-    project,
-    permissions,
-}: {
-    project: Project;
-    permissions: {
-        project: { invite: boolean; edit: boolean; request: boolean };
+export default function ProjectShow({ project }: { project: Project }) {
+    // Derive permissions based on auth state and membership
+    const permissions = {
+        project: {
+            invite: false,
+            edit: false,
+            request: false,
+        },
     };
-}) {
+
     const projectStats = {
         commits: 156,
-        contributors: 4,
+        contributors: project.members.length,
         codeLines: 12500,
     };
 
@@ -102,6 +103,35 @@ export default function ProjectShow({
                                             ).format('Do MMMM YYYY')}
                                         </p>
                                     </div>
+                                </div>
+                            </div>
+
+                            <div className="mb-6">
+                                <h3 className="mb-2 font-semibold">
+                                    Team Members
+                                </h3>
+                                <div className="flex flex-wrap gap-4">
+                                    {project.members.map((member) => (
+                                        <div
+                                            key={member.id}
+                                            className="flex items-center space-x-2"
+                                        >
+                                            <Avatar className="bg-primary">
+                                                <AvatarImage
+                                                    src={`https://api.dicebear.com/9.x/open-peeps/svg?seed=${member.username}`}
+                                                    alt={member.username}
+                                                />
+                                                <AvatarFallback>
+                                                    {member.username}
+                                                </AvatarFallback>
+                                            </Avatar>
+                                            <div>
+                                                <p className="text-sm font-medium">
+                                                    {member.username}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    ))}
                                 </div>
                             </div>
 
