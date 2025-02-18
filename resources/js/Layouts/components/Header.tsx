@@ -9,12 +9,18 @@ import {
 } from '@/components/ui/breadcrumb';
 import { Button } from '@/components/ui/button';
 import { SidebarTrigger, useSidebar } from '@/components/ui/sidebar';
+import { usePageProps } from '@/hooks/usePageProps';
+import NotificationBellDropdown from '@/Layouts/components/notifications/NotificationBellDropdown';
+import { Notification } from '@/Layouts/components/notifications/types';
 import { Link, usePage } from '@inertiajs/react';
 import React from 'react';
 
 export function Header() {
     const { open } = useSidebar();
-    const { url } = usePage();
+    const { url, component } = usePage();
+    const { user } = usePage().props.auth;
+    const { notifications } = usePageProps<{ notifications: Notification[] }>()
+        .props;
 
     const getBreadcrumbItems = () => {
         const path = url.split('?')[0];
@@ -110,7 +116,14 @@ export function Header() {
                         </Button>
                     </>
                 )}
-                <ThemeToggle />
+                <div className="flex items-center gap-2">
+                    {user && component !== 'Notifications' && (
+                        <NotificationBellDropdown
+                            notifications={notifications}
+                        />
+                    )}
+                    <ThemeToggle />
+                </div>
             </div>
         </header>
     );

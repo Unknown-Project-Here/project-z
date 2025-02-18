@@ -9,7 +9,7 @@ import {
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Link, useForm } from '@inertiajs/react';
+import { Head, Link, useForm } from '@inertiajs/react';
 
 export default function Login({
     status,
@@ -34,6 +34,7 @@ export default function Login({
 
     return (
         <>
+            <Head title="Login" />
             {status && (
                 <div className="mb-4 text-sm font-medium text-green-600">
                     {status}

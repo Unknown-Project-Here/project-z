@@ -6,10 +6,12 @@ use App\Actions\Project\Invite\GetEligibleUsers;
 use App\Actions\Project\Invite\InviteUserToProject;
 use App\Models\Project;
 use App\Models\ProjectRequest;
+use App\Notifications\ProjectJoinRequestNotification;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Notification;
 
 class ProjectInvitationController extends Controller
 {
@@ -109,10 +111,16 @@ class ProjectInvitationController extends Controller
         }
 
         try {
-            ProjectRequest::create([
+            $projectRequest = ProjectRequest::create([
                 'project_id' => $project->id,
                 'user_id' => $request->user()->id,
             ]);
+
+            $projectMembers = $project->members()
+                ->wherePivotIn('role', ['creator', 'admin'])
+                ->get();
+
+            Notification::send($projectMembers, new ProjectJoinRequestNotification($projectRequest));
 
             return back()->with([
                 'success' => true,
