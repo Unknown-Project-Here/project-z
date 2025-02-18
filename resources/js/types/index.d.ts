@@ -25,7 +25,7 @@ export interface Project {
     contact: Record<string, string>;
     created_at: string;
     updated_at: string;
-    creator: {
+    user: {
         username: string;
         created_at: string;
     };

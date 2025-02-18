@@ -69,7 +69,7 @@ export default function ProjectIndex() {
                                         </div>
                                         <div className="flex items-center gap-2 text-sm">
                                             <span>
-                                                By {project.creator.username}
+                                                By {project.user.username}
                                             </span>
                                         </div>
                                     </CardHeader>
