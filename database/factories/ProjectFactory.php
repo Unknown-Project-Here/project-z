@@ -12,19 +12,17 @@ class ProjectFactory extends Factory
 
     public function definition(): array
     {
-        $contacts = [
-            ['email' => fake()->safeEmail()],
-            ['discord' => fake()->userName() . '#' . fake()->numberBetween(1000, 9999)],
-            ['github' => 'https://github.com/' . fake()->userName()],
-            ['website' => fake()->url()],
-        ];
-
         return [
             'user_id' => User::factory(),
             'title' => fake()->catchPhrase(),
             'description' => fake()->paragraph(3),
-            'contact' => fake()->randomElement($contacts),
-            'is_active' => fake()->boolean(80), // 80% chance of being active
+            'contact' => [
+                'email' => fake()->safeEmail(),
+                'github' => 'https://github.com/' . fake()->userName(),
+                'discord' => 'https://discord.com/' . fake()->userName(),
+            ],
+            'skill_level' => fake()->randomElement(['beginner', 'intermediate', 'expert']),
+            'is_active' => fake()->boolean(80),
         ];
     }
 

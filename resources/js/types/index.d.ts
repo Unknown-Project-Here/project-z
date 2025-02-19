@@ -1,5 +1,12 @@
 import { Config } from 'ziggy-js';
 
+export enum SkillLevel {
+    BEGINNER = 'Beginner',
+    INTERMEDIATE = 'Intermediate',
+    ADVANCED = 'Advanced',
+    EXPERT = 'Expert',
+}
+
 export interface User {
     id: number;
     username: string;
@@ -7,28 +14,47 @@ export interface User {
     email_verified_at?: string;
     avatar: string | null;
     onboarded: boolean;
+    created_at: string;
+    skill_level: SkillLevel;
 }
 
-export interface Project {
-    id?: number;
-    user_id: number;
+export interface Member {
+    id: number;
+    username: string;
+    created_at: string;
+}
+
+export interface ProjectStack {
+    id: number;
+    name: string;
+    skill_level: string | null;
+}
+
+export interface BaseProject {
+    id: number;
     title: string;
     description: string;
-    is_active?: boolean;
-    stack: {
-        [key: string]: Array<{
-            id: number;
-            name: string;
-            skill_level: string | null;
-        }>;
-    };
-    contact: Record<string, string>;
+    is_active: boolean;
     created_at: string;
     updated_at: string;
-    user: {
+    creator: {
+        id: number;
         username: string;
         created_at: string;
     };
+    contact?: ProjectContact;
+    skill_level: string;
+}
+
+export interface IndexProject extends BaseProject {
+    stack: ProjectStack[];
+}
+
+export interface Project extends BaseProject {
+    stack: {
+        [category: string]: ProjectStack[];
+    };
+    members: Member[];
 }
 
 export interface PaginationLink {
