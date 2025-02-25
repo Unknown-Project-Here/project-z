@@ -1,3 +1,4 @@
+import { Icons } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import {
     Card,
@@ -125,6 +126,70 @@ export default function Login({
                                 </Link>
                             </div>
                         )}
+
+                        <div className="relative my-6">
+                            <div className="absolute inset-0 flex items-center">
+                                <span className="w-full border-t" />
+                            </div>
+                            <div className="relative flex justify-center text-xs uppercase">
+                                <span className="bg-background px-2 text-muted-foreground">
+                                    Or continue with
+                                </span>
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-3 gap-3">
+                            <Button
+                                variant="outline"
+                                onClick={() =>
+                                    (window.location.href = route(
+                                        'oauth.redirect',
+                                        'google',
+                                    ))
+                                }
+                                className="space-x-2"
+                            >
+                                <Icons.google className="h-5 w-5" />
+                                <span>Google</span>
+                            </Button>
+
+                            <Button
+                                variant="outline"
+                                onClick={() =>
+                                    (window.location.href = route(
+                                        'oauth.redirect',
+                                        'github',
+                                    ))
+                                }
+                                className="space-x-2"
+                            >
+                                <Icons.github className="h-5 w-5" />
+                                <span>GitHub</span>
+                            </Button>
+
+                            <Button
+                                variant="outline"
+                                onClick={() =>
+                                    (window.location.href = route(
+                                        'oauth.redirect',
+                                        'discord',
+                                    ))
+                                }
+                                className="space-x-2"
+                            >
+                                <Icons.discord className="h-5 w-5" />
+                                <span>Discord</span>
+                            </Button>
+                        </div>
+                        {/* Already have an account? */}
+                        <div className="mt-4 text-center">
+                            <Link
+                                href="/register"
+                                className="text-sm text-blue-600 hover:underline"
+                            >
+                                Don't have an account? Register here
+                            </Link>
+                        </div>
                     </CardContent>
                 </Card>
             </div>
