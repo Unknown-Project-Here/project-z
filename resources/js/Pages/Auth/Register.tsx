@@ -1,3 +1,4 @@
+import { SocialLoginButtons } from '@/Pages/Auth/SocialLogin';
 import { Button } from '@/components/ui/button';
 import {
     Card,
@@ -113,6 +114,10 @@ export default function Register() {
                             {processing ? 'Registering...' : 'Register'}
                         </Button>
                     </form>
+
+                    {/* Social Login Buttons */}
+                    <SocialLoginButtons />
+
                     <div className="mt-4 text-center">
                         <Link
                             href="/login"
