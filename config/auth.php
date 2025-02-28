@@ -126,6 +126,7 @@ return [
     'socialite' => [
         'drivers' => [
             'google',
+            'discord',
         ],
     ],
 
