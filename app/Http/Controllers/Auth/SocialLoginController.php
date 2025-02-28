@@ -51,9 +51,9 @@ class SocialLoginController extends Controller
                 );
             }
 
-            // Create new user
+            // Create new user with passed socialUser
             $newUser = User::create([
-                'username' => $this->generateUniqueUsername($socialUser->getName()),
+                'username' => $this->generateUniqueUsername($socialUser),
                 'provider_name' => $provider,
                 'provider_id' => $socialUser->getId(),
                 'email' => $socialUser->getEmail(),
@@ -88,17 +88,38 @@ class SocialLoginController extends Controller
         }
     }
 
-    private function generateUniqueUsername(string $name): string
+    private function generateUniqueUsername($socialUser): string
     {
-        $baseUsername = strtolower(preg_replace('/[^a-zA-Z0-9]/', '', $name));
+        // Get potential username sources
+        $nickname = $socialUser->getNickname();
+        $name = $socialUser->getName();
+        $email = $socialUser->getEmail();
+        
+        // Try sources in order of preference
+        $baseUsername = $nickname ?? $name ?? explode('@', $email)[0] ?? 'user';
+        
+        $baseUsername = strtolower(preg_replace('/[^a-zA-Z0-9]/', '', $baseUsername));
+        
+        if (strlen($baseUsername) < 3) {
+            $baseUsername .= substr(str_shuffle('abcdefghijklmnopqrstuvwxyz'), 0, 3);
+        }
+        
+        $baseUsername = substr($baseUsername, 0, 15);
+        
         $username = $baseUsername;
         $counter = 1;
-
-        while (User::where('username', $username)->exists()) {
-            $username = $baseUsername . $counter;
+        
+        // Try up to 999 times to find a unique username
+        while ($counter < 1000 && User::where('username', $username)->exists()) {
+            $username = substr($baseUsername, 0, 15 - strlen((string)$counter)) . $counter;
             $counter++;
         }
-
+        
+        // If we somehow couldn't find a unique username, generate a random one
+        if ($counter >= 1000) {
+            $username = 'user' . substr(md5(uniqid()), 0, 10);
+        }
+        
         return $username;
     }
 }
