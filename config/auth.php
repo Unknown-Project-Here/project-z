@@ -127,6 +127,7 @@ return [
         'drivers' => [
             'google',
             'discord',
+            'github',
         ],
     ],
 
