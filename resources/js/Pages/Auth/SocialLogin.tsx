@@ -16,13 +16,13 @@ export function SocialLoginButtons({ className }: SocialLoginButtonsProps) {
         {
             name: 'GitHub',
             icon: Icons.github,
-            route: 'oauth.redirect',
+            route: 'social.login',
             provider: 'github',
         },
         {
             name: 'Discord',
             icon: Icons.discord,
-            route: 'oauth.redirect',
+            route: 'social.login',
             provider: 'discord',
         },
     ];
