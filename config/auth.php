@@ -112,4 +112,23 @@ return [
 
     'password_timeout' => env('AUTH_PASSWORD_TIMEOUT', 10800),
 
+    /*
+    |--------------------------------------------------------------------------
+    | Socialite Configuration
+    |--------------------------------------------------------------------------
+    |
+    | This section defines the available social authentication drivers that can
+    | be used with Laravel Socialite. Add or remove drivers as needed for
+    | your application's social authentication requirements.
+    |
+    */
+
+    'socialite' => [
+        'drivers' => [
+            'google',
+            'discord',
+            'github',
+        ],
+    ],
+
 ];

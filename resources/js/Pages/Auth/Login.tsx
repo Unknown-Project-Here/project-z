@@ -1,3 +1,4 @@
+import { SocialLoginButtons } from '@/Pages/Auth/SocialLogin';
 import { Button } from '@/components/ui/button';
 import {
     Card,
@@ -125,6 +126,19 @@ export default function Login({
                                 </Link>
                             </div>
                         )}
+
+                        {/* Social Login Buttons */}
+                        <SocialLoginButtons />
+
+                        {/* Already have an account? */}
+                        <div className="mt-4 text-center">
+                            <Link
+                                href="/register"
+                                className="text-sm text-blue-600 hover:underline"
+                            >
+                                Don't have an account? Register here
+                            </Link>
+                        </div>
                     </CardContent>
                 </Card>
             </div>
