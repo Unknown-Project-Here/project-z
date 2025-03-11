@@ -21,17 +21,14 @@ class SocialLoginController extends Controller
         if (!in_array($provider, config('auth.socialite.drivers'), true)) {
             abort(404, 'Social Provider is not supported');
         }
-        
-        // $scopes = match($provider) {
-        //     'discord' => ['identify', 'email', 'guilds'],
-        //     'github' => ['user', 'user:email', 'read:user'],
-        //     'google' => ['email', 'profile', 'openid'],
-        //     default => [],
-        // };
-        
-        // return Socialite::driver($provider)
-        //     ->with(['scope' => implode(' ', $scopes)])
-        //     ->redirect();
+        if ($provider === 'google') {
+            return Socialite::driver($provider)
+                ->with([
+                    "access_type" => "offline",
+                    "prompt" => "consent select_account"
+                ])
+                ->redirect();
+        }
 
         return Socialite::driver($provider)->redirect();
     }
@@ -115,8 +112,6 @@ class SocialLoginController extends Controller
             'username' => $this->generateUniqueUsername($socialUser),
             'email' => $socialUser->getEmail(),
             'avatar' => $socialUser->getAvatar(),
-            // Generate a random password for users created via social login
-            'password' => bcrypt(Str::random(32)),
         ]);
 
         // Create social account record
@@ -132,7 +127,7 @@ class SocialLoginController extends Controller
         event(new Registered($newUser));
 
         // Auto verify email for trusted providers
-        if (in_array($provider, ['google'], true)) {
+        if (in_array($provider, ['google', 'discord', 'github'], true)) {
             $newUser->markEmailAsVerified();
             event(new Verified($newUser));
         }

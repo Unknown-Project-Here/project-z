@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Inertia\Response;
-
+use App\Models\SocialAccount;
 class AuthenticatedSessionController extends Controller
 {
     /**
@@ -46,6 +46,12 @@ class AuthenticatedSessionController extends Controller
         $request->session()->invalidate();
 
         $request->session()->regenerateToken();
+
+        SocialAccount::where('user_id', Auth::id())->update([
+            'access_token' => null,
+            'refresh_token' => null,
+            'token_expires_at' => null,
+        ]);
 
         return redirect('/');
     }
