@@ -41,17 +41,23 @@ class AuthenticatedSessionController extends Controller
      */
     public function destroy(Request $request): RedirectResponse
     {
+        // Get the user ID before logging out
+        $userId = Auth::id();
+
         Auth::guard('web')->logout();
 
         $request->session()->invalidate();
 
         $request->session()->regenerateToken();
 
-        SocialAccount::where('user_id', Auth::id())->update([
-            'access_token' => null,
-            'refresh_token' => null,
-            'token_expires_at' => null,
-        ]);
+        // Use the stored user ID to update social accounts
+        if ($userId) {
+            SocialAccount::where('user_id', $userId)->update([
+                'access_token' => null,
+                'refresh_token' => null,
+                'token_expires_at' => null,
+            ]);
+        }
 
         return redirect('/');
     }
