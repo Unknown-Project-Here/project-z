@@ -65,4 +65,8 @@ Route::middleware('auth')->group(function () {
 
     Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])
         ->name('logout');
+
+    Route::get('{provider}/refresh', [SocialLoginController::class, 'refreshToken'])
+        ->name('social.refresh')
+        ->where('provider', implode('|', config('auth.socialite.drivers')));
 });

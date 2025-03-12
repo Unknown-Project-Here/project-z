@@ -8,6 +8,7 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
@@ -24,8 +25,6 @@ class User extends Authenticatable implements MustVerifyEmail
         'email',
         'password',
         'skill_level',
-        'provider_name',
-        'provider_id',
         'avatar',
         'email_verified_at',
     ];
@@ -38,8 +37,6 @@ class User extends Authenticatable implements MustVerifyEmail
     protected $hidden = [
         'password',
         'remember_token',
-        'provider_name',
-        'provider_id',
     ];
 
     /**
@@ -59,6 +56,60 @@ class User extends Authenticatable implements MustVerifyEmail
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    /**
+     * Get the social accounts for the user
+     */
+    public function socialAccounts(): HasMany
+    {
+        return $this->hasMany(SocialAccount::class);
+    }
+
+    /**
+     * Get a specific social account by provider name
+     * @param string $provider
+     * @param array<string> $with Additional relations to eager load
+     */
+    public function getSocialAccount(string $provider, array $with = []): ?SocialAccount
+    {
+        $query = $this->socialAccounts()->where('provider', $provider);
+        
+        if (!empty($with)) {
+            $query->with($with);
+        }
+        
+        return $query->first();
+    }
+
+    /**
+     * Check if user has connected a specific social provider
+     */
+    public function hasSocialProvider(string $provider): bool
+    {
+        return $this->socialAccounts()
+            ->where('provider', $provider)
+            ->exists();
+    }
+
+    /**
+     * Get access token for a specific provider
+     */
+    public function getAccessToken(string $provider): ?string
+    {
+        $account = $this->getSocialAccount($provider);
+        
+        if (!$account) {
+            return null;
+        }
+        
+        if ($account->isTokenExpired()) {
+            // TODO: Handle expired token - refresh it here
+            // or handle this in your controller
+            return null;
+        }
+        
+        return $account->access_token;
     }
 
     public function projects()

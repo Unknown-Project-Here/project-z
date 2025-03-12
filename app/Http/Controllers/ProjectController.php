@@ -83,7 +83,7 @@ class ProjectController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Project $project): Response|JsonResponse
+    public function show(Project $project): Response|JsonResponse|RedirectResponse
     {
         try {
             $project->load(['stack.option.category', 'members']);
@@ -112,7 +112,7 @@ class ProjectController extends Controller
                 'success' => false,
                 'message' => 'Failed to retrieve project.',
                 'error' => config('app.debug') ? $e->getMessage() : null,
-            ], 500);
+            ]);
         }
     }
 
