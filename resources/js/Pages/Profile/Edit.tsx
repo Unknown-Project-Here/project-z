@@ -7,12 +7,12 @@ import UpdateProfileInformationForm from './Partials/UpdateProfileInformationFor
 export default function Edit({
     mustVerifyEmail,
     status,
-    mustVerifyPasswordToDeleteAccount,
+    hasPassword,
     auth,
 }: PageProps<{
     mustVerifyEmail: boolean;
     status?: string;
-    mustVerifyPasswordToDeleteAccount: boolean;
+    hasPassword: boolean;
 }>) {
     return (
         <>
@@ -20,7 +20,7 @@ export default function Edit({
 
             <div className="py-12">
                 <div className="mx-auto max-w-7xl space-y-6 sm:px-6 lg:px-8">
-                    <div className="bg-white p-4 shadow dark:bg-gray-800 sm:rounded-lg sm:p-8">
+                    <div className="p-4 shadow sm:rounded-lg sm:p-8">
                         <UpdateProfileInformationForm
                             mustVerifyEmail={mustVerifyEmail}
                             status={status}
@@ -28,16 +28,17 @@ export default function Edit({
                         />
                     </div>
 
-                    <div className="bg-white p-4 shadow dark:bg-gray-800 sm:rounded-lg sm:p-8">
-                        <UpdatePasswordForm className="max-w-xl" />
+                    <div className="p-4 shadow sm:rounded-lg sm:p-8">
+                        <UpdatePasswordForm
+                            className="max-w-xl"
+                            hasPassword={hasPassword}
+                        />
                     </div>
 
-                    <div className="bg-white p-4 shadow dark:bg-gray-800 sm:rounded-lg sm:p-8">
+                    <div className="p-4 shadow sm:rounded-lg sm:p-8">
                         <DeleteUserForm
                             className="max-w-xl"
-                            mustVerifyPasswordToDeleteAccount={
-                                mustVerifyPasswordToDeleteAccount
-                            }
+                            mustVerifyPasswordToDeleteAccount={hasPassword}
                             username={auth.user.username}
                         />
                     </div>
