@@ -29,6 +29,12 @@ class SocialLoginController extends Controller
                 ->redirect();
         }
 
+        if ($provider === "github") {
+            return Socialite::driver($provider)
+                ->scopes(['read:user', 'public_repo', 'read:org', 'read:project'])
+                ->redirect();
+        }
+
         return Socialite::driver($provider)->redirect();
     }
 
