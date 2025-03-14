@@ -21,7 +21,7 @@ import {
     FolderGit2,
     LayoutDashboard,
     Settings,
-    UserCircle,
+    UserCog,
 } from 'lucide-react';
 import { NavItems } from '../config/Site';
 
@@ -29,7 +29,7 @@ import { NavItems } from '../config/Site';
 const iconComponents = {
     FolderGit2,
     LayoutDashboard,
-    UserCircle,
+    UserCog,
     Settings,
 };
 
@@ -114,7 +114,7 @@ export function AppSidebar() {
                         </DropdownMenuTrigger>
                         <DropdownMenuContent>
                             <DropdownMenuItem asChild>
-                                <Link href="/profile">Profile</Link>
+                                <Link href="/dashboard">Profile</Link>
                             </DropdownMenuItem>
                             <DropdownMenuItem asChild>
                                 <Link href="/logout" method="post">

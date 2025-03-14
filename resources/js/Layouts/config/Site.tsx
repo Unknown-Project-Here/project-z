@@ -12,13 +12,8 @@ export const NavItems: NavItem[] = [
         icon: 'FolderGit2',
     },
     {
-        name: 'Profile',
-        href: '/profile',
-        icon: 'UserCircle',
-    },
-    {
         name: 'Settings',
-        href: '/settings/account',
-        icon: 'Settings',
+        href: '/settings',
+        icon: 'UserCog',
     },
 ];

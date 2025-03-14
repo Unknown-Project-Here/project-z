@@ -106,7 +106,7 @@ class SocialLoginController extends Controller
 
         return redirect()->intended(
             $user->hasVerifiedEmail()
-                ? route('dashboard')
+                ? route('profile.onboarding')
                 : route('verification.notice')
         );
     }
@@ -142,7 +142,7 @@ class SocialLoginController extends Controller
 
         return redirect()->intended(
             $newUser->hasVerifiedEmail()
-                ? route('dashboard')
+                ? route('profile.onboarding')
                 : route('verification.notice')
         );
     }

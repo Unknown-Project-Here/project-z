@@ -7,7 +7,13 @@ import UpdateProfileInformationForm from './Partials/UpdateProfileInformationFor
 export default function Edit({
     mustVerifyEmail,
     status,
-}: PageProps<{ mustVerifyEmail: boolean; status?: string }>) {
+    mustVerifyPasswordToDeleteAccount,
+    auth,
+}: PageProps<{
+    mustVerifyEmail: boolean;
+    status?: string;
+    mustVerifyPasswordToDeleteAccount: boolean;
+}>) {
     return (
         <>
             <Head title="Profile" />
@@ -27,7 +33,13 @@ export default function Edit({
                     </div>
 
                     <div className="bg-white p-4 shadow dark:bg-gray-800 sm:rounded-lg sm:p-8">
-                        <DeleteUserForm className="max-w-xl" />
+                        <DeleteUserForm
+                            className="max-w-xl"
+                            mustVerifyPasswordToDeleteAccount={
+                                mustVerifyPasswordToDeleteAccount
+                            }
+                            username={auth.user.username}
+                        />
                     </div>
                 </div>
             </div>

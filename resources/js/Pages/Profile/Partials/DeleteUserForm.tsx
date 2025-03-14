@@ -20,11 +20,15 @@ import { FormEventHandler, useRef, useState } from 'react';
 
 export default function DeleteUserForm({
     className = '',
+    mustVerifyPasswordToDeleteAccount = true,
+    username = '',
 }: {
     className?: string;
+    mustVerifyPasswordToDeleteAccount?: boolean;
+    username?: string;
 }) {
     const [open, setOpen] = useState(false);
-    const passwordInput = useRef<HTMLInputElement>(null);
+    const confirmInput = useRef<HTMLInputElement>(null);
 
     const {
         data,
@@ -36,15 +40,16 @@ export default function DeleteUserForm({
         clearErrors,
     } = useForm({
         password: '',
+        username_confirmation: '',
     });
 
     const deleteUser: FormEventHandler = (e) => {
         e.preventDefault();
 
-        destroy(route('profile.destroy'), {
+        destroy(route('settings.destroy'), {
             preserveScroll: true,
             onSuccess: () => closeModal(),
-            onError: () => passwordInput.current?.focus(),
+            onError: () => confirmInput.current?.focus(),
             onFinish: () => reset(),
         });
     };
@@ -101,36 +106,88 @@ export default function DeleteUserForm({
                                     Confirm account deletion
                                 </DialogStackTitle>
                                 <DialogStackDescription>
-                                    Please enter your password to confirm you
-                                    would like to permanently delete your
-                                    account.
+                                    {mustVerifyPasswordToDeleteAccount ? (
+                                        'Please enter your password to confirm you would like to permanently delete your account.'
+                                    ) : (
+                                        <>
+                                            Please type{' '}
+                                            <strong>{username}-delete</strong>{' '}
+                                            to confirm you would like to
+                                            permanently delete your account.
+                                        </>
+                                    )}
                                 </DialogStackDescription>
                             </DialogStackHeader>
                             <div className="py-4">
-                                <Label htmlFor="password" className="sr-only">
-                                    Password
-                                </Label>
-                                <Input
-                                    id="password"
-                                    type="password"
-                                    ref={passwordInput}
-                                    value={data.password}
-                                    onChange={(e) =>
-                                        setData('password', e.target.value)
-                                    }
-                                    className="mt-1 block w-full"
-                                    placeholder="Password"
-                                    required
-                                />
-                                {errors.password && (
-                                    <Alert
-                                        variant="destructive"
-                                        className="mt-2"
-                                    >
-                                        <AlertDescription>
-                                            {errors.password}
-                                        </AlertDescription>
-                                    </Alert>
+                                {mustVerifyPasswordToDeleteAccount ? (
+                                    <>
+                                        <Label
+                                            htmlFor="password"
+                                            className="sr-only"
+                                        >
+                                            Password
+                                        </Label>
+                                        <Input
+                                            id="password"
+                                            type="password"
+                                            ref={confirmInput}
+                                            value={data.password}
+                                            onChange={(e) =>
+                                                setData(
+                                                    'password',
+                                                    e.target.value,
+                                                )
+                                            }
+                                            className="mt-1 block w-full"
+                                            placeholder="Password"
+                                            required
+                                        />
+                                        {errors.password && (
+                                            <Alert
+                                                variant="destructive"
+                                                className="mt-2"
+                                            >
+                                                <AlertDescription>
+                                                    {errors.password}
+                                                </AlertDescription>
+                                            </Alert>
+                                        )}
+                                    </>
+                                ) : (
+                                    <>
+                                        <Label
+                                            htmlFor="username_confirmation"
+                                            className="sr-only"
+                                        >
+                                            Confirmation
+                                        </Label>
+                                        <Input
+                                            id="username_confirmation"
+                                            type="text"
+                                            ref={confirmInput}
+                                            value={data.username_confirmation}
+                                            onChange={(e) =>
+                                                setData(
+                                                    'username_confirmation',
+                                                    e.target.value,
+                                                )
+                                            }
+                                            className="mt-1 block w-full"
+                                            required
+                                        />
+                                        {errors.username_confirmation && (
+                                            <Alert
+                                                variant="destructive"
+                                                className="mt-2"
+                                            >
+                                                <AlertDescription>
+                                                    {
+                                                        errors.username_confirmation
+                                                    }
+                                                </AlertDescription>
+                                            </Alert>
+                                        )}
+                                    </>
                                 )}
                             </div>
                             <DialogStackFooter className="justify-between">
