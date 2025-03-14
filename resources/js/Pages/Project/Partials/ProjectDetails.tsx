@@ -1,8 +1,8 @@
-import { Icons } from '@/components/icons';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Card } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
+import { Icons } from '@/Components/icons';
+import { Alert, AlertDescription } from '@/Components/ui/alert';
+import { Card } from '@/Components/ui/card';
+import { Input } from '@/Components/ui/input';
+import { Textarea } from '@/Components/ui/textarea';
 import { ProjectDetailsProps, ProjectType } from '@/types';
 import { useState } from 'react';
 

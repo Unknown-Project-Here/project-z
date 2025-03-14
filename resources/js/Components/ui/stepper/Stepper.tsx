@@ -1,8 +1,8 @@
-import { Step } from '@/components/ui/stepper/Step';
-import { StepConnector } from '@/components/ui/stepper/StepConnector';
-import { StepperContent } from '@/components/ui/stepper/StepperContent';
-import { StepperContext } from '@/components/ui/stepper/StepperContext';
-import { StepperSidebar } from '@/components/ui/stepper/StepperSidebar';
+import { Step } from '@/Components/ui/stepper/Step';
+import { StepConnector } from '@/Components/ui/stepper/StepConnector';
+import { StepperContent } from '@/Components/ui/stepper/StepperContent';
+import { StepperContext } from '@/Components/ui/stepper/StepperContext';
+import { StepperSidebar } from '@/Components/ui/stepper/StepperSidebar';
 import { cn } from '@/lib/utils';
 import React, { useMemo, useState } from 'react';
 

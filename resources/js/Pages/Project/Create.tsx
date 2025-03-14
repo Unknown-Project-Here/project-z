@@ -1,4 +1,4 @@
-import { Stepper } from '@/components/ui/stepper/Stepper';
+import { Stepper } from '@/Components/ui/stepper/Stepper';
 import { useLocalStorage } from '@/hooks/use-local-storage';
 import { ProjectType } from '@/types';
 import { router } from '@inertiajs/react';

@@ -1,4 +1,4 @@
-import { useInviteStore } from '@/components/projects/invite/store/use-invite-store';
+import { useInviteStore } from '@/Components/projects/invite/store/use-invite-store';
 
 export const useResetInvite = () => {
     return () => {

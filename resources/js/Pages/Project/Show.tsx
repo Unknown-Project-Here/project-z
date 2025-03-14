@@ -1,15 +1,15 @@
-import ProjectInviteDialogButton from '@/components/projects/invite/components/ProjectInviteDialogButton';
-import ProjectRequestDialog from '@/components/projects/request/ProjectRequestDialog';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
+import ProjectInviteDialogButton from '@/Components/projects/invite/components/ProjectInviteDialogButton';
+import ProjectRequestDialog from '@/Components/projects/request/ProjectRequestDialog';
+import { Avatar, AvatarFallback, AvatarImage } from '@/Components/ui/avatar';
+import { Badge } from '@/Components/ui/badge';
+import { Button } from '@/Components/ui/button';
 import {
     Card,
     CardContent,
     CardDescription,
     CardHeader,
     CardTitle,
-} from '@/components/ui/card';
+} from '@/Components/ui/card';
 import { Project } from '@/types';
 import { Head, Link } from '@inertiajs/react';
 import dayjs from 'dayjs';

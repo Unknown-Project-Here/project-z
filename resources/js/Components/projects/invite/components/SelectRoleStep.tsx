@@ -1,9 +1,9 @@
-import { SearchResultUser } from '@/components/projects/invite/types';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Label } from '@/components/ui/label';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { useSetSelectedRole } from '@/components/projects/invite/store/hooks/useSetSelectedRole';
-import { useInviteStore } from '@/components/projects/invite/store/use-invite-store';
+import { useSetSelectedRole } from '@/Components/projects/invite/store/hooks/useSetSelectedRole';
+import { useInviteStore } from '@/Components/projects/invite/store/use-invite-store';
+import { SearchResultUser } from '@/Components/projects/invite/types';
+import { Avatar, AvatarFallback, AvatarImage } from '@/Components/ui/avatar';
+import { Label } from '@/Components/ui/label';
+import { RadioGroup, RadioGroupItem } from '@/Components/ui/radio-group';
 
 interface SelectRoleStepProps {
     selectedUser: SearchResultUser;

@@ -1,4 +1,4 @@
-import { useStepperContext } from '@/components/ui/stepper/StepperContext';
+import { useStepperContext } from '@/Components/ui/stepper/StepperContext';
 import { cn } from '@/lib/utils';
 import * as React from 'react';
 

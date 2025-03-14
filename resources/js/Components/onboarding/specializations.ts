@@ -1,4 +1,4 @@
-import { OnboardingItem } from '@/components/onboarding/types';
+import { OnboardingItem } from '@/Components/onboarding/types';
 
 export const specializations: Record<string, OnboardingItem[]> = {
     Development: [

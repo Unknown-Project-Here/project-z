@@ -1,10 +1,10 @@
-import DomainsStep from '@/components/onboarding/DomainsStep';
-import ExpertiseStep from '@/components/onboarding/ExpertiseStep';
-import FrameworksStep from '@/components/onboarding/FrameworksStep';
-import LanguagesStep from '@/components/onboarding/LanguagesStep';
-import SpecializationsStep from '@/components/onboarding/SpecializationsStep';
-import { OnboardingType } from '@/components/onboarding/types';
-import { Stepper } from '@/components/ui/stepper/Stepper';
+import DomainsStep from '@/Components/onboarding/DomainsStep';
+import ExpertiseStep from '@/Components/onboarding/ExpertiseStep';
+import FrameworksStep from '@/Components/onboarding/FrameworksStep';
+import LanguagesStep from '@/Components/onboarding/LanguagesStep';
+import SpecializationsStep from '@/Components/onboarding/SpecializationsStep';
+import { OnboardingType } from '@/Components/onboarding/types';
+import { Stepper } from '@/Components/ui/stepper/Stepper';
 import { useLocalStorage } from '@/hooks/use-local-storage';
 import { router } from '@inertiajs/react';
 

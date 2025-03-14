@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Services\GitHub\GitHubApiService;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class GitHubController extends Controller
@@ -24,7 +23,7 @@ class GitHubController extends Controller
 
         return response()->json([
             'success' => true,
-            'data' => $profile
+            'data' => $profile,
         ]);
     }
 
@@ -35,7 +34,7 @@ class GitHubController extends Controller
 
         return response()->json([
             'success' => true,
-            'data' => $repositories
+            'data' => $repositories,
         ]);
     }
 
@@ -46,7 +45,7 @@ class GitHubController extends Controller
 
         return response()->json([
             'success' => true,
-            'data' => $organizations
+            'data' => $organizations,
         ]);
     }
 

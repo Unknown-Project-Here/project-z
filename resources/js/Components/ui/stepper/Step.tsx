@@ -1,5 +1,5 @@
-import { StepConnector } from '@/components/ui/stepper/StepConnector';
-import { useStepperContext } from '@/components/ui/stepper/StepperContext';
+import { StepConnector } from '@/Components/ui/stepper/StepConnector';
+import { useStepperContext } from '@/Components/ui/stepper/StepperContext';
 import { cn } from '@/lib/utils';
 import { Check } from 'lucide-react';
 import React from 'react';

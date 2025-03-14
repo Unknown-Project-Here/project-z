@@ -1,9 +1,9 @@
-import { domains } from '@/components/onboarding/domains';
-import { FloatingSelections } from '@/components/onboarding/FloatingSelections';
-import { OnboardingType } from '@/components/onboarding/types';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { domains } from '@/Components/onboarding/domains';
+import { FloatingSelections } from '@/Components/onboarding/FloatingSelections';
+import { OnboardingType } from '@/Components/onboarding/types';
+import { Badge } from '@/Components/ui/badge';
+import { Button } from '@/Components/ui/button';
+import { Input } from '@/Components/ui/input';
 import { useOnboarding } from '@/hooks/useOnboarding';
 
 interface DomainProps {

@@ -1,8 +1,7 @@
 <?php
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\GitHubController;
+use Illuminate\Support\Facades\Route;
 
 Route::middleware('web')->prefix('github')->group(function () {
     Route::get('/profile', [GitHubController::class, 'getProfile']);

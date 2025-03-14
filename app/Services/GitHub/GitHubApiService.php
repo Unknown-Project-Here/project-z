@@ -2,7 +2,6 @@
 
 namespace App\Services\GitHub;
 
-use App\Models\SocialAccount;
 use App\Models\User;
 use Exception;
 use GuzzleHttp\Client;
@@ -12,8 +11,11 @@ use Illuminate\Support\Facades\Log;
 class GitHubApiService
 {
     protected Client $client;
+
     protected ?string $accessToken;
+
     protected ?string $username;
+
     protected const BASE_URL = 'https://api.github.com';
 
     public function __construct(?string $accessToken = null)
@@ -32,6 +34,7 @@ class GitHubApiService
     public function setAccessToken(string $accessToken): self
     {
         $this->accessToken = $accessToken;
+
         return $this;
     }
 
@@ -39,12 +42,13 @@ class GitHubApiService
     {
         $socialAccount = $user->getSocialAccount('github');
 
-        if (!$socialAccount || !$socialAccount->access_token) {
+        if (! $socialAccount || ! $socialAccount->access_token) {
             throw new Exception('User does not have a GitHub account connected');
         }
 
         $this->accessToken = $socialAccount->access_token;
         $this->username = $socialAccount->username ?? null;
+
         return $this;
     }
 
@@ -66,16 +70,17 @@ class GitHubApiService
     /**
      * Make an API request to GitHub
      *
-     * @param string $method HTTP method (GET, POST, etc)
-     * @param string $endpoint API endpoint
-     * @param array $params Request parameters
-     * @param array $customHeaders Custom headers to add to the request
+     * @param  string  $method  HTTP method (GET, POST, etc)
+     * @param  string  $endpoint  API endpoint
+     * @param  array  $params  Request parameters
+     * @param  array  $customHeaders  Custom headers to add to the request
      * @return array Response data
+     *
      * @throws GuzzleException|Exception
      */
     protected function request(string $method, string $endpoint, array $params = [], array $customHeaders = []): array
     {
-        if (!$this->accessToken) {
+        if (! $this->accessToken) {
             throw new Exception('GitHub API access token not provided');
         }
 
@@ -85,11 +90,11 @@ class GitHubApiService
             ],
         ];
 
-        if (!empty($customHeaders)) {
+        if (! empty($customHeaders)) {
             $options['headers'] = array_merge($options['headers'], $customHeaders);
         }
 
-        if (!empty($params)) {
+        if (! empty($params)) {
             if (strtoupper($method) === 'GET') {
                 $options['query'] = $params;
             } else {
@@ -99,6 +104,7 @@ class GitHubApiService
 
         try {
             $response = $this->client->request($method, $endpoint, $options);
+
             return json_decode($response->getBody()->getContents(), true) ?? [];
         } catch (GuzzleException $e) {
             Log::error('GitHub API error', [

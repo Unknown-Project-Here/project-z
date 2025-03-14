@@ -1,5 +1,5 @@
-import { useInviteStore } from '@/components/projects/invite/store/use-invite-store';
-import { SearchResultUser } from '@/components/projects/invite/types';
+import { useInviteStore } from '@/Components/projects/invite/store/use-invite-store';
+import { SearchResultUser } from '@/Components/projects/invite/types';
 
 export const useHandleUserSelect = () => {
     return (user: SearchResultUser) => {

@@ -3,7 +3,6 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 
 class ProfileDeleteRequest extends FormRequest
 {
@@ -27,18 +26,19 @@ class ProfileDeleteRequest extends FormRequest
                 'required',
                 function ($attribute, $value, $fail) use ($user) {
                     // If it's exactly username-delete, it's valid
-                    if ($value === $user->username . '-delete') {
+                    if ($value === $user->username.'-delete') {
                         return;
                     }
 
                     // If it doesn't contain the username at all, it's invalid
-                    if (!str_starts_with($value, $user->username)) {
+                    if (! str_starts_with($value, $user->username)) {
                         $fail('The username provided does not match your account username.');
+
                         return;
                     }
 
                     // If it contains the username but doesn't end with -delete, it's invalid
-                    if (!str_ends_with($value, '-delete')) {
+                    if (! str_ends_with($value, '-delete')) {
                         $fail('Please type your username followed by "-delete" to confirm account deletion.');
                     }
                 },

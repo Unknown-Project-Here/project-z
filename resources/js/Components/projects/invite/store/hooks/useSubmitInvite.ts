@@ -1,4 +1,4 @@
-import { useInviteStore } from '@/components/projects/invite/store/use-invite-store';
+import { useInviteStore } from '@/Components/projects/invite/store/use-invite-store';
 import { Project } from '@/types';
 import axios, { AxiosError } from 'axios';
 import { toast } from 'sonner';

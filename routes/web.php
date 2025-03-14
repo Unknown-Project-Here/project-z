@@ -29,7 +29,6 @@ Route::prefix('profile')->name('profile.')->middleware(['auth', 'verified'])->gr
         ->name('onboarding.store');
 });
 
-
 Route::middleware(['auth', 'verified'])->prefix('settings')->name('settings.')->group(function () {
     Route::get('/', [ProfileController::class, 'edit'])->name('edit');
     Route::patch('/', [ProfileController::class, 'update'])->name('update');

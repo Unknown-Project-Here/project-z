@@ -1,6 +1,6 @@
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import H3 from '@/components/ui/typography/H3';
+import { Button } from '@/Components/ui/button';
+import { Card, CardContent } from '@/Components/ui/card';
+import H3 from '@/Components/ui/typography/H3';
 import { usePageProps } from '@/hooks/usePageProps';
 import NotificationItemPage from '@/Layouts/components/notifications/NotificationItemPage';
 import { useNotificationStore } from '@/Layouts/components/notifications/store/notifications';

@@ -1,6 +1,6 @@
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { Alert, AlertDescription } from '@/Components/ui/alert';
+import { Button } from '@/Components/ui/button';
+import { Input } from '@/Components/ui/input';
 import {
     DialogStack,
     DialogStackBody,
@@ -13,8 +13,8 @@ import {
     DialogStackPrevious,
     DialogStackTitle,
     DialogStackTrigger,
-} from '@/components/ui/kibo-ui/dialog-stack';
-import { Label } from '@/components/ui/label';
+} from '@/Components/ui/kibo-ui/dialog-stack';
+import { Label } from '@/Components/ui/label';
 import { useForm } from '@inertiajs/react';
 import { FormEventHandler, useRef, useState } from 'react';
 

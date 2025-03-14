@@ -29,7 +29,7 @@ class SocialLoginController extends Controller
                 ->redirect();
         }
 
-        if ($provider === "github") {
+        if ($provider === 'github') {
             return Socialite::driver($provider)
                 ->scopes(['read:user', 'public_repo', 'read:org', 'read:project'])
                 ->with(['prompt' => 'consent'])
