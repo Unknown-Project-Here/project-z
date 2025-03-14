@@ -2,8 +2,8 @@
 
 namespace Database\Factories;
 
-use App\Models\User;
 use App\Models\Project;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class ProjectFactory extends Factory
@@ -18,8 +18,8 @@ class ProjectFactory extends Factory
             'description' => fake()->paragraph(3),
             'contact' => [
                 'email' => fake()->safeEmail(),
-                'github' => 'https://github.com/' . fake()->userName(),
-                'discord' => 'https://discord.com/' . fake()->userName(),
+                'github' => 'https://github.com/'.fake()->userName(),
+                'discord' => 'https://discord.com/'.fake()->userName(),
             ],
             'skill_level' => fake()->randomElement(['beginner', 'intermediate', 'expert']),
             'is_active' => fake()->boolean(80),
@@ -34,7 +34,7 @@ class ProjectFactory extends Factory
         return $this->afterCreating(function (Project $project) use ($members) {
             foreach ($members as $member) {
                 $project->members()->attach($member['user'], [
-                    'role' => $member['role']
+                    'role' => $member['role'],
                 ]);
             }
         });
@@ -45,7 +45,7 @@ class ProjectFactory extends Factory
      */
     public function active(): static
     {
-        return $this->state(fn(array $attributes) => [
+        return $this->state(fn (array $attributes) => [
             'is_active' => true,
         ]);
     }
@@ -55,7 +55,7 @@ class ProjectFactory extends Factory
      */
     public function inactive(): static
     {
-        return $this->state(fn(array $attributes) => [
+        return $this->state(fn (array $attributes) => [
             'is_active' => false,
         ]);
     }

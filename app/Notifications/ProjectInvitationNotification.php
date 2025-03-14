@@ -4,7 +4,6 @@ namespace App\Notifications;
 
 use App\Models\ProjectInvitation;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\BroadcastMessage;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
@@ -13,11 +12,9 @@ class ProjectInvitationNotification extends Notification
 {
     use Queueable;
 
-
     public function __construct(
         private readonly ProjectInvitation $invitation
     ) {}
-
 
     public function via(object $notifiable): array
     {
@@ -28,11 +25,10 @@ class ProjectInvitationNotification extends Notification
     {
         return (new MailMessage)
             ->subject('You\'ve Been Invited to Join a Project')
-            ->line('You have been invited to join the project: ' . $this->invitation->project->title)
-            ->action('View Invitation', url('/projects/' . $this->invitation->project->id))
+            ->line('You have been invited to join the project: '.$this->invitation->project->title)
+            ->action('View Invitation', url('/projects/'.$this->invitation->project->id))
             ->line('This invitation will expire in 7 days.');
     }
-
 
     public function toDatabase(object $notifiable): array
     {

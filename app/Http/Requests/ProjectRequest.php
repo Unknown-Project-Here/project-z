@@ -2,8 +2,8 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
 use App\Enums\SkillLevelEnum;
+use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rules\Enum;
 
 class ProjectRequest extends FormRequest
@@ -50,7 +50,7 @@ class ProjectRequest extends FormRequest
             'project.skills.language.array' => 'The project language must be an array.',
             'project.skills.framework.required' => 'A project framework is required.',
             'project.skills.framework.array' => 'The project framework must be an array.',
-            'project.skills.expertise.required' => 'A project expertise is required.'
+            'project.skills.expertise.required' => 'A project expertise is required.',
         ];
     }
 }

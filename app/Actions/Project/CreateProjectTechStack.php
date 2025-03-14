@@ -16,7 +16,7 @@ class CreateProjectTechStack
 
         foreach (['domain', 'language', 'framework', 'specialization'] as $category) {
             $options = Option::query()
-                ->whereHas('category', fn($query) => $query->where('name', $category))
+                ->whereHas('category', fn ($query) => $query->where('name', $category))
                 ->whereIn('name', array_map('strtolower', $data['project']['skills'][$category]))
                 ->get();
 
@@ -25,12 +25,12 @@ class CreateProjectTechStack
                     'project_id' => $project->id,
                     'option_id' => $option->id,
                     'created_at' => now(),
-                    'updated_at' => now()
+                    'updated_at' => now(),
                 ];
             }
         }
 
-        if (!empty($insertData)) {
+        if (! empty($insertData)) {
             ProjectTechStack::insert($insertData);
         }
 

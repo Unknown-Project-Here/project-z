@@ -69,4 +69,4 @@ Route::prefix('notifications')->name('notifications.')->group(function () {
     });
 });
 
-require __DIR__ . '/auth.php';
+require __DIR__.'/auth.php';

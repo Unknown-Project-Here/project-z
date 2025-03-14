@@ -20,7 +20,7 @@ return new class extends Migration
             $table->text('refresh_token')->nullable();
             $table->timestamp('token_expires_at')->nullable();
             $table->timestamps();
-            
+
             // Ensure a user can't have multiple accounts for the same provider
             $table->unique(['user_id', 'provider']);
             // Ensure provider_id is unique for each provider

@@ -2,10 +2,9 @@
 
 namespace Tests\Feature;
 
-use App\Models\User;
-use App\Models\Project;
 use App\Enums\ProjectRole;
-use App\Enums\ProjectPermission;
+use App\Models\Project;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -14,8 +13,11 @@ class ProjectDeleteTest extends TestCase
     use RefreshDatabase;
 
     private Project $project;
+
     private User $creator;
+
     private User $admin;
+
     private User $contributor;
 
     protected function setUp(): void
@@ -51,7 +53,7 @@ class ProjectDeleteTest extends TestCase
 
         $response->assertForbidden()
             ->assertJson([
-                'message' => 'You do not have permission to delete this project.'
+                'message' => 'You do not have permission to delete this project.',
             ]);
 
         $this->assertDatabaseHas('projects', ['id' => $this->project->id]);
@@ -64,7 +66,7 @@ class ProjectDeleteTest extends TestCase
 
         $response->assertForbidden()
             ->assertJson([
-                'message' => 'You do not have permission to delete this project.'
+                'message' => 'You do not have permission to delete this project.',
             ]);
 
         $this->assertDatabaseHas('projects', ['id' => $this->project->id]);
@@ -87,7 +89,7 @@ class ProjectDeleteTest extends TestCase
 
         $response->assertForbidden()
             ->assertJson([
-                'message' => 'You do not have permission to delete this project.'
+                'message' => 'You do not have permission to delete this project.',
             ]);
 
         $this->assertDatabaseHas('projects', ['id' => $this->project->id]);

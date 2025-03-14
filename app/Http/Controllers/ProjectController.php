@@ -41,10 +41,10 @@ class ProjectController extends Controller
 
         $transformed = collect($projects->items())->map(function ($project) {
             $projectArray = $project->toArray();
-            
+
             // Transform stack into flat array
             $stackArray = collect($project->stack)
-                ->map(fn($item) => [
+                ->map(fn ($item) => [
                     'id' => $item->option->id,
                     'name' => $item->option->name,
                     'skill_level' => $item->skill_level,
@@ -52,7 +52,7 @@ class ProjectController extends Controller
 
             $projectArray['stack'] = $stackArray;
             $projectArray['creator'] = $project->creator;
-            
+
             return $projectArray;
         });
 
@@ -90,8 +90,8 @@ class ProjectController extends Controller
 
             // Organize stack by categories
             $stackByCategory = collect($project->stack)
-                ->groupBy(fn($stack) => $stack->option->category->name)
-                ->map(fn($items) => $items->map(fn($item) => [
+                ->groupBy(fn ($stack) => $stack->option->category->name)
+                ->map(fn ($items) => $items->map(fn ($item) => [
                     'id' => $item->option->id,
                     'name' => $item->option->name,
                     'skill_level' => $item->skill_level,

@@ -2,11 +2,11 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use Illuminate\Database\Seeder;
-use App\Models\Project;
 use App\Enums\ProjectRole;
+// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\Project;
+use App\Models\User;
+use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -35,8 +35,8 @@ class DatabaseSeeder extends Seeder
                         'user' => $user,
                         'role' => fake()->randomElement([
                             ProjectRole::ADMIN,
-                            ProjectRole::CONTRIBUTOR
-                        ])
+                            ProjectRole::CONTRIBUTOR,
+                        ]),
                     ];
                 })
                 ->toArray();

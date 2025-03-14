@@ -13,6 +13,7 @@ class OnboardingTest extends TestCase
     use RefreshDatabase;
 
     private array $validOnboardingData;
+
     private User $user;
 
     protected function setUp(): void
@@ -34,13 +35,12 @@ class OnboardingTest extends TestCase
                 'language' => ['Objective-C'],
                 'framework' => ['FastAPI'],
                 'expertise' => 'intermediate',
-                'specialization' => ['Cloud Architect', 'Machine Learning Engineer']
-            ]
+                'specialization' => ['Cloud Architect', 'Machine Learning Engineer'],
+            ],
         ];
     }
 
     public function test_unverified_users_cannot_complete_onboarding(): void
-
     {
         $user = User::factory()->unverified()->create();
 
@@ -62,7 +62,7 @@ class OnboardingTest extends TestCase
                 foreach ($values as $value) {
                     $this->assertDatabaseHas('options', [
                         'name' => strtolower($value),
-                        'category_id' => Category::where('name', $key)->first()->id
+                        'category_id' => Category::where('name', $key)->first()->id,
                     ]);
                 }
             }
@@ -87,8 +87,8 @@ class OnboardingTest extends TestCase
                 'language' => [],
                 'framework' => [],
                 'expertise' => 'invalid-level',
-                'specialization' => []
-            ]
+                'specialization' => [],
+            ],
         ];
 
         $response = $this->actingAs($this->user)
@@ -110,11 +110,13 @@ class OnboardingTest extends TestCase
         $response->assertSessionHas('status', 'onboarding-completed');
 
         foreach ($this->validOnboardingData['skills'] as $category => $values) {
-            if ($category === 'expertise') continue;
+            if ($category === 'expertise') {
+                continue;
+            }
 
             foreach ($values as $value) {
                 $option = Option::where('name', strtolower($value))
-                    ->whereHas('category', fn($query) => $query->where('name', $category))
+                    ->whereHas('category', fn ($query) => $query->where('name', $category))
                     ->first();
 
                 $this->assertNotNull($option, "Option not found: {$value} in category {$category}");
@@ -122,7 +124,7 @@ class OnboardingTest extends TestCase
                 $this->assertDatabaseHas('user_tech_stacks', [
                     'user_id' => $this->user->id,
                     'option_id' => $option->id,
-                    'skill_level' => $this->validOnboardingData['skills']['expertise']
+                    'skill_level' => $this->validOnboardingData['skills']['expertise'],
                 ]);
             }
         }

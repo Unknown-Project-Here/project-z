@@ -2,8 +2,8 @@
 
 namespace App\Actions\Options;
 
-use App\Models\Option;
 use App\Models\Category;
+use App\Models\Option;
 use Closure;
 
 class CreateMissingOptions
@@ -13,10 +13,9 @@ class CreateMissingOptions
         foreach (['domain', 'language', 'framework', 'specialization'] as $categoryName) {
             if ($category = Category::where('name', $categoryName)->first()) {
                 collect($data['skills'][$categoryName])->each(
-                    fn($optionName) =>
-                    Option::firstOrCreate([
+                    fn ($optionName) => Option::firstOrCreate([
                         'name' => strtolower($optionName),
-                        'category_id' => $category->id
+                        'category_id' => $category->id,
                     ])
                 );
             }

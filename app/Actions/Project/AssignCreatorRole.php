@@ -15,7 +15,7 @@ class AssignCreatorRole
         $project->members()->attach($user->id, [
             'role' => ProjectRole::CREATOR,
             'created_at' => now(),
-            'updated_at' => now()
+            'updated_at' => now(),
         ]);
 
         return $next($pipeline);

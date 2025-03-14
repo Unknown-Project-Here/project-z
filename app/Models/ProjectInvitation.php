@@ -14,7 +14,7 @@ class ProjectInvitation extends Model
         'invitee_id',
         'role',
         'expires_at',
-        'token'
+        'token',
     ];
 
     protected $casts = [
@@ -53,6 +53,6 @@ class ProjectInvitation extends Model
 
     public function isPending(): bool
     {
-        return !$this->isExpired();
+        return ! $this->isExpired();
     }
 }

@@ -22,7 +22,7 @@ class CreateProject
 
         return $next([
             'project' => $project,
-            'data' => $data
+            'data' => $data,
         ]);
     }
 }

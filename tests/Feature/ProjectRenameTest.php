@@ -2,9 +2,9 @@
 
 namespace Tests\Feature;
 
-use App\Models\User;
-use App\Models\Project;
 use App\Enums\ProjectRole;
+use App\Models\Project;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -13,8 +13,11 @@ class ProjectRenameTest extends TestCase
     use RefreshDatabase;
 
     private Project $project;
+
     private User $creator;
+
     private User $admin;
+
     private User $contributor;
 
     protected function setUp(): void
@@ -41,13 +44,13 @@ class ProjectRenameTest extends TestCase
 
         $response = $this->actingAs($this->creator)
             ->patchJson("/projects/{$this->project->id}/rename", [
-                'title' => $newTitle
+                'title' => $newTitle,
             ]);
 
         $response->assertSuccessful()
             ->assertJson([
                 'success' => true,
-                'message' => 'Project renamed successfully.'
+                'message' => 'Project renamed successfully.',
             ]);
 
         $this->assertDatabaseHas('projects', [
@@ -62,12 +65,12 @@ class ProjectRenameTest extends TestCase
 
         $response = $this->actingAs($this->admin)
             ->patchJson("/projects/{$this->project->id}/rename", [
-                'title' => $newTitle
+                'title' => $newTitle,
             ]);
 
         $response->assertForbidden()
             ->assertJson([
-                'message' => 'You do not have permission to rename this project.'
+                'message' => 'You do not have permission to rename this project.',
             ]);
 
         $this->assertDatabaseMissing('projects', [
@@ -82,7 +85,7 @@ class ProjectRenameTest extends TestCase
 
         $response = $this->actingAs($this->contributor)
             ->patchJson("/projects/{$this->project->id}/rename", [
-                'title' => $newTitle
+                'title' => $newTitle,
             ]);
 
         $response->assertForbidden();
@@ -97,7 +100,7 @@ class ProjectRenameTest extends TestCase
         $newTitle = 'Unauthorized Updated Title';
 
         $response = $this->patchJson("/projects/{$this->project->id}/rename", [
-            'title' => $newTitle
+            'title' => $newTitle,
         ]);
 
         $response->assertUnauthorized();
@@ -114,7 +117,7 @@ class ProjectRenameTest extends TestCase
 
         $response = $this->actingAs($nonMember)
             ->patchJson("/projects/{$this->project->id}/rename", [
-                'title' => $newTitle
+                'title' => $newTitle,
             ]);
 
         $response->assertForbidden();
@@ -128,12 +131,12 @@ class ProjectRenameTest extends TestCase
     {
         $response = $this->actingAs($this->creator)
             ->patchJson("/projects/{$this->project->id}/rename", [
-                'title' => ''
+                'title' => '',
             ]);
 
         $response->assertUnprocessable()
             ->assertJsonValidationErrors([
-                'title' => 'A project title is required.'
+                'title' => 'A project title is required.',
             ]);
     }
 
@@ -141,12 +144,12 @@ class ProjectRenameTest extends TestCase
     {
         $response = $this->actingAs($this->creator)
             ->patchJson("/projects/{$this->project->id}/rename", [
-                'title' => 'ab'
+                'title' => 'ab',
             ]);
 
         $response->assertUnprocessable()
             ->assertJsonValidationErrors([
-                'title' => 'The project title must be at least 3 characters long.'
+                'title' => 'The project title must be at least 3 characters long.',
             ]);
     }
 
@@ -154,12 +157,12 @@ class ProjectRenameTest extends TestCase
     {
         $response = $this->actingAs($this->creator)
             ->patchJson("/projects/{$this->project->id}/rename", [
-                'title' => str_repeat('a', 256)
+                'title' => str_repeat('a', 256),
             ]);
 
         $response->assertUnprocessable()
             ->assertJsonValidationErrors([
-                'title' => 'The project title cannot be longer than 255 characters.'
+                'title' => 'The project title cannot be longer than 255 characters.',
             ]);
     }
 
@@ -167,12 +170,12 @@ class ProjectRenameTest extends TestCase
     {
         $response = $this->actingAs($this->creator)
             ->patchJson("/projects/{$this->project->id}/rename", [
-                'title' => $this->project->title
+                'title' => $this->project->title,
             ]);
 
         $response->assertUnprocessable()
             ->assertJsonValidationErrors([
-                'title' => 'This project title is already taken.'
+                'title' => 'This project title is already taken.',
             ]);
     }
 }

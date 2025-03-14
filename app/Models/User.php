@@ -6,9 +6,9 @@ use App\Enums\ProjectPermission;
 use App\Enums\ProjectRole;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
@@ -68,17 +68,17 @@ class User extends Authenticatable implements MustVerifyEmail
 
     /**
      * Get a specific social account by provider name
-     * @param string $provider
-     * @param array<string> $with Additional relations to eager load
+     *
+     * @param  array<string>  $with  Additional relations to eager load
      */
     public function getSocialAccount(string $provider, array $with = []): ?SocialAccount
     {
         $query = $this->socialAccounts()->where('provider', $provider);
-        
-        if (!empty($with)) {
+
+        if (! empty($with)) {
             $query->with($with);
         }
-        
+
         return $query->first();
     }
 
@@ -98,17 +98,17 @@ class User extends Authenticatable implements MustVerifyEmail
     public function getAccessToken(string $provider): ?string
     {
         $account = $this->getSocialAccount($provider);
-        
-        if (!$account) {
+
+        if (! $account) {
             return null;
         }
-        
+
         if ($account->isTokenExpired()) {
             // TODO: Handle expired token - refresh it here
             // or handle this in your controller
             return null;
         }
-        
+
         return $account->access_token;
     }
 
