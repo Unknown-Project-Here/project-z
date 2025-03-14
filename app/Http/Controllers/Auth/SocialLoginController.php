@@ -105,7 +105,7 @@ class SocialLoginController extends Controller
         Auth::login($user, true);
 
         return redirect()->intended(
-            $user->hasVerifiedEmail()
+            $user->hasVerifiedEmail() && !$user->onboarded
                 ? route('profile.onboarding')
                 : route('verification.notice')
         );
