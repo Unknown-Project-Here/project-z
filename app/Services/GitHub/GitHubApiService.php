@@ -3,115 +3,119 @@
 namespace App\Services\GitHub;
 
 use App\Models\User;
-use Exception;
-use GuzzleHttp\Client;
-use GuzzleHttp\Exception\GuzzleException;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Http\Client\PendingRequest;
+use Illuminate\Http\Client\RequestException;
+use Illuminate\Support\Facades\Http;
 
 class GitHubApiService
 {
-    protected Client $client;
+    private const GITHUB_API_BASE = 'https://api.github.com';
 
-    protected ?string $accessToken;
+    private const PROVIDER = 'github';
 
-    protected ?string $username;
+    private ?User $user = null;
 
-    protected const BASE_URL = 'https://api.github.com';
+    private PendingRequest $httpClient;
 
-    public function __construct(?string $accessToken = null)
+    public function __construct()
     {
-        $this->accessToken = $accessToken;
-        $this->client = new Client([
-            'base_uri' => self::BASE_URL,
-            'headers' => [
-                'Accept' => 'application/vnd.github.v3+json',
-                'Content-Type' => 'application/json',
-                'User-Agent' => 'Laravel-GitHub-App',
-            ],
-        ]);
+        $this->httpClient = Http::withHeaders([
+            'Accept' => 'application/vnd.github.v3+json',
+            'User-Agent' => 'Laravel-GitHub-App',
+        ])->baseUrl(self::GITHUB_API_BASE);
     }
 
-    public function setAccessToken(string $accessToken): self
+    public function setUser(?User $user): self
     {
-        $this->accessToken = $accessToken;
+        $this->user = $user;
 
         return $this;
     }
 
-    public function setAccessTokenFromUser(User $user): self
+    public function hasSocialProvider(): bool
     {
-        $socialAccount = $user->getSocialAccount('github');
+        return $this->user?->hasSocialProvider(self::PROVIDER) ?? false;
+    }
 
-        if (! $socialAccount || ! $socialAccount->access_token) {
-            throw new Exception('User does not have a GitHub account connected');
+    public function getUserId(): ?int
+    {
+        return $this->user?->id;
+    }
+
+    public function getUser(): ?array
+    {
+        if (! $this->user) {
+            return null;
         }
 
-        $this->accessToken = $socialAccount->access_token;
-        $this->username = $socialAccount->username ?? null;
+        $accessToken = $this->user->getAccessToken(self::PROVIDER);
 
-        return $this;
-    }
-
-    public function getAuthenticatedUser(): array
-    {
-        return $this->request('GET', '/user');
-    }
-
-    public function getRepositories(): array
-    {
-        return $this->request('GET', '/user/repos');
-    }
-
-    public function getOrganizations(): array
-    {
-        return $this->request('GET', '/user/orgs');
-    }
-
-    /**
-     * Make an API request to GitHub
-     *
-     * @param  string  $method  HTTP method (GET, POST, etc)
-     * @param  string  $endpoint  API endpoint
-     * @param  array  $params  Request parameters
-     * @param  array  $customHeaders  Custom headers to add to the request
-     * @return array Response data
-     *
-     * @throws GuzzleException|Exception
-     */
-    protected function request(string $method, string $endpoint, array $params = [], array $customHeaders = []): array
-    {
-        if (! $this->accessToken) {
-            throw new Exception('GitHub API access token not provided');
-        }
-
-        $options = [
-            'headers' => [
-                'Authorization' => "Bearer {$this->accessToken}",
-            ],
-        ];
-
-        if (! empty($customHeaders)) {
-            $options['headers'] = array_merge($options['headers'], $customHeaders);
-        }
-
-        if (! empty($params)) {
-            if (strtoupper($method) === 'GET') {
-                $options['query'] = $params;
-            } else {
-                $options['json'] = $params;
-            }
+        if (! $accessToken) {
+            return null;
         }
 
         try {
-            $response = $this->client->request($method, $endpoint, $options);
+            $response = $this->httpClient
+                ->withToken($accessToken)
+                ->get('/user');
 
-            return json_decode($response->getBody()->getContents(), true) ?? [];
-        } catch (GuzzleException $e) {
-            Log::error('GitHub API error', [
-                'method' => $method,
-                'endpoint' => $endpoint,
-                'error' => $e->getMessage(),
-            ]);
+            $response->throw();
+
+            return $response->json();
+        } catch (RequestException $e) {
+            logger()->error('GitHub API request failed: '.$e->getMessage());
+            throw $e;
+        }
+    }
+
+    public function getRepositories(): ?array
+    {
+        if (! $this->user) {
+            return null;
+        }
+
+        $accessToken = $this->user->getAccessToken(self::PROVIDER);
+
+        if (! $accessToken) {
+            return null;
+        }
+
+        try {
+            $response = $this->httpClient
+                ->withToken($accessToken)
+                ->get('/user/repos');
+
+            $response->throw();
+
+            return $response->json();
+        } catch (RequestException $e) {
+            logger()->error('GitHub API request failed: '.$e->getMessage());
+            throw $e;
+        }
+    }
+
+    public function getOrganizations(): ?array
+    {
+        if (! $this->user) {
+            return null;
+        }
+
+        $accessToken = $this->user->getAccessToken(self::PROVIDER);
+
+        if (! $accessToken) {
+            return null;
+        }
+
+        try {
+            $response = $this->httpClient
+                ->withToken($accessToken)
+                ->get('/user/organizations');
+
+            $response->throw();
+
+            return $response->json();
+        } catch (RequestException $e) {
+            logger()->error('GitHub API request failed: '.$e->getMessage());
             throw $e;
         }
     }

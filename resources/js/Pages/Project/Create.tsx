@@ -34,11 +34,7 @@ export default function CreateProject() {
 
         switch (stepIndex) {
             case 0:
-                return (
-                    !!projectData.title &&
-                    !!projectData.description &&
-                    Object.values(projectData.contact).some((value) => !!value)
-                );
+                return !!projectData.title && !!projectData.description;
             case 1:
                 return projectData?.domain?.length > 0;
             case 2:

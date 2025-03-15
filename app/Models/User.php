@@ -162,4 +162,9 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasMany(UserTechStack::class);
     }
+
+    public function getSocialUsernames(): array
+    {
+        return $this->socialAccounts->pluck('provider', 'username')->flip()->toArray();
+    }
 }

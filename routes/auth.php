@@ -12,6 +12,14 @@ use App\Http\Controllers\Auth\SocialLoginController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use Illuminate\Support\Facades\Route;
 
+Route::get('redirect/{provider}', [SocialLoginController::class, 'redirectToProvider'])
+    ->name('social.login')
+    ->where('driver', implode('|', config('auth.socialite.drivers')));
+
+Route::get('{provider}/callback', [SocialLoginController::class, 'handleProviderCallback'])
+    ->name('social.callback')
+    ->where('provider', implode('|', config('auth.socialite.drivers')));
+
 Route::middleware('guest')->group(function () {
     Route::get('register', [RegisteredUserController::class, 'create'])
         ->name('register');
@@ -34,14 +42,6 @@ Route::middleware('guest')->group(function () {
 
     Route::post('reset-password', [NewPasswordController::class, 'store'])
         ->name('password.store');
-
-    Route::get('redirect/{provider}', [SocialLoginController::class, 'redirectToProvider'])
-        ->name('social.login')
-        ->where('driver', implode('|', config('auth.socialite.drivers')));
-
-    Route::get('{provider}/callback', [SocialLoginController::class, 'handleProviderCallback'])
-        ->name('social.callback')
-        ->where('provider', implode('|', config('auth.socialite.drivers')));
 });
 
 Route::middleware('auth')->group(function () {
