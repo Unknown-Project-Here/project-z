@@ -10,8 +10,6 @@ use App\Http\Requests\ProjectRenameRequest;
 use App\Http\Requests\ProjectRequest;
 use App\Models\Project;
 use App\Models\User;
-use App\Services\Discord\DiscordApiService;
-use App\Services\GitHub\GitHubApiService;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -26,13 +24,6 @@ use Inertia\Response;
 class ProjectController extends Controller
 {
     use AuthorizesRequests;
-
-    public function __construct(private GitHubApiService $githubService,
-        private DiscordApiService $discordService, )
-    {
-        $this->githubService = $githubService;
-        $this->discordService = $discordService;
-    }
 
     /**
      * Display a listing of the resource.
