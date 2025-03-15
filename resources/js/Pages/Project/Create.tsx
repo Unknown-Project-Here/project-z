@@ -1,8 +1,18 @@
 import { Stepper } from '@/Components/ui/stepper/Stepper';
 import { useLocalStorage } from '@/hooks/use-local-storage';
+import { usePageProps } from '@/hooks/usePageProps';
 import { ProjectType } from '@/types';
 import { router } from '@inertiajs/react';
+import { useEffect } from 'react';
 import { projectSteps } from './Partials/ProjectSteps';
+
+type PagePropsWithUsernames = {
+    usernames: {
+        google?: string;
+        github?: string;
+        discord?: string;
+    };
+};
 
 const defaultProjectData: ProjectType = {
     title: '',
@@ -21,10 +31,42 @@ const defaultProjectData: ProjectType = {
 };
 
 export default function CreateProject() {
+    const { props } = usePageProps<PagePropsWithUsernames>();
+
+    // Initialize with default data
     const [projectData, setProjectData] = useLocalStorage({
         key: 'project-creation',
         defaultValue: defaultProjectData,
     });
+
+    // Update contact info with usernames from props if they exist
+    useEffect(() => {
+        const usernames = props.usernames || {};
+
+        if (usernames && Object.keys(usernames).length > 0) {
+            setProjectData((prev) => {
+                // Only update if the current values are empty
+                const updatedContact = { ...prev.contact };
+
+                if (usernames.github && !prev.contact.github) {
+                    updatedContact.github = usernames.github;
+                }
+
+                if (usernames.discord && !prev.contact.discord) {
+                    updatedContact.discord = usernames.discord;
+                }
+
+                if (usernames.google && !prev.contact.email) {
+                    updatedContact.email = usernames.google;
+                }
+
+                return {
+                    ...prev,
+                    contact: updatedContact,
+                };
+            });
+        }
+    }, [props.usernames, setProjectData]);
 
     const validateStep = (stepIndex: number) => {
         if (!projectData) {

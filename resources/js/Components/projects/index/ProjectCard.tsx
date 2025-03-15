@@ -20,7 +20,7 @@ interface ProjectCardProps {
 export function ProjectCard({ project }: ProjectCardProps) {
     return (
         <Card className="flex h-[450px] flex-col transition-shadow hover:shadow-lg">
-            <CardHeader className="h-28 flex-none">
+            <CardHeader className="flex-none">
                 <div className="flex items-start justify-between gap-2">
                     <Link href={route('projects.show', project.id)}>
                         <CardTitle className="line-clamp-3 text-xl">
@@ -40,7 +40,7 @@ export function ProjectCard({ project }: ProjectCardProps) {
                     <span className="line-clamp-1">
                         By {project.creator.username}
                     </span>
-                    <p className="mb-4 line-clamp-2">{project.description}</p>
+                    <p className="mb-2 line-clamp-2">{project.description}</p>
                 </div>
 
                 <div className="mt-4 flex flex-col gap-2">
