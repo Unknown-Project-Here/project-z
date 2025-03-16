@@ -1,7 +1,7 @@
-import { expertiseLevels } from '@/components/onboarding/expertiseLevels';
-import { OnboardingType } from '@/components/onboarding/types';
-import { Card } from '@/components/ui/card';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { expertiseLevels } from '@/Components/onboarding/expertiseLevels';
+import { OnboardingType } from '@/Components/onboarding/types';
+import { Card } from '@/Components/ui/card';
+import { RadioGroup, RadioGroupItem } from '@/Components/ui/radio-group';
 
 interface ExpertiseStepProps {
     data: OnboardingType;

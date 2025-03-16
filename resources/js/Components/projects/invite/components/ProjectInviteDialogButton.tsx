@@ -1,13 +1,13 @@
-import { Button } from '@/components/ui/button';
+import { ConfirmInviteStep } from '@/Components/projects/invite/components/ConfirmInviteStep';
+import { SearchUsersStep } from '@/Components/projects/invite/components/SearchUsersStep';
+import { SelectRoleStep } from '@/Components/projects/invite/components/SelectRoleStep';
+import { DialogStack } from '@/Components/projects/invite/components/ui/dialog-stack';
+import { useHandleStepChange } from '@/Components/projects/invite/store/hooks/useHandleStepChange';
+import { useResetInvite } from '@/Components/projects/invite/store/hooks/useResetInvite';
+import { useInviteStore } from '@/Components/projects/invite/store/use-invite-store';
+import { Button } from '@/Components/ui/button';
 import { Project } from '@/types';
 import { useEffect, useState } from 'react';
-import { useHandleStepChange } from '@/components/projects/invite/store/hooks/useHandleStepChange';
-import { useResetInvite } from '@/components/projects/invite/store/hooks/useResetInvite';
-import { useInviteStore } from '@/components/projects/invite/store/use-invite-store';
-import { ConfirmInviteStep } from '@/components/projects/invite/components/ConfirmInviteStep';
-import { SearchUsersStep } from '@/components/projects/invite/components/SearchUsersStep';
-import { SelectRoleStep } from '@/components/projects/invite/components/SelectRoleStep';
-import { DialogStack } from '@/components/projects/invite/components/ui/dialog-stack';
 
 interface ProjectInviteDialogButtonProps {
     project: Project;

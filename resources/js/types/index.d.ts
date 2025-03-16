@@ -95,6 +95,7 @@ export interface ProjectType {
     framework: string[];
     expertise: string;
     specialization: string[];
+    githubRepo: { id: number; name: string } | null;
 }
 
 export interface ProjectDetailsProps {
@@ -118,4 +119,14 @@ export type NavItem = {
     name: string;
     href: string;
     icon: string;
+};
+
+export type ProjectCreateGithubRepoList = {
+    public: ProjectCreateGithubRepo[];
+    private: ProjectCreateGithubRepo[];
+};
+
+type ProjectCreateGithubRepo = {
+    id: number;
+    name: string;
 };

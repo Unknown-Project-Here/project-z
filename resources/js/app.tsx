@@ -1,7 +1,7 @@
 import '../css/app.css';
 import './bootstrap';
 
-import { Toaster } from '@/components/ui/sonner';
+import { Toaster } from '@/Components/ui/sonner';
 import { ThemeProvider } from '@/Providers/ThemeProvider';
 import { createInertiaApp } from '@inertiajs/react';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';

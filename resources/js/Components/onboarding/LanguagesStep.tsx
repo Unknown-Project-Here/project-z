@@ -1,9 +1,9 @@
-import { FloatingSelections } from '@/components/onboarding/FloatingSelections';
-import { languages } from '@/components/onboarding/languages';
-import { OnboardingType } from '@/components/onboarding/types';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { FloatingSelections } from '@/Components/onboarding/FloatingSelections';
+import { languages } from '@/Components/onboarding/languages';
+import { OnboardingType } from '@/Components/onboarding/types';
+import { Badge } from '@/Components/ui/badge';
+import { Button } from '@/Components/ui/button';
+import { Input } from '@/Components/ui/input';
 import { useOnboarding } from '@/hooks/useOnboarding';
 
 interface LanguagesStepProps {

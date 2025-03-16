@@ -1,4 +1,4 @@
-import { DropdownMenuItem } from '@/components/ui/dropdown-menu';
+import { DropdownMenuItem } from '@/Components/ui/dropdown-menu';
 import { useNotificationStore } from '@/Layouts/components/notifications/store/notifications';
 import { Notification } from '@/Layouts/components/notifications/types';
 import { getIcon } from '@/Layouts/components/notifications/utils';

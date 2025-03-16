@@ -1,11 +1,11 @@
-import { Button } from '@/components/ui/button';
+import { Button } from '@/Components/ui/button';
 import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import H3 from '@/components/ui/typography/H3';
+} from '@/Components/ui/dropdown-menu';
+import H3 from '@/Components/ui/typography/H3';
 import NotificationItemBellDropdown from '@/Layouts/components/notifications/NotificationItemBellDropdown';
 import { useNotificationStore } from '@/Layouts/components/notifications/store/notifications';
 import { Notification } from '@/Layouts/components/notifications/types';

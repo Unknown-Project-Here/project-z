@@ -1,4 +1,4 @@
-import { SidebarProvider } from '@/components/ui/sidebar';
+import { SidebarProvider } from '@/Components/ui/sidebar';
 import { Header } from '@/Layouts/components/Header';
 import { AppSidebar } from '@/Layouts/components/Sidebar';
 import type React from 'react';

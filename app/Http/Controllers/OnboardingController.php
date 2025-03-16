@@ -32,7 +32,7 @@ class OnboardingController extends Controller
                     ->then(fn ($data) => $data);
             });
 
-            return redirect()->route('profile.edit')
+            return redirect()->route('dashboard')
                 ->with('status', 'onboarding-completed');
         } catch (\Exception $e) {
             return back()->withErrors(['error' => 'Failed to complete onboarding: '.$e->getMessage()]);

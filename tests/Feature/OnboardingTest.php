@@ -106,7 +106,7 @@ class OnboardingTest extends TestCase
         $response = $this->actingAs($this->user)
             ->post('/profile/onboarding/store', $this->validOnboardingData);
 
-        $response->assertRedirectToRoute('profile.edit');
+        $response->assertRedirectToRoute('settings.edit');
         $response->assertSessionHas('status', 'onboarding-completed');
 
         foreach ($this->validOnboardingData['skills'] as $category => $values) {

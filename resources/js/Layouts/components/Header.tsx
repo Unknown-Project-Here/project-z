@@ -1,4 +1,4 @@
-import { ThemeToggle } from '@/components/ThemeToggle';
+import { ThemeToggle } from '@/Components/ThemeToggle';
 import {
     Breadcrumb,
     BreadcrumbItem,
@@ -6,9 +6,9 @@ import {
     BreadcrumbList,
     BreadcrumbPage,
     BreadcrumbSeparator,
-} from '@/components/ui/breadcrumb';
-import { Button } from '@/components/ui/button';
-import { SidebarTrigger, useSidebar } from '@/components/ui/sidebar';
+} from '@/Components/ui/breadcrumb';
+import { Button } from '@/Components/ui/button';
+import { SidebarTrigger, useSidebar } from '@/Components/ui/sidebar';
 import { usePageProps } from '@/hooks/usePageProps';
 import NotificationBellDropdown from '@/Layouts/components/notifications/NotificationBellDropdown';
 import { Notification } from '@/Layouts/components/notifications/types';

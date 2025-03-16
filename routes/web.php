@@ -24,12 +24,15 @@ Route::get('/dashboard', function () {
 
 // Profile routes
 Route::prefix('profile')->name('profile.')->middleware(['auth', 'verified'])->group(function () {
-    Route::get('/', [ProfileController::class, 'edit'])->name('edit');
-    Route::patch('/', [ProfileController::class, 'update'])->name('update');
-    Route::delete('/', [ProfileController::class, 'destroy'])->name('destroy');
     Route::get('/onboarding', [OnboardingController::class, 'show'])->name('onboarding');
     Route::post('/onboarding/store', [OnboardingController::class, 'store'])
         ->name('onboarding.store');
+});
+
+Route::middleware(['auth', 'verified'])->prefix('settings')->name('settings.')->group(function () {
+    Route::get('/', [ProfileController::class, 'edit'])->name('edit');
+    Route::patch('/', [ProfileController::class, 'update'])->name('update');
+    Route::delete('/', [ProfileController::class, 'destroy'])->name('destroy');
 });
 
 // Projects routes
@@ -68,5 +71,7 @@ Route::prefix('notifications')->name('notifications.')->group(function () {
         Route::post('/{notification}/markAsRead', 'markNotificationAsRead')->name('markAsRead');
     });
 });
+
+Route::githubWebhooks('github/webhook');
 
 require __DIR__.'/auth.php';

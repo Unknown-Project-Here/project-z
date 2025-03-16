@@ -1,5 +1,5 @@
-import { ProjectCard } from '@/components/projects/index/ProjectCard';
-import { Button } from '@/components/ui/button';
+import { ProjectCard } from '@/Components/projects/index/ProjectCard';
+import { Button } from '@/Components/ui/button';
 import { usePageProps } from '@/hooks/usePageProps';
 import { IndexProject } from '@/types';
 import { Head, Link } from '@inertiajs/react';

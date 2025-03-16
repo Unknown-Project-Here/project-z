@@ -1,8 +1,8 @@
-import DomainsStep from '@/components/onboarding/DomainsStep';
-import ExpertiseStep from '@/components/onboarding/ExpertiseStep';
-import FrameworksStep from '@/components/onboarding/FrameworksStep';
-import LanguagesStep from '@/components/onboarding/LanguagesStep';
-import SpecializationsStep from '@/components/onboarding/SpecializationsStep';
+import DomainsStep from '@/Components/onboarding/DomainsStep';
+import ExpertiseStep from '@/Components/onboarding/ExpertiseStep';
+import FrameworksStep from '@/Components/onboarding/FrameworksStep';
+import LanguagesStep from '@/Components/onboarding/LanguagesStep';
+import SpecializationsStep from '@/Components/onboarding/SpecializationsStep';
 import ProjectDetails from './ProjectDetails';
 
 export const projectSteps = [

@@ -17,6 +17,7 @@ class SocialAccount extends Model
         'refresh_token',
         'token_expires_at',
         'avatar',
+        'username',
     ];
 
     protected $hidden = [
