@@ -163,7 +163,7 @@ export default function GithubRepoSelector({
                                                 <div
                                                     role="button"
                                                     tabIndex={0}
-                                                    className="flex h-5 w-5 cursor-pointer items-center justify-center rounded-full p-0 hover:bg-muted"
+                                                    className="flex h-5 w-5 cursor-pointer items-center justify-center rounded-full p-0 hover:bg-secondary"
                                                     onClick={handleClearRepo}
                                                     onKeyDown={(e) => {
                                                         if (

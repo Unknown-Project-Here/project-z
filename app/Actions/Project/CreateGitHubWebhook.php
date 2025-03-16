@@ -96,12 +96,7 @@ class CreateGitHubWebhook
                 'active' => true,
             ];
 
-            $response = $this->githubApiService->createWebhook($owner, $repoName, $webhookData);
-
-            logger()->warning('Failed to create GitHub webhook', [
-                'project_id' => $project->id,
-                'repo_id' => $repoId,
-            ]);
+            $this->githubApiService->createWebhook($owner, $repoName, $webhookData);
 
             return false;
         } catch (\Exception $e) {
