@@ -41,7 +41,7 @@ export function AppSidebar() {
 
     const isActiveLink = (href: string) => {
         // Extract the path from the full URL if it contains http/https
-        const currentPath = path.replace(/^(?:https?:\/\/[^\/]+)?/, '');
+        const currentPath = path.replace(/^(?:https?:\/\/[^/]+)?/, '');
 
         // Handle root path separately
         if (href === '/') {
@@ -79,11 +79,11 @@ export function AppSidebar() {
                             <SidebarMenuItem key={item.href}>
                                 <SidebarMenuButton
                                     asChild
-                                    className={`my-1 ${isActive ? 'bg-primary hover:bg-primary' : ''}`}
+                                    className={`my-1 ${isActive ? 'bg-primary/50' : 'hover:bg-secondary/50'}`}
                                 >
                                     <Link href={item.href}>
                                         <IconComponent
-                                            className={`mr-2 h-5 w-5 ${isActive ? 'text-white' : ''}`}
+                                            className={`mr-2 h-5 w-5`}
                                         />
                                         {item.name}
                                     </Link>
