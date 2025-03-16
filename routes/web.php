@@ -5,7 +5,9 @@ use App\Http\Controllers\OnboardingController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\ProjectInvitationController;
+use App\Http\Controllers\UserController;
 use Illuminate\Foundation\Application;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -18,8 +20,10 @@ Route::get('/', function () {
     ]);
 });
 
+Route::get('/user/{username}', [UserController::class, 'show'])->name('user.profile');
+
 Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
+    return redirect()->route('user.profile', ['username' => Auth::user()->username]);
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 // Profile routes
