@@ -119,4 +119,44 @@ class GitHubApiService
             throw $e;
         }
     }
+
+    /**
+     * Create a webhook for a GitHub repository
+     *
+     * @param  string  $owner  The repository owner (username or organization)
+     * @param  string  $repo  The repository name
+     * @param  array  $webhookData  The webhook configuration data
+     * @return array|null The created webhook data or null on failure
+     */
+    public function createWebhook(string $owner, string $repo, array $webhookData): ?array
+    {
+        if (! $this->user) {
+            return null;
+        }
+
+        $accessToken = $this->user->getAccessToken(self::PROVIDER);
+
+        if (! $accessToken) {
+            return null;
+        }
+
+        try {
+            $response = $this->httpClient
+                ->withToken($accessToken)
+                ->post("/repos/{$owner}/{$repo}/hooks", $webhookData);
+
+            $response->throw();
+
+            return $response->json();
+        } catch (RequestException $e) {
+            logger()->error('GitHub webhook creation failed: '.$e->getMessage(), [
+                'owner' => $owner,
+                'repo' => $repo,
+                'status' => $e->response?->status(),
+                'body' => $e->response?->body(),
+            ]);
+
+            return null;
+        }
+    }
 }

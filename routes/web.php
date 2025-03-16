@@ -72,4 +72,6 @@ Route::prefix('notifications')->name('notifications.')->group(function () {
     });
 });
 
+Route::githubWebhooks('github/webhook');
+
 require __DIR__.'/auth.php';
