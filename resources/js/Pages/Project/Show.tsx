@@ -10,6 +10,7 @@ import {
     CardHeader,
     CardTitle,
 } from '@/Components/ui/card';
+import { useProjectPermissions } from '@/hooks/useProjectPermissions';
 import { Project } from '@/types';
 import { Head, Link } from '@inertiajs/react';
 import dayjs from 'dayjs';
@@ -21,14 +22,8 @@ dayjs.extend(advancedFormat);
 dayjs.extend(relativeTime);
 
 export default function ProjectShow({ project }: { project: Project }) {
-    // Derive permissions based on auth state and membership
-    const permissions = {
-        project: {
-            invite: false,
-            edit: false,
-            request: false,
-        },
-    };
+    const { canEditProject, canInviteToProject, canRequestToJoinProject } =
+        useProjectPermissions();
 
     const projectStats = {
         commits: 156,
@@ -44,13 +39,13 @@ export default function ProjectShow({ project }: { project: Project }) {
                 <div className="mb-6 flex items-center justify-between">
                     <h1 className="text-3xl font-bold">{project.title}</h1>
                     <div className="flex items-center gap-2">
-                        {permissions.project.invite && (
+                        {canInviteToProject && (
                             <ProjectInviteDialogButton project={project} />
                         )}
-                        {permissions.project.request && (
+                        {canRequestToJoinProject && (
                             <ProjectRequestDialog project={project} />
                         )}
-                        {permissions.project.edit && (
+                        {canEditProject && (
                             <Button asChild>
                                 <Link href={route('projects.edit', project.id)}>
                                     Edit
@@ -216,7 +211,7 @@ export default function ProjectShow({ project }: { project: Project }) {
                                             </div>
                                         ),
                                     )
-                                ) : permissions.project.edit ? (
+                                ) : canEditProject ? (
                                     <div className="flex flex-col items-center justify-center space-y-4 rounded-lg border border-dashed border-gray-300 bg-gray-50/50 px-6 py-8 text-center">
                                         <div className="space-y-2">
                                             <h3 className="font-medium text-gray-900">

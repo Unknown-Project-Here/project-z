@@ -12,6 +12,10 @@ type PagePropsWithUsernames = {
         github?: string;
         discord?: string;
     };
+    repos?: {
+        public: { id: number; name: string }[];
+        private: { id: number; name: string }[];
+    };
 };
 
 const defaultProjectData: ProjectType = {
@@ -28,6 +32,7 @@ const defaultProjectData: ProjectType = {
     framework: [],
     expertise: '',
     specialization: [],
+    githubRepo: null,
 };
 
 export default function CreateProject() {
@@ -94,7 +99,12 @@ export default function CreateProject() {
 
     const updateProjectData = (
         field: keyof ProjectType,
-        value: string | string[] | Record<string, string>,
+        value:
+            | string
+            | string[]
+            | Record<string, string>
+            | { id: number; name: string }
+            | null,
     ) => {
         setProjectData((prev) => ({
             ...prev,
@@ -119,6 +129,7 @@ export default function CreateProject() {
                     framework: projectData.framework,
                     specialization: projectData.specialization,
                 },
+                github_repo: projectData.githubRepo,
             };
 
             router.post(

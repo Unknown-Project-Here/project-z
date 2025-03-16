@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\ProjectPermission;
 use App\Enums\ProjectRole;
+use App\Services\GitHub\GitHubApiService;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -166,5 +167,49 @@ class User extends Authenticatable implements MustVerifyEmail
     public function getSocialUsernames(): array
     {
         return $this->socialAccounts->pluck('provider', 'username')->flip()->toArray();
+    }
+
+    public function getGithubRepos(): ?array
+    {
+        if (! $this->hasSocialProvider('github')) {
+            return null;
+        }
+
+        $githubService = app(GitHubApiService::class);
+        $githubService->setUser($this);
+
+        try {
+            $socialAccount = $this->getSocialAccount('github');
+
+            if (! $socialAccount) {
+                return null;
+            }
+
+            $repos = $githubService->getRepositories();
+
+            if (empty($repos)) {
+                return null;
+            }
+
+            $providerId = $socialAccount->provider_id;
+
+            $result = ['public' => [], 'private' => []];
+
+            foreach ($repos as $repo) {
+                if ($repo['owner']['id'] === (int) $providerId) {
+                    $repoData = [
+                        'id' => $repo['id'],
+                        'name' => $repo['name'],
+                    ];
+                    $result[$repo['private'] ? 'private' : 'public'][] = $repoData;
+                }
+            }
+
+            return $result;
+        } catch (\Exception $e) {
+            logger()->error('Failed to fetch GitHub repositories: '.$e->getMessage());
+
+            return null;
+        }
     }
 }

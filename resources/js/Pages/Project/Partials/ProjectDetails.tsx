@@ -1,15 +1,29 @@
+import GithubRepoSelector from '@/Components/projects/create/GithubRepoSelector';
 import ProjectDescriptionField from '@/Components/projects/create/ProjectDescriptionField';
 import ProjectTitleField from '@/Components/projects/create/ProjectTitleField';
 import SocialLinksSection from '@/Components/projects/create/SocialLinksSection';
 import ValidationErrors from '@/Components/projects/create/ValidationErrors';
 import { Card } from '@/Components/ui/card';
-import { ProjectDetailsProps, ProjectType } from '@/types';
+import { ProjectType } from '@/types';
 import { useState } from 'react';
+
+interface ExtendedProjectDetailsProps {
+    data: ProjectType;
+    onChange: (
+        field: keyof ProjectType,
+        value:
+            | string
+            | string[]
+            | Record<string, string>
+            | { id: number; name: string }
+            | null,
+    ) => void;
+}
 
 export default function ProjectDetails({
     data,
     onChange,
-}: ProjectDetailsProps) {
+}: ExtendedProjectDetailsProps) {
     const [errors, setErrors] = useState<Record<string, string>>({});
 
     const validateField = (field: string, value: string) => {
@@ -30,7 +44,12 @@ export default function ProjectDetails({
 
     const handleFieldChange = (
         field: keyof ProjectType,
-        value: string | string[] | Record<string, string>,
+        value:
+            | string
+            | string[]
+            | Record<string, string>
+            | { id: number; name: string }
+            | null,
     ) => {
         onChange(field, value);
         if (
@@ -52,6 +71,11 @@ export default function ProjectDetails({
 
                     <ProjectDescriptionField
                         value={data.description}
+                        onChange={handleFieldChange}
+                    />
+
+                    <GithubRepoSelector
+                        selectedRepo={data.githubRepo}
                         onChange={handleFieldChange}
                     />
 

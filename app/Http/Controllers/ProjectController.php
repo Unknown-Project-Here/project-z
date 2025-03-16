@@ -9,7 +9,6 @@ use App\Actions\Project\CreateProjectTechStack;
 use App\Http\Requests\ProjectRenameRequest;
 use App\Http\Requests\ProjectRequest;
 use App\Models\Project;
-use App\Models\User;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -77,11 +76,12 @@ class ProjectController extends Controller
         $this->authorize('create', Project::class);
 
         $user = Auth::user();
-
         $socialUsernames = $user->getSocialUsernames();
+        $repos = $user->getGithubRepos();
 
         return inertia('Project/Create', [
             'usernames' => $socialUsernames,
+            'repos' => $repos,
         ]);
     }
 
@@ -171,12 +171,7 @@ class ProjectController extends Controller
      */
     public function edit(Project $project): Response
     {
-        // Check if the authenticated user is the project owner
-        if ($project->user_id !== Auth::id()) {
-            abort(403, 'Unauthorized action.');
-        }
-
-        $this->authorize('update', $project);
+        $this->authorize('edit', $project);
 
         return Inertia::render('Project/Edit', [
             'project' => $project->load('user'),

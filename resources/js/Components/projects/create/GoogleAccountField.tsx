@@ -51,33 +51,27 @@ export default function GoogleAccountField({
                     <div className="flex h-10 w-[60px] items-center justify-center rounded-l-md border">
                         <Icon className="h-5 w-5" />
                     </div>
-                    <Button
-                        variant="outline"
-                        className="max-w-fit flex-1"
-                        onClick={() =>
-                            (window.location.href = route(
-                                'social.login',
-                                'google',
-                            ))
-                        }
-                    >
-                        Link Google Account
-                    </Button>
-                </div>
-
-                <div className="relative">
-                    <Input
-                        id="email"
-                        value={value}
-                        onChange={(e) => onChange('email', e.target.value)}
-                        className="pl-[83px]"
-                        placeholder="Enter email address"
-                        aria-label="Email"
-                    />
-                    <div className="absolute inset-y-0 left-0 flex items-center">
-                        <span className="flex h-full w-[60px] items-center justify-center border-r border-input">
-                            <Icon className="h-5 w-5" />
-                        </span>
+                    <div className="flex w-full gap-2">
+                        <Button
+                            variant="outline"
+                            className="max-w-fit flex-1"
+                            onClick={() =>
+                                (window.location.href = route(
+                                    'social.login',
+                                    'google',
+                                ))
+                            }
+                        >
+                            Link Google Account
+                        </Button>
+                        <p className="flex items-center">OR</p>
+                        <Input
+                            id="email"
+                            value={value}
+                            onChange={(e) => onChange('email', e.target.value)}
+                            placeholder="Enter email address"
+                            aria-label="Email"
+                        />
                     </div>
                 </div>
             </div>
