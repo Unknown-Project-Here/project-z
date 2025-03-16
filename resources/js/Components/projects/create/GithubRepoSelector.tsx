@@ -160,17 +160,28 @@ export default function GithubRepoSelector({
                                         </div>
                                         <div className="flex items-center gap-1">
                                             {selectedRepo && (
-                                                <Button
-                                                    variant="ghost"
-                                                    size="icon"
-                                                    className="h-5 w-5 rounded-full p-0"
+                                                <div
+                                                    role="button"
+                                                    tabIndex={0}
+                                                    className="flex h-5 w-5 cursor-pointer items-center justify-center rounded-full p-0 hover:bg-muted"
                                                     onClick={handleClearRepo}
+                                                    onKeyDown={(e) => {
+                                                        if (
+                                                            e.key === 'Enter' ||
+                                                            e.key === ' '
+                                                        ) {
+                                                            e.preventDefault();
+                                                            handleClearRepo(
+                                                                e as unknown as React.MouseEvent,
+                                                            );
+                                                        }
+                                                    }}
                                                 >
                                                     <XIcon className="h-3 w-3" />
                                                     <span className="sr-only">
                                                         Clear
                                                     </span>
-                                                </Button>
+                                                </div>
                                             )}
                                             <ChevronsUpDown className="h-4 w-4 shrink-0 opacity-50" />
                                         </div>

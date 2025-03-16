@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use App\Enums\SkillLevelEnum;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Enum;
 
 class ProjectRequest extends FormRequest
@@ -29,6 +30,11 @@ class ProjectRequest extends FormRequest
             'project.skills.expertise' => ['required', 'string', new Enum(SkillLevelEnum::class)],
             'project.skills.specialization' => ['required', 'array', 'min:1'],
             'project.skills.specialization.*' => ['required', 'string', 'min:1'],
+            'project.github_repo_id' => [
+                'nullable',
+                'integer',
+                Rule::unique('projects', 'repo_id')->whereNotNull('repo_id'),
+            ],
         ];
     }
 
@@ -51,6 +57,8 @@ class ProjectRequest extends FormRequest
             'project.skills.framework.required' => 'A project framework is required.',
             'project.skills.framework.array' => 'The project framework must be an array.',
             'project.skills.expertise.required' => 'A project expertise is required.',
+            'project.github_repo_id.integer' => 'The GitHub repository ID must be an integer.',
+            'project.github_repo_id.unique' => 'This repository is already being used by another project.',
         ];
     }
 }

@@ -4,6 +4,7 @@ import { usePageProps } from '@/hooks/usePageProps';
 import { ProjectType } from '@/types';
 import { router } from '@inertiajs/react';
 import { useEffect } from 'react';
+import { toast } from 'sonner';
 import { projectSteps } from './Partials/ProjectSteps';
 
 type PagePropsWithUsernames = {
@@ -129,7 +130,7 @@ export default function CreateProject() {
                     framework: projectData.framework,
                     specialization: projectData.specialization,
                 },
-                github_repo: projectData.githubRepo,
+                github_repo_id: projectData.githubRepo?.id,
             };
 
             router.post(
@@ -142,7 +143,10 @@ export default function CreateProject() {
                         localStorage.removeItem('project-creation');
                     },
                     onError: (errors) => {
-                        console.error('Validation errors:', errors);
+                        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                        Object.entries(errors).forEach(([_, message]) => {
+                            toast.error(message as string);
+                        });
                     },
                 },
             );

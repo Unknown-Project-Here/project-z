@@ -28,6 +28,7 @@ class Project extends Model
         'created_at',
         'updated_at',
         'skill_level',
+        'repo_id'
     ];
 
     // Relationships

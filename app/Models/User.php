@@ -170,46 +170,40 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
     public function getGithubRepos(): ?array
-    {
-        if (! $this->hasSocialProvider('github')) {
-            return null;
-        }
-
-        $githubService = app(GitHubApiService::class);
-        $githubService->setUser($this);
-
-        try {
-            $socialAccount = $this->getSocialAccount('github');
-
-            if (! $socialAccount) {
-                return null;
-            }
-
-            $repos = $githubService->getRepositories();
-
-            if (empty($repos)) {
-                return null;
-            }
-
-            $providerId = $socialAccount->provider_id;
-
-            $result = ['public' => [], 'private' => []];
-
-            foreach ($repos as $repo) {
-                if ($repo['owner']['id'] === (int) $providerId) {
-                    $repoData = [
-                        'id' => $repo['id'],
-                        'name' => $repo['name'],
-                    ];
-                    $result[$repo['private'] ? 'private' : 'public'][] = $repoData;
-                }
-            }
-
-            return $result;
-        } catch (\Exception $e) {
-            logger()->error('Failed to fetch GitHub repositories: '.$e->getMessage());
-
-            return null;
-        }
+{
+    if (!$this->hasSocialProvider('github') || !($socialAccount = $this->getSocialAccount('github'))) {
+        return null;
     }
+
+    try {
+        $githubService = app(GitHubApiService::class)->setUser($this);
+        $repos = $githubService->getRepositories();
+
+        if (empty($repos)) {
+            return null;
+        }
+
+        $providerId = (int) $socialAccount->provider_id;
+
+        $existingRepoIds = Project::whereIn('repo_id', array_column($repos, 'id'))
+            ->pluck('repo_id')
+            ->all();
+
+        $result = ['public' => [], 'private' => []];
+
+        foreach ($repos as $repo) {
+            if ($repo['owner']['id'] === $providerId && !in_array($repo['id'], $existingRepoIds)) {
+                $result[$repo['private'] ? 'private' : 'public'][] = [
+                    'id' => $repo['id'],
+                    'name' => $repo['name'],
+                ];
+            }
+        }
+
+        return $result['public'] || $result['private'] ? $result : null;
+    } catch (\Exception $e) {
+        logger()->error('Failed to fetch GitHub repositories: '.$e->getMessage());
+        return null;
+    }
+}
 }
