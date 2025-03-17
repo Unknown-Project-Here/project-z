@@ -8,7 +8,9 @@ use App\Http\Controllers\ProjectInvitationController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use App\Http\Controllers\MessageController;
 
+// Welcome routes
 Route::get('/', function () {
     return Inertia::render('Welcome', [
         'canLogin' => Route::has('login'),
@@ -18,6 +20,7 @@ Route::get('/', function () {
     ]);
 });
 
+// Dashboard routes
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
@@ -61,11 +64,21 @@ Route::prefix('projects')->name('projects.')->group(function () {
     });
 });
 
+// Notifications routes
 Route::prefix('notifications')->name('notifications.')->group(function () {
     Route::controller(NotificationController::class)->group(function () {
         Route::get('/', 'index')->name('index');
         Route::post('/markAllAsRead', 'markAllAsRead')->name('markAllAsRead');
         Route::post('/{notification}/markAsRead', 'markNotificationAsRead')->name('markAsRead');
+    });
+});
+
+// Messages routes
+Route::prefix('messages')->name('messages.')->middleware(['auth', 'verified'])->group(function () {
+    Route::controller(MessageController::class)->group(function () {
+        Route::get('/', 'index')->name('index');
+        Route::get('/{message}', 'message')->name('message');
+        Route::post('/message', 'store')->name('store');
     });
 });
 
