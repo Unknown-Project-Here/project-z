@@ -1,6 +1,6 @@
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Input } from '@/components/ui/input';
-import { ScrollArea } from '@/components/ui/scroll-area';
+import { Avatar, AvatarFallback, AvatarImage } from '@/Components/ui/avatar';
+import { Input } from '@/Components/ui/input';
+import { ScrollArea } from '@/Components/ui/scroll-area';
 import { User } from '@/types';
 import { Link } from '@inertiajs/react';
 import { useState } from 'react';

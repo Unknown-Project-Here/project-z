@@ -1,4 +1,4 @@
-import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogTrigger } from '@/Components/ui/dialog';
 import { cn } from '@/lib/utils';
 
 interface MessageImageProps {

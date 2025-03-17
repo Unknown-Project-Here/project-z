@@ -35,7 +35,8 @@ export const useImageUpload = (
             formData.append('image', imageFile);
 
             router.post('/messages/upload-image', formData, {
-                onSuccess: (page) => {
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                onSuccess: (page: any) => {
                     const imageUrl = page?.props?.flash?.imageUrl;
 
                     if (imageUrl) {

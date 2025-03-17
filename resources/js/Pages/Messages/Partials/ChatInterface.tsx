@@ -1,4 +1,4 @@
-import { ScrollArea } from '@/components/ui/scroll-area';
+import { ScrollArea } from '@/Components/ui/scroll-area';
 import { Message } from '@/types';
 import { MessageBubble } from './MessageBubble';
 import { MessageInput } from './MessageInput';
@@ -22,19 +22,18 @@ export const ChatInterface = ({
     messagesContainerRef,
     handleImageSelect,
 }: ChatInterfaceProps) => (
-    <>
-        <ScrollArea className="flex-1">
-            <div
-                ref={messagesContainerRef}
-                className="max-h-[80vh] overflow-y-auto p-4"
-            >
-                <div className="flex flex-col space-y-4">
-                    {messages.map((message) => (
-                        <MessageBubble key={message.id} message={message} />
-                    ))}
+    <div className="flex h-full flex-col">
+        <div className="relative flex-1">
+            <ScrollArea className="h-[calc(100vh-13rem)]">
+                <div ref={messagesContainerRef} className="p-4">
+                    <div className="flex flex-col space-y-4">
+                        {messages.map((message) => (
+                            <MessageBubble key={message.id} message={message} />
+                        ))}
+                    </div>
                 </div>
-            </div>
-        </ScrollArea>
+            </ScrollArea>
+        </div>
 
         <MessageInput
             value={newMessage}
@@ -43,5 +42,5 @@ export const ChatInterface = ({
             onSend={handleSendMessage}
             onImageSelect={handleImageSelect}
         />
-    </>
+    </div>
 );
