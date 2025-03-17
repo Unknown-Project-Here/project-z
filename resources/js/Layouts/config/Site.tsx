@@ -12,6 +12,11 @@ export const NavItems: NavItem[] = [
         icon: 'FolderGit2',
     },
     {
+        name: 'Messages',
+        href: '/messages',
+        icon: 'MessagesSquare',
+    },
+    {
         name: 'Profile',
         href: '/profile',
         icon: 'UserCircle',

@@ -119,3 +119,12 @@ export type NavItem = {
     href: string;
     icon: string;
 };
+
+export interface Message {
+    id: number;
+    text: string;
+    is_mine: boolean;
+    created_at: string;
+    user: User;
+    recipient_id: number;
+}
