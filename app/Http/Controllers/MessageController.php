@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 use App\Models\User;
+use App\Http\Requests\MessageRequest;
 
 class MessageController extends Controller
 {
@@ -45,15 +46,37 @@ class MessageController extends Controller
     }
 
     /**
+     * Upload an image and return its URL
+     */
+    public function uploadImage(Request $request)
+    {
+        if (!Auth::check()) {
+            return response()->json(['error' => 'User not authenticated'], 401);
+        }
+
+        try {
+            if (!$request->hasFile('image')) {
+                return Inertia::location(url()->previous());
+            }
+            
+            $image = $request->file('image');
+            $path = $image->store('message-images', 'public');
+            $imageUrl = asset('storage/' . $path);
+
+            return response()->json(['imageUrl' => $imageUrl]);
+
+        } catch (\Exception $e) {
+            Log::error('Error uploading image: ' . $e->getMessage());
+            return back()->with('error', 'Failed to upload image');
+        }
+    }
+
+    /**
      * Store a new message
      */
-    public function store(Request $request)
+    public function store(MessageRequest $request)
     {
-        // Validate the request
-        $validated = $request->validate([
-            'text' => 'required|string|max:1000',
-            'recipient_id' => 'required|exists:users,id',
-        ]);
+        $validated = $request->validated();
         
         if (!Auth::check()) {
             return back()->with('error', 'User not authenticated');
@@ -64,6 +87,7 @@ class MessageController extends Controller
                 'text' => $validated['text'],
                 'user_id' => Auth::id(),
                 'recipient_id' => $validated['recipient_id'],
+                'image_url' => $validated['image_url'] ?? null,
             ]);
 
             if (!$message) {
@@ -82,4 +106,7 @@ class MessageController extends Controller
             return back()->with('error', 'Failed to create message');
         }
     }
+
+    
 }
+
