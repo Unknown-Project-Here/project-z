@@ -14,7 +14,7 @@ export default function Layout({ children }: LayoutProps) {
                 <AppSidebar />
                 <div className="relative flex w-full flex-1 flex-col overflow-hidden">
                     <Header />
-                    <main className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
+                    <main className="flex flex-1 flex-col gap-4 overflow-y-auto">
                         <div className="flex-1">{children}</div>
                     </main>
                 </div>

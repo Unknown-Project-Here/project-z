@@ -20,6 +20,7 @@ import {
     FeatherIcon,
     FolderGit2,
     LayoutDashboard,
+    MessagesSquare,
     Settings,
     UserCog,
 } from 'lucide-react';
@@ -31,6 +32,7 @@ const iconComponents = {
     LayoutDashboard,
     UserCog,
     Settings,
+    MessagesSquare,
 };
 
 export function AppSidebar() {
