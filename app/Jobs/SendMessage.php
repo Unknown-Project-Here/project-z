@@ -26,6 +26,7 @@ class SendMessage implements ShouldQueue
             'text' => $this->message->text,
             'user_id' => $this->message->user_id,
             'recipient_id' => $this->message->recipient_id,
+            'image_url' => $this->message->image_url,
             'created_at' => $this->message->created_at,
             'user' => [
                 'id' => $this->message->user->id,

@@ -86,6 +86,7 @@ export function useMessage(
             router.post('/messages/message', payload, {
                 preserveScroll: true,
                 preserveState: true,
+
                 onSuccess: () => {
                     setNewMessage('');
                 },

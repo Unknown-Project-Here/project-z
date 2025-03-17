@@ -1,68 +1,19 @@
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { router } from '@inertiajs/react';
+import { useImageUpload } from '@/hooks/useImageUpload';
 import { ImagePlus, SendIcon, X } from 'lucide-react';
-import { useState } from 'react';
-import { toast } from 'sonner';
+
 interface ImageUploaderProps {
     onImageSelect: (url: string | null) => void;
 }
 
 export const ImageUploader = ({ onImageSelect }: ImageUploaderProps) => {
-    const [selectedImage, setSelectedImage] = useState<string | null>(null);
-    const [imageFile, setImageFile] = useState<File | null>(null);
-
-    const handleImageSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const file = event.target.files?.[0];
-        if (!file) return;
-
-        if (!file.type.startsWith('image/')) {
-            toast.error('Please select an image file');
-            return;
-        }
-
-        setImageFile(file);
-        setSelectedImage(URL.createObjectURL(file));
-    };
-
-    const handleSendImage = async () => {
-        if (selectedImage && imageFile) {
-            const formData = new FormData();
-            formData.append('image', imageFile);
-
-            try {
-                await router.post('/messages/upload-image', formData, {
-                    forceFormData: true,
-                    preserveScroll: true,
-
-                    onSuccess: (page) => {
-                        console.log('Inertia response:', page);
-                        console.log('Props:', page.props);
-                        console.log('Flash data:', page.props?.flash);
-
-                        // Access the flash data correctly
-                        const imageUrl = page.data.imageUrl;
-                        if (imageUrl) {
-                            onImageSelect(imageUrl);
-                            handleRemoveImage();
-                        }
-                    },
-                });
-            } catch (error) {
-                console.error('Error uploading image:', error);
-                toast.error('Failed to upload image');
-            }
-        }
-    };
-
-    const handleRemoveImage = () => {
-        if (selectedImage) {
-            URL.revokeObjectURL(selectedImage);
-        }
-        setSelectedImage(null);
-        setImageFile(null);
-        onImageSelect(null);
-    };
+    const {
+        selectedImage,
+        handleImageSelect,
+        handleSendImage,
+        handleRemoveImage,
+    } = useImageUpload(onImageSelect);
 
     return (
         <div className="absolute right-24">

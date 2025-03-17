@@ -1,9 +1,9 @@
+import { useMessage } from '@/hooks/useMessage';
 import { Message, User } from '@/types';
 import { router } from '@inertiajs/react';
 import { ChatInterface } from './Partials/ChatInterface';
 import { EmptyState } from './Partials/EmptyState';
 import { UserList } from './Partials/UserList';
-import { useMessage } from './hooks/useMessage';
 
 interface MessagesProps {
     messages: Message[];

@@ -63,7 +63,7 @@ class MessageController extends Controller
             $path = $image->store('message-images', 'public');
             $imageUrl = asset('storage/' . $path);
 
-            return response()->json(['imageUrl' => $imageUrl]);
+            return back()->with('imageUrl', $imageUrl);
 
         } catch (\Exception $e) {
             Log::error('Error uploading image: ' . $e->getMessage());
@@ -83,12 +83,22 @@ class MessageController extends Controller
         }
 
         try {
-            $message = Message::create([
-                'text' => $validated['text'],
+            $messageData = [
                 'user_id' => Auth::id(),
                 'recipient_id' => $validated['recipient_id'],
-                'image_url' => $validated['image_url'] ?? null,
-            ]);
+            ];
+
+            // Add text field only if it exists in validated data
+            if (isset($validated['text'])) {
+                $messageData['text'] = $validated['text'];
+            }
+
+            // Add image_url field only if it exists in validated data
+            if (isset($validated['image_url'])) {
+                $messageData['image_url'] = $validated['image_url'];
+            }
+
+            $message = Message::create($messageData);
 
             if (!$message) {
                 Log::error('Failed to create message');

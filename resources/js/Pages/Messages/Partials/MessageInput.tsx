@@ -29,6 +29,7 @@ export const MessageInput = ({
                 className="h-10 flex-1 rounded-full bg-gray-100 pl-4 pr-[130px] text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
             />
             <ImageUploader onImageSelect={onImageSelect} />
+
             <Button
                 onClick={onSend}
                 className="absolute right-1 h-8 rounded-full"

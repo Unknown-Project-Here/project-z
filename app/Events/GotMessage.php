@@ -41,14 +41,4 @@ class GotMessage implements ShouldBroadcast
             new PrivateChannel("chat.{$this->message['recipient_id']}"),
         ];
     }
-    
-    // public function broadcastAs(): string
-    // {
-    //     return 'GotMessage';
-    // }
-
-    // public function broadcastWith(): array
-    // {
-    //     return $this->message;
-    // }
 }

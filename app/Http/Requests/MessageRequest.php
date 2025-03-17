@@ -14,9 +14,9 @@ class MessageRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'text' => 'required|string|max:1000',
+            'text' => 'required_without:image_url|string|max:1000',
             'recipient_id' => 'required|exists:users,id',
-            'image_url' => 'nullable|url',
+            'image_url' => 'required_without:text|url',
         ];
     }
 
