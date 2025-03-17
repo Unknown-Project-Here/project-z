@@ -77,6 +77,7 @@ Route::prefix('notifications')->name('notifications.')->group(function () {
 Route::prefix('messages')->name('messages.')->middleware(['auth', 'verified'])->group(function () {
     Route::controller(MessageController::class)->group(function () {
         Route::get('/', 'index')->name('index');
+        Route::post('/upload-image', 'uploadImage')->name('uploadImage');
         Route::get('/{message}', 'message')->name('message');
         Route::post('/message', 'store')->name('store');
     });
