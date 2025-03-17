@@ -1,14 +1,14 @@
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { SendIcon } from 'lucide-react';
-import { MessageImageUpload } from './MessageImageUpload';
+import { ImageUploader } from './ImageUploader';
 
 interface MessageInputProps {
     value: string;
     onChange: (value: string) => void;
     onKeyDown: (e: React.KeyboardEvent) => void;
     onSend: () => void;
-    onImageSelect: (file: File | null) => void;
+    onImageSelect: (url: string | null) => void;
 }
 
 export const MessageInput = ({
@@ -28,7 +28,7 @@ export const MessageInput = ({
                 placeholder="Type a message..."
                 className="h-10 flex-1 rounded-full bg-gray-100 pl-4 pr-[130px] text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
             />
-            <MessageImageUpload onImageSelect={onImageSelect} />
+            <ImageUploader onImageSelect={onImageSelect} />
             <Button
                 onClick={onSend}
                 className="absolute right-1 h-8 rounded-full"
