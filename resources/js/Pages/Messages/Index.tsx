@@ -3,7 +3,7 @@ import { router } from '@inertiajs/react';
 import { ChatInterface } from './Partials/ChatInterface';
 import { EmptyState } from './Partials/EmptyState';
 import { UserList } from './Partials/UserList';
-import { useMessages } from './hooks/useMessage';
+import { useMessage } from './hooks/useMessage';
 
 interface MessagesProps {
     messages: Message[];
@@ -25,7 +25,7 @@ export default function Messages({
         setNewMessage,
         sendMessage,
         messagesContainerRef,
-    } = useMessages(initialMessages, auth.user.id, recipientId, users);
+    } = useMessage(initialMessages, auth.user.id, recipientId, users);
 
     const handleKeyPress = (e: React.KeyboardEvent) => {
         if (e.key === 'Enter' && !e.shiftKey) {
@@ -34,8 +34,10 @@ export default function Messages({
         }
     };
 
-    const handleImageSelect = (file: File | null) => {
-        console.log(file);
+    const handleImageSelect = (url: string | null) => {
+        if (url) {
+            sendMessage('', url);
+        }
     };
 
     return (

@@ -1,17 +1,8 @@
-import { User } from '@/types';
+import { Message, User } from '@/types';
 import { router } from '@inertiajs/react';
 import { useEffect, useRef, useState } from 'react';
 
-interface Message {
-    id: number;
-    user: User;
-    recipient_id: number;
-    text: string;
-    created_at: string;
-    is_mine: boolean;
-}
-
-export function useMessages(
+export function useMessage(
     initialMessages: Message[],
     authUserId: number,
     recipientId: string | null,
@@ -82,27 +73,26 @@ export function useMessages(
         };
     }, [authUserId, recipientId]);
 
-    const sendMessage = async (text: string) => {
-        if (!text.trim() || !recipientId) return;
+    const sendMessage = async (text: string, image_url?: string) => {
+        if ((!text?.trim() && !image_url) || !recipientId) return;
+
+        const payload = {
+            recipient_id: recipientId,
+            ...(text?.trim() && { text: text.trim() }),
+            ...(image_url && { image_url }),
+        };
 
         try {
-            await router.post(
-                '/messages/message',
-                {
-                    text,
-                    recipient_id: recipientId,
+            router.post('/messages/message', payload, {
+                preserveScroll: true,
+                preserveState: true,
+                onSuccess: () => {
+                    setNewMessage('');
                 },
-                {
-                    preserveScroll: true,
-                    preserveState: true,
-                    onSuccess: () => {
-                        setNewMessage('');
-                    },
-                    onError: (errors) => {
-                        console.error('Failed to send message', errors);
-                    },
+                onError: (errors) => {
+                    console.error('Failed to send message', errors);
                 },
-            );
+            });
         } catch (error) {
             console.error('Error sending message:', error);
         }

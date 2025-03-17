@@ -10,7 +10,7 @@ interface ChatInterfaceProps {
     handleKeyPress: (event: React.KeyboardEvent<Element>) => void;
     handleSendMessage: () => void;
     messagesContainerRef: React.RefObject<HTMLDivElement>;
-    handleImageSelect: (file: File | null) => void;
+    handleImageSelect: (url: string | null) => void;
 }
 
 export const ChatInterface = ({

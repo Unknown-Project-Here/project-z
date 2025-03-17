@@ -1,5 +1,6 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Message } from '@/types';
+import { MessageImage } from './MessageImage';
 
 export const MessageBubble = ({ message }: { message: Message }) => (
     <div
@@ -31,7 +32,12 @@ export const MessageBubble = ({ message }: { message: Message }) => (
                     : 'border bg-white text-gray-900'
             }`}
         >
-            <div className="text-sm">{message.text}</div>
+            {message.text && (
+                <p className="break-words text-sm">{message.text}</p>
+            )}
+            {message.image_url && (
+                <MessageImage imageUrl={message.image_url} className="mt-2" />
+            )}
             <div
                 className={`mt-1 w-full text-end text-xs ${
                     message.is_mine ? 'text-white/80' : 'text-gray-500'

@@ -123,6 +123,7 @@ export type NavItem = {
 export interface Message {
     id: number;
     text: string;
+    image_url?: string;
     is_mine: boolean;
     created_at: string;
     user: User;
