@@ -1,45 +1,55 @@
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
+import { Avatar, AvatarFallback, AvatarImage } from '@/Components/ui/avatar';
+import { Badge } from '@/Components/ui/badge';
+import { Button } from '@/Components/ui/button';
 import {
     Card,
     CardContent,
     CardDescription,
     CardHeader,
     CardTitle,
-} from '@/components/ui/card';
+} from '@/Components/ui/card';
 import { IndexProject } from '@/types';
-import { Link, router, usePage } from '@inertiajs/react';
-export default function Dashboard() {
-    const { auth } = usePage().props;
+import { Link } from '@inertiajs/react';
 
+interface ProfileUser {
+    username: string;
+    created_at: string;
+    avatar: string | null;
+}
+
+interface ProfileProps {
+    profileUser: ProfileUser;
+    projects: IndexProject[];
+    skills: string[];
+    isOwnProfile: boolean;
+}
+
+export default function Profile({
+    profileUser,
+    projects,
+    skills,
+    isOwnProfile,
+}: ProfileProps) {
     const formattedJoinDate = new Date(
-        auth.user.created_at,
+        profileUser.created_at,
     ).toLocaleDateString();
-
-    const isOnboardingComplete = auth.user.onboarded;
-
-    const skills: string[] = [];
-
-    const projects: IndexProject[] = [];
 
     return (
         <>
             <div className="container mx-auto px-4 py-8">
                 <div className="mb-6 flex items-center justify-between">
                     <h1 className="text-3xl font-bold">
-                        Welcome, {auth.user.username}!
+                        {isOwnProfile
+                            ? 'Your Profile'
+                            : `${profileUser.username}'s Profile`}
                     </h1>
-                    <Button
-                        onClick={() =>
-                            router.visit(route('profile.onboarding'))
-                        }
-                        variant="outline"
-                    >
-                        {isOnboardingComplete
-                            ? 'Edit Profile'
-                            : 'Complete Profile'}
-                    </Button>
+                    {isOwnProfile && (
+                        <Button asChild variant="outline">
+                            <Link href={route('settings.edit')}>
+                                Edit Profile
+                            </Link>
+                        </Button>
+                    )}
                 </div>
 
                 <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
@@ -47,25 +57,27 @@ export default function Dashboard() {
                         <CardHeader>
                             <CardTitle>Profile Information</CardTitle>
                             <CardDescription>
-                                Your personal details and stats
+                                User details and stats
                             </CardDescription>
                         </CardHeader>
                         <CardContent>
                             <div className="mb-4 flex items-center space-x-4">
                                 <Avatar className="h-20 w-20 bg-primary">
                                     <AvatarImage
-                                        src={`https://api.dicebear.com/9.x/open-peeps/svg?seed=${auth.user.username}`}
-                                        alt={auth.user.username}
+                                        src={
+                                            profileUser.avatar ||
+                                            `https://api.dicebear.com/9.x/open-peeps/svg?seed=${profileUser.username}`
+                                        }
+                                        alt={profileUser.username}
                                     />
                                     <AvatarFallback>
-                                        {auth.user.username.charAt(0)}
+                                        {profileUser.username.charAt(0)}
                                     </AvatarFallback>
                                 </Avatar>
                                 <div>
                                     <h2 className="text-2xl font-semibold">
-                                        {auth.user.username}
+                                        {profileUser.username}
                                     </h2>
-                                    <p>{auth.user.email}</p>
                                     <p className="text-sm">
                                         Joined on {formattedJoinDate}
                                     </p>
@@ -73,14 +85,16 @@ export default function Dashboard() {
                             </div>
                             <div className="mt-6 grid grid-cols-3 gap-4">
                                 <div className="text-center">
-                                    <h3 className="text-2xl font-bold">0</h3>
-                                    <p className="text-sm">
-                                        Projects Completed
-                                    </p>
+                                    <h3 className="text-2xl font-bold">
+                                        {projects.length}
+                                    </h3>
+                                    <p className="text-sm">Projects</p>
                                 </div>
                                 <div className="text-center">
-                                    <h3 className="text-2xl font-bold">0</h3>
-                                    <p className="text-sm">Lines of Code</p>
+                                    <h3 className="text-2xl font-bold">
+                                        {skills.length}
+                                    </h3>
+                                    <p className="text-sm">Skills</p>
                                 </div>
                                 <div className="text-center">
                                     <h3 className="text-2xl font-bold">0</h3>
@@ -94,7 +108,7 @@ export default function Dashboard() {
                         <CardHeader>
                             <CardTitle>Skills</CardTitle>
                             <CardDescription>
-                                Your top programming skills
+                                Programming skills
                             </CardDescription>
                         </CardHeader>
                         <CardContent>
@@ -110,9 +124,9 @@ export default function Dashboard() {
                                                 No skills added
                                             </h3>
                                             <p className="text-sm text-gray-500">
-                                                Complete your profile to add
-                                                your programming skills and
-                                                expertise.
+                                                {isOwnProfile
+                                                    ? "You haven't added any programming skills yet."
+                                                    : "This user hasn't added any programming skills yet."}
                                             </p>
                                         </div>
                                     </div>
@@ -124,14 +138,20 @@ export default function Dashboard() {
 
                 <Card className="mt-6">
                     <CardHeader>
-                        <CardTitle>Your Projects</CardTitle>
+                        <CardTitle>
+                            {isOwnProfile
+                                ? 'Your Projects'
+                                : `${profileUser.username}'s Projects`}
+                        </CardTitle>
                         <CardDescription>
-                            Recent coding projects you've worked on
+                            {isOwnProfile
+                                ? 'All your coding projects'
+                                : 'Coding projects shared by this user'}
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
                         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-                            {projects?.length > 0 ? (
+                            {projects.length > 0 ? (
                                 projects.map((project) => (
                                     <Card key={project.id}>
                                         <CardHeader>
@@ -156,6 +176,22 @@ export default function Dashboard() {
                                                     {project.skill_level}
                                                 </Badge>
                                             )}
+                                            <div className="mt-4">
+                                                <Button
+                                                    asChild
+                                                    variant="outline"
+                                                    size="sm"
+                                                >
+                                                    <Link
+                                                        href={route(
+                                                            'projects.show',
+                                                            project.id,
+                                                        )}
+                                                    >
+                                                        View Project
+                                                    </Link>
+                                                </Button>
+                                            </div>
                                         </CardContent>
                                     </Card>
                                 ))
@@ -163,23 +199,30 @@ export default function Dashboard() {
                                 <div className="col-span-full flex flex-col items-center justify-center space-y-4 rounded-lg border border-dashed border-gray-300 bg-gray-50/50 px-6 py-8 text-center">
                                     <div className="space-y-2">
                                         <h3 className="font-medium text-gray-900">
-                                            No projects found
+                                            {isOwnProfile
+                                                ? 'No projects found'
+                                                : 'No projects'}
                                         </h3>
-                                        <p className="pb-2 text-sm text-gray-500">
-                                            Start creating your first project to
-                                            showcase your work.
+                                        <p className="text-sm text-gray-500">
+                                            {isOwnProfile
+                                                ? 'Start creating your first project to showcase your work.'
+                                                : "This user hasn't created any projects yet."}
                                         </p>
-                                        <Button
-                                            asChild
-                                            variant="default"
-                                            className="w-fit"
-                                        >
-                                            <Link
-                                                href={route('projects.create')}
+                                        {isOwnProfile && (
+                                            <Button
+                                                asChild
+                                                variant="default"
+                                                className="mt-2"
                                             >
-                                                Create Project
-                                            </Link>
-                                        </Button>
+                                                <Link
+                                                    href={route(
+                                                        'projects.create',
+                                                    )}
+                                                >
+                                                    Create Project
+                                                </Link>
+                                            </Button>
+                                        )}
                                     </div>
                                 </div>
                             )}

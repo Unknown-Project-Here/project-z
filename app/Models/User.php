@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\ProjectPermission;
 use App\Enums\ProjectRole;
+use App\Services\GitHub\GitHubApiService;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -162,4 +163,47 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasMany(UserTechStack::class);
     }
+
+    public function getSocialUsernames(): array
+    {
+        return $this->socialAccounts->pluck('provider', 'username')->flip()->toArray();
+    }
+
+    public function getGithubRepos(): ?array
+{
+    if (!$this->hasSocialProvider('github') || !($socialAccount = $this->getSocialAccount('github'))) {
+        return null;
+    }
+
+    try {
+        $githubService = app(GitHubApiService::class)->setUser($this);
+        $repos = $githubService->getRepositories();
+
+        if (empty($repos)) {
+            return null;
+        }
+
+        $providerId = (int) $socialAccount->provider_id;
+
+        $existingRepoIds = Project::whereIn('repo_id', array_column($repos, 'id'))
+            ->pluck('repo_id')
+            ->all();
+
+        $result = ['public' => [], 'private' => []];
+
+        foreach ($repos as $repo) {
+            if ($repo['owner']['id'] === $providerId && !in_array($repo['id'], $existingRepoIds)) {
+                $result[$repo['private'] ? 'private' : 'public'][] = [
+                    'id' => $repo['id'],
+                    'name' => $repo['name'],
+                ];
+            }
+        }
+
+        return $result['public'] || $result['private'] ? $result : null;
+    } catch (\Exception $e) {
+        logger()->error('Failed to fetch GitHub repositories: '.$e->getMessage());
+        return null;
+    }
+}
 }

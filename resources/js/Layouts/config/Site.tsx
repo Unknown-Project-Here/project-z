@@ -17,13 +17,8 @@ export const NavItems: NavItem[] = [
         icon: 'MessagesSquare',
     },
     {
-        name: 'Profile',
-        href: '/profile',
-        icon: 'UserCircle',
-    },
-    {
         name: 'Settings',
-        href: '/settings/account',
-        icon: 'Settings',
+        href: '/settings',
+        icon: 'UserCog',
     },
 ];

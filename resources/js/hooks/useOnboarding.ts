@@ -1,4 +1,4 @@
-import { OnboardingType } from '@/components/onboarding/types';
+import { OnboardingType } from '@/Components/onboarding/types';
 import { useState } from 'react';
 
 interface UseOnboardingProps {

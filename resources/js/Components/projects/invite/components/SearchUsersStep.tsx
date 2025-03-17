@@ -1,13 +1,13 @@
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { useHandleUserSelect } from '@/Components/projects/invite/store/hooks/useHandleUserSelect';
+import { useSearchUsers } from '@/Components/projects/invite/store/hooks/useSearchUsers';
+import { useSetSearchQuery } from '@/Components/projects/invite/store/hooks/useSetSearchQuery';
+import { useInviteStore } from '@/Components/projects/invite/store/use-invite-store';
+import { Avatar, AvatarFallback, AvatarImage } from '@/Components/ui/avatar';
+import { Button } from '@/Components/ui/button';
+import { Input } from '@/Components/ui/input';
 import { useDebouncedValue } from '@/hooks/use-debounced-value';
 import { Project } from '@/types';
 import { useEffect, useRef } from 'react';
-import { useHandleUserSelect } from '@/components/projects/invite/store/hooks/useHandleUserSelect';
-import { useSearchUsers } from '@/components/projects/invite/store/hooks/useSearchUsers';
-import { useSetSearchQuery } from '@/components/projects/invite/store/hooks/useSetSearchQuery';
-import { useInviteStore } from '@/components/projects/invite/store/use-invite-store';
 
 interface SearchUsersStepProps {
     project: Project;

@@ -1,9 +1,9 @@
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Button } from '@/components/ui/button';
+import { useHandleStepChange } from '@/Components/projects/invite/store/hooks/useHandleStepChange';
+import { useSubmitInvite } from '@/Components/projects/invite/store/hooks/useSubmitInvite';
+import { useInviteStore } from '@/Components/projects/invite/store/use-invite-store';
+import { Avatar, AvatarFallback, AvatarImage } from '@/Components/ui/avatar';
+import { Button } from '@/Components/ui/button';
 import { Project } from '@/types';
-import { useHandleStepChange } from '@/components/projects/invite/store/hooks/useHandleStepChange';
-import { useSubmitInvite } from '@/components/projects/invite/store/hooks/useSubmitInvite';
-import { useInviteStore } from '@/components/projects/invite/store/use-invite-store';
 
 interface ConfirmInviteStepProps {
     project: Project;

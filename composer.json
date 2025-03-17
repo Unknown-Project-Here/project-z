@@ -17,6 +17,7 @@
         "laravel/socialite": "^5.18",
         "laravel/tinker": "^2.9",
         "socialiteproviders/discord": "^4.2",
+        "spatie/laravel-github-webhooks": "^1.2",
         "tightenco/ziggy": "^2.0"
     },
     "require-dev": {
@@ -59,7 +60,7 @@
         ],
         "dev": [
             "Composer\\Config::disableProcessTimeout",
-            "npx concurrently -c \"#93c5fd,#c4b5fd,#fb7185,#fdba74\" \"php artisan serve\" \"php artisan queue:work\" \"npm run dev\" \"php artisan reverb:start\" --names=server,queue,logs,vite"
+            "npx concurrently -c \"#93c5fd,#c4b5fd,#fb7185,#fdba74\" \"php artisan serve\" \"php artisan queue:work\" \"npm run dev\" \"php artisan reverb:start\" --names=server,queue,vite,reverb"
         ]
     },
     "extra": {

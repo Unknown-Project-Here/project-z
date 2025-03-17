@@ -95,6 +95,7 @@ export interface ProjectType {
     framework: string[];
     expertise: string;
     specialization: string[];
+    githubRepo: { id: number; name: string } | null;
 }
 
 export interface ProjectDetailsProps {
@@ -129,3 +130,13 @@ export interface Message {
     user: User;
     recipient_id: number;
 }
+
+export type ProjectCreateGithubRepoList = {
+    public: ProjectCreateGithubRepo[];
+    private: ProjectCreateGithubRepo[];
+};
+
+type ProjectCreateGithubRepo = {
+    id: number;
+    name: string;
+};

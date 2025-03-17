@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ProfileDeleteRequest;
 use App\Http\Requests\ProfileUpdateRequest;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\RedirectResponse;
@@ -21,6 +22,7 @@ class ProfileController extends Controller
         return Inertia::render('Profile/Edit', [
             'mustVerifyEmail' => $request->user() instanceof MustVerifyEmail,
             'status' => session('status'),
+            'hasPassword' => $request->user()->password !== null,
         ]);
     }
 
@@ -37,18 +39,14 @@ class ProfileController extends Controller
 
         $request->user()->save();
 
-        return Redirect::route('profile.edit');
+        return Redirect::route('settings.edit');
     }
 
     /**
      * Delete the user's account.
      */
-    public function destroy(Request $request): RedirectResponse
+    public function destroy(ProfileDeleteRequest $request): RedirectResponse
     {
-        $request->validate([
-            'password' => ['required', 'current_password'],
-        ]);
-
         $user = $request->user();
 
         Auth::logout();
@@ -56,6 +54,7 @@ class ProfileController extends Controller
         $user->delete();
 
         $request->session()->invalidate();
+
         $request->session()->regenerateToken();
 
         return Redirect::to('/');

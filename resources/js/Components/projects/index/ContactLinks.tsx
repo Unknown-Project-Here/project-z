@@ -1,4 +1,4 @@
-import ContactItem from '@/components/projects/index/ContactItem';
+import ContactItem from '@/Components/projects/index/ContactItem';
 import { ProjectContact } from '@/types';
 import { Mail } from 'lucide-react';
 

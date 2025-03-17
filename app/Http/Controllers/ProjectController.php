@@ -9,6 +9,7 @@ use App\Actions\Project\CreateProjectTechStack;
 use App\Http\Requests\ProjectRenameRequest;
 use App\Http\Requests\ProjectRequest;
 use App\Models\Project;
+use App\Services\ProjectService;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -71,12 +72,17 @@ class ProjectController extends Controller
     /**
      * Show the form for creating a new project.
      */
-    public function create(Request $request): Response
+    public function create(Request $request)
     {
         $this->authorize('create', Project::class);
 
-        return Inertia::render('Project/Create', [
-            'user' => Auth::user(),
+        $user = Auth::user();
+        $socialUsernames = $user->getSocialUsernames();
+        $repos = $user->getGithubRepos();
+
+        return inertia('Project/Create', [
+            'usernames' => $socialUsernames,
+            'repos' => $repos,
         ]);
     }
 
@@ -119,46 +125,22 @@ class ProjectController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(ProjectRequest $request): RedirectResponse|JsonResponse
+    public function store(ProjectRequest $request, ProjectService $projectService): RedirectResponse|JsonResponse
     {
         $this->authorize('create', Project::class);
 
-        try {
-            return DB::transaction(function () use ($request) {
-                $validatedData = $request->validated();
+        $result = $projectService->store($request->validated());
 
-                // Create missing options
-                $options = ['skills' => $validatedData['project']['skills']];
-                app()->make(CreateMissingOptions::class)
-                    ->handle($options, function ($data) {
-                        return $data;
-                    });
-
-                // Create project and related data
-                $pipeline = Pipeline::send($validatedData)
-                    ->through([
-                        CreateProject::class,
-                        CreateProjectTechStack::class,
-                        AssignCreatorRole::class,
-                    ])
-                    ->then(function ($data) {
-                        return $data['project'];
-                    });
-
-                return redirect()->route('projects.show', $pipeline->id)->with(['success' => true, 'message' => 'Project created successfully.']);
-            });
-        } catch (\Exception $e) {
-            Log::error('Project creation failed:', [
-                'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString(),
-            ]);
-
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to create project.',
-                'error' => config('app.debug') ? $e->getMessage() : null,
-            ], 500);
+        if ($result['success']) {
+            return redirect()->route('projects.show', $result['project']->id)
+                ->with(['success' => true, 'message' => $result['message']]);
         }
+
+        return response()->json([
+            'success' => false,
+            'message' => $result['message'],
+            'error' => $result['error'] ?? null,
+        ], 500);
     }
 
     /**
@@ -166,12 +148,7 @@ class ProjectController extends Controller
      */
     public function edit(Project $project): Response
     {
-        // Check if the authenticated user is the project owner
-        if ($project->user_id !== Auth::id()) {
-            abort(403, 'Unauthorized action.');
-        }
-
-        $this->authorize('update', $project);
+        $this->authorize('edit', $project);
 
         return Inertia::render('Project/Edit', [
             'project' => $project->load('user'),

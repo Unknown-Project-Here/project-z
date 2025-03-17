@@ -1,4 +1,4 @@
-import { StepperNavigation } from '@/components/ui/stepper/StepperNavigation';
+import { StepperNavigation } from '@/Components/ui/stepper/StepperNavigation';
 import { cn } from '@/lib/utils';
 
 interface StepperContentProps {

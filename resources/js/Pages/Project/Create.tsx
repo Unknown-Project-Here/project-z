@@ -1,8 +1,23 @@
-import { Stepper } from '@/components/ui/stepper/Stepper';
+import { Stepper } from '@/Components/ui/stepper/Stepper';
 import { useLocalStorage } from '@/hooks/use-local-storage';
+import { usePageProps } from '@/hooks/usePageProps';
 import { ProjectType } from '@/types';
 import { router } from '@inertiajs/react';
+import { useEffect } from 'react';
+import { toast } from 'sonner';
 import { projectSteps } from './Partials/ProjectSteps';
+
+type PagePropsWithUsernames = {
+    usernames: {
+        google?: string;
+        github?: string;
+        discord?: string;
+    };
+    repos?: {
+        public: { id: number; name: string }[];
+        private: { id: number; name: string }[];
+    };
+};
 
 const defaultProjectData: ProjectType = {
     title: '',
@@ -18,13 +33,46 @@ const defaultProjectData: ProjectType = {
     framework: [],
     expertise: '',
     specialization: [],
+    githubRepo: null,
 };
 
 export default function CreateProject() {
+    const { props } = usePageProps<PagePropsWithUsernames>();
+
+    // Initialize with default data
     const [projectData, setProjectData] = useLocalStorage({
         key: 'project-creation',
         defaultValue: defaultProjectData,
     });
+
+    // Update contact info with usernames from props if they exist
+    useEffect(() => {
+        const usernames = props.usernames || {};
+
+        if (usernames && Object.keys(usernames).length > 0) {
+            setProjectData((prev) => {
+                // Only update if the current values are empty
+                const updatedContact = { ...prev.contact };
+
+                if (usernames.github && !prev.contact.github) {
+                    updatedContact.github = usernames.github;
+                }
+
+                if (usernames.discord && !prev.contact.discord) {
+                    updatedContact.discord = usernames.discord;
+                }
+
+                if (usernames.google && !prev.contact.email) {
+                    updatedContact.email = usernames.google;
+                }
+
+                return {
+                    ...prev,
+                    contact: updatedContact,
+                };
+            });
+        }
+    }, [props.usernames, setProjectData]);
 
     const validateStep = (stepIndex: number) => {
         if (!projectData) {
@@ -34,11 +82,7 @@ export default function CreateProject() {
 
         switch (stepIndex) {
             case 0:
-                return (
-                    !!projectData.title &&
-                    !!projectData.description &&
-                    Object.values(projectData.contact).some((value) => !!value)
-                );
+                return !!projectData.title && !!projectData.description;
             case 1:
                 return projectData?.domain?.length > 0;
             case 2:
@@ -56,7 +100,12 @@ export default function CreateProject() {
 
     const updateProjectData = (
         field: keyof ProjectType,
-        value: string | string[] | Record<string, string>,
+        value:
+            | string
+            | string[]
+            | Record<string, string>
+            | { id: number; name: string }
+            | null,
     ) => {
         setProjectData((prev) => ({
             ...prev,
@@ -81,6 +130,7 @@ export default function CreateProject() {
                     framework: projectData.framework,
                     specialization: projectData.specialization,
                 },
+                github_repo_id: projectData.githubRepo?.id,
             };
 
             router.post(
@@ -93,7 +143,10 @@ export default function CreateProject() {
                         localStorage.removeItem('project-creation');
                     },
                     onError: (errors) => {
-                        console.error('Validation errors:', errors);
+                        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                        Object.entries(errors).forEach(([_, message]) => {
+                            toast.error(message as string);
+                        });
                     },
                 },
             );

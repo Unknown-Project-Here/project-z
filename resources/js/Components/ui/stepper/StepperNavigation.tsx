@@ -1,5 +1,5 @@
-import { Button } from '@/components/ui/button';
-import { useStepperContext } from '@/components/ui/stepper/StepperContext';
+import { Button } from '@/Components/ui/button';
+import { useStepperContext } from '@/Components/ui/stepper/StepperContext';
 
 export function StepperNavigation() {
     const { activeStep, setActiveStep, onComplete, totalSteps, canMoveNext } =

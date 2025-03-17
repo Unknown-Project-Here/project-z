@@ -1,6 +1,6 @@
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { ScrollArea } from '@/components/ui/scroll-area';
+import { Badge } from '@/Components/ui/badge';
+import { Button } from '@/Components/ui/button';
+import { ScrollArea } from '@/Components/ui/scroll-area';
 import { X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 

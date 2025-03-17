@@ -1,5 +1,5 @@
-import { useInviteStore } from '@/components/projects/invite/store/use-invite-store';
-import { ProjectRole } from '@/components/projects/invite/types';
+import { useInviteStore } from '@/Components/projects/invite/store/use-invite-store';
+import { ProjectRole } from '@/Components/projects/invite/types';
 
 export const useSetSelectedRole = () => {
     return (role: ProjectRole) => {
