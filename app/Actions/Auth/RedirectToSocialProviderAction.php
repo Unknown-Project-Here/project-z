@@ -24,7 +24,8 @@ class RedirectToSocialProviderAction
 
         if ($provider === 'github') {
             return Socialite::driver($provider)
-                ->scopes(['user', 'repo', 'admin:repo_hook', 'read:org'])
+                ->with(['prompt' => 'consent'])
+                ->scopes(['user', 'repo', 'admin:repo_hook', 'admin:org','project'])
                 ->redirect();
         }
 
