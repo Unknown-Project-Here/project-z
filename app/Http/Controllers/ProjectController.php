@@ -2,10 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Actions\Options\CreateMissingOptions;
-use App\Actions\Project\AssignCreatorRole;
-use App\Actions\Project\CreateProject;
-use App\Actions\Project\CreateProjectTechStack;
 use App\Http\Requests\ProjectRenameRequest;
 use App\Http\Requests\ProjectRequest;
 use App\Models\Project;
@@ -15,9 +11,6 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Pipeline;
 use Inertia\Inertia;
 use Inertia\Response;
 
