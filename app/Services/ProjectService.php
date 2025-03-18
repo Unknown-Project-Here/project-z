@@ -176,6 +176,19 @@ class ProjectService
             ];
         }
 
+        $allRepoIds = [];
+        foreach (['public', 'private', 'orgs'] as $repoType) {
+            if (isset($repos[$repoType])) {
+                $repoIds = collect($repos[$repoType])->pluck('id')->toArray();
+                $allRepoIds = array_merge($allRepoIds, $repoIds);
+            }
+        }
+
+        $usedRepoIds = [];
+        if (!empty($allRepoIds)) {
+            $usedRepoIds = Project::whereIn('repo_id', $allRepoIds)->pluck('repo_id')->toArray();
+        }
+
         $filteredRepos = [];
         foreach (['public', 'private', 'orgs'] as $repoType) {
             if (!isset($repos[$repoType])) {
@@ -184,8 +197,8 @@ class ProjectService
             }
 
             $filteredRepos[$repoType] = collect($repos[$repoType])
-                ->filter(function($repo) {
-                    return Project::where('repo_id', $repo['id'])->doesntExist();
+                ->filter(function($repo) use ($usedRepoIds) {
+                    return !in_array($repo['id'], $usedRepoIds);
                 })
                 ->values()
                 ->toArray();
