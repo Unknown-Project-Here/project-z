@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\ProjectRenameRequest;
 use App\Http\Requests\ProjectRequest;
 use App\Models\Project;
+use App\Services\GitHub\GitHubApiService;
 use App\Services\ProjectService;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\JsonResponse;
@@ -65,13 +66,13 @@ class ProjectController extends Controller
     /**
      * Show the form for creating a new project.
      */
-    public function create(Request $request)
+    public function create(ProjectService $projectService)
     {
         $this->authorize('create', Project::class);
 
         $user = Auth::user();
         $socialUsernames = $user->getSocialUsernames();
-        $repos = $user->getGithubRepos();
+        $repos = $projectService->getRepositoriesForProjectCreation();
 
         return inertia('Project/Create', [
             'usernames' => $socialUsernames,

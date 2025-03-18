@@ -109,7 +109,33 @@ class GitHubApiService
         try {
             $response = $this->httpClient
                 ->withToken($accessToken)
-                ->get('/user/organizations');
+                ->get('/user/orgs');
+
+            $response->throw();
+
+            return $response->json();
+        } catch (RequestException $e) {
+            logger()->error('GitHub API request failed: '.$e->getMessage());
+            throw $e;
+        }
+    }
+
+    public function getOrganizationRepos(string $login)
+    {
+        if (! $this->user) {
+            return null;
+        }
+
+        $accessToken = $this->user->getAccessToken(self::PROVIDER);
+
+        if (! $accessToken) {
+            return null;
+        }
+
+        try {
+            $response = $this->httpClient
+                ->withToken($accessToken)
+                ->get("/orgs/{$login}/repos");
 
             $response->throw();
 
@@ -158,5 +184,66 @@ class GitHubApiService
 
             return null;
         }
+    }
+
+    /**
+     * Get repositories categorized by public, private, and organization repositories
+     * where the user has admin permissions
+     *
+     * @return array|null Categorized repositories with id and name properties or null on failure
+     */
+    public function getPersonandOrganizationRepos(): ?array
+    {
+        if (! $this->user?->getAccessToken(self::PROVIDER)) {
+            return null;
+        }
+
+        $publicRepos = [];
+        $privateRepos = [];
+        $organizationRepos = [];
+
+        $personalReposData = $this->getRepositories();
+        if ($personalReposData) {
+            $personalRepos = collect($personalReposData)
+                ->filter(fn ($repo) => $repo['permissions']['admin'] ?? false);
+
+            foreach ($personalRepos as $repo) {
+                $repoData = [
+                    'id' => $repo['id'],
+                    'name' => $repo['full_name'],
+                ];
+
+                if ($repo['private'] ?? false) {
+                    $privateRepos[] = $repoData;
+                } else {
+                    $publicRepos[] = $repoData;
+                }
+            }
+        }
+
+        $orgs = $this->getOrganizations();
+        if ($orgs && count($orgs) > 0) {
+            foreach ($orgs as $org) {
+                $orgRepos = $this->getOrganizationRepos($org['login']);
+                if (! $orgRepos) {
+                    continue;
+                }
+
+                foreach ($orgRepos as $repo) {
+                    if (($repo['permissions']['admin'] ?? false)) {
+                        $organizationRepos[] = [
+                            'id' => $repo['id'],
+                            'name' => $repo['full_name'],
+                        ];
+                    }
+                }
+            }
+        }
+
+        return [
+            'public' => $publicRepos,
+            'private' => $privateRepos,
+            'orgs' => $organizationRepos,
+        ];
     }
 }

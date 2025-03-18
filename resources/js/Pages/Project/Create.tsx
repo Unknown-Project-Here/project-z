@@ -16,6 +16,7 @@ type PagePropsWithUsernames = {
     repos?: {
         public: { id: number; name: string }[];
         private: { id: number; name: string }[];
+        orgs: { id: number; name: string }[];
     };
 };
 
