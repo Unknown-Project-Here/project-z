@@ -87,7 +87,7 @@ class CreateGitHubWebhook
             $webhookData = [
                 'name' => 'web',
                 'config' => [
-                    'url' => 'https://project-z.test/github/webhook',
+                    'url' => config('services.github.webhook_url'),
                     'content_type' => 'json',
                     'secret' => config('github-webhooks.signing_secret'),
                     'insecure_ssl' => '0',
