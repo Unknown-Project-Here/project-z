@@ -157,7 +157,15 @@ class ProjectService
     {
         $user = Auth::user();
 
-        if (!$user->hasSocialProvider('github')) {
+        if (!$user || !$user->hasSocialProvider('github')) {
+            return [
+                'public' => [],
+                'private' => [],
+                'orgs' => [],
+            ];
+        }
+
+        if (!$user->getAccessToken('github')) {
             return [
                 'public' => [],
                 'private' => [],

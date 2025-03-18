@@ -28,44 +28,7 @@ class GitHubApiService
     public function setUser(?User $user): self
     {
         $this->user = $user;
-
         return $this;
-    }
-
-    public function hasSocialProvider(): bool
-    {
-        return $this->user?->hasSocialProvider(self::PROVIDER) ?? false;
-    }
-
-    public function getUserId(): ?int
-    {
-        return $this->user?->id;
-    }
-
-    public function getUser(): ?array
-    {
-        if (! $this->user) {
-            return null;
-        }
-
-        $accessToken = $this->user->getAccessToken(self::PROVIDER);
-
-        if (! $accessToken) {
-            return null;
-        }
-
-        try {
-            $response = $this->httpClient
-                ->withToken($accessToken)
-                ->get('/user');
-
-            $response->throw();
-
-            return $response->json();
-        } catch (RequestException $e) {
-            logger()->error('GitHub API request failed: '.$e->getMessage());
-            throw $e;
-        }
     }
 
     public function getRepositories(): ?array
