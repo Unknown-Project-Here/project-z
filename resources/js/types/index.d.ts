@@ -134,6 +134,7 @@ export interface Message {
 export type ProjectCreateGithubRepoList = {
     public: ProjectCreateGithubRepo[];
     private: ProjectCreateGithubRepo[];
+    orgs: ProjectCreateGithubRepo[];
 };
 
 type ProjectCreateGithubRepo = {

@@ -18,7 +18,7 @@ class HandleIssueOpenedWebhookJob implements ShouldQueue
 
     public function handle()
     {
-        logger()->info('GitHub issue opened', [
+        logger()->channel('webhook')->info('GitHub issue opened', [
             'repository' => $this->webhookCall->payload('repository.full_name'),
             'issue_number' => $this->webhookCall->payload('issue.number'),
             'issue_title' => $this->webhookCall->payload('issue.title'),

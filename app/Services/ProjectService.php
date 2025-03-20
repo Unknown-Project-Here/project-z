@@ -9,6 +9,7 @@ use App\Actions\Project\CreateProject;
 use App\Actions\Project\CreateProjectTechStack;
 use App\Models\Project;
 use App\Models\User;
+use App\Services\GitHub\GitHubApiService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -17,20 +18,28 @@ use Illuminate\Validation\ValidationException;
 
 class ProjectService
 {
+    protected GitHubApiService $githubApiService;
+
+    public function __construct(GitHubApiService $githubApiService)
+    {
+        $this->githubApiService = $githubApiService;
+    }
+
     /**
      * Store a new project.
      *
      * @param  array  $validatedData  The validated request data
      * @return array Response with project and status information
      */
-    public function store(array $validatedData): array
+   public function store(array $validatedData): array
     {
         try {
+            $githubRepoData = null;
             if (isset($validatedData['project']['github_repo_id']) && $validatedData['project']['github_repo_id']) {
-                $this->validateGithubRepoId($validatedData['project']['github_repo_id']);
+                $githubRepoData = $this->validateGithubRepoId($validatedData['project']['github_repo_id']);
             }
 
-            return DB::transaction(function () use ($validatedData) {
+            return DB::transaction(function () use ($validatedData, $githubRepoData) {
                 // Create missing options
                 $options = ['skills' => $validatedData['project']['skills']];
                 app()->make(CreateMissingOptions::class)
@@ -38,9 +47,12 @@ class ProjectService
                         return $data;
                     });
 
-                // Add repo_id to project data if GitHub repo ID was provided and validated
                 if (isset($validatedData['project']['github_repo_id']) && $validatedData['project']['github_repo_id']) {
                     $validatedData['project']['repo_id'] = $validatedData['project']['github_repo_id'];
+                }
+
+                if ($githubRepoData) {
+                    $validatedData['github_repo_data'] = $githubRepoData;
                 }
 
                 $project = Pipeline::send($validatedData)
@@ -93,7 +105,7 @@ class ProjectService
      *
      * @throws ValidationException If the repository is invalid
      */
-    private function validateGithubRepoId(int $repoId): bool
+    private function validateGithubRepoId(int $repoId): ?array
     {
         $user = Auth::user();
 
@@ -103,15 +115,24 @@ class ProjectService
             ]);
         }
 
-        $userRepos = $user->getGithubRepos() ?? throw ValidationException::withMessages([
-            'github_repo_id' => 'Unable to fetch your GitHub repositories.',
-        ]);
+        $this->githubApiService->setUser($user);
+        $repos = $this->githubApiService->getPersonandOrganizationRepos();
 
-        $repoExists = collect($userRepos['public'] ?? [])
-            ->merge($userRepos['private'] ?? [])
-            ->contains(fn ($repo) => $repo['id'] === $repoId);
+        if (! $repos) {
+            throw ValidationException::withMessages([
+                'github_repo_id' => 'Unable to fetch your GitHub repositories.',
+            ]);
+        }
 
-        if (! $repoExists) {
+        $allRepos = collect($repos['public'])
+            ->merge($repos['private'])
+            ->merge($repos['orgs']);
+
+        $repoData = $allRepos->first(function ($repo) use ($repoId) {
+            return $repo['id'] === $repoId;
+        });
+
+        if (! $repoData) {
             throw ValidationException::withMessages([
                 'github_repo_id' => 'The selected GitHub repository does not exist or does not belong to you.',
             ]);
@@ -124,6 +145,65 @@ class ProjectService
             ]);
         }
 
-        return true;
+        return $repoData;
+    }
+
+    /**
+     * Get GitHub repositories for project creation form.
+     *
+     * @return array GitHub repositories filtered by those not already used in projects
+     */
+    public function getRepositoriesForProjectCreation(): array
+    {
+        $user = Auth::user();
+
+        if (!$user || !$user->hasSocialProvider('github') || !$user->getAccessToken('github')) {
+            return [
+                'public' => [],
+                'private' => [],
+                'orgs' => [],
+            ];
+        }
+
+        $this->githubApiService->setUser($user);
+        $repos = $this->githubApiService->getPersonandOrganizationRepos();
+
+        if (!$repos) {
+            return [
+                'public' => [],
+                'private' => [],
+                'orgs' => [],
+            ];
+        }
+
+        $allRepoIds = [];
+        foreach (['public', 'private', 'orgs'] as $repoType) {
+            if (isset($repos[$repoType])) {
+                $repoIds = collect($repos[$repoType])->pluck('id')->toArray();
+                $allRepoIds = array_merge($allRepoIds, $repoIds);
+            }
+        }
+
+        $usedRepoIds = [];
+        if (!empty($allRepoIds)) {
+            $usedRepoIds = Project::whereIn('repo_id', $allRepoIds)->pluck('repo_id')->toArray();
+        }
+
+        $filteredRepos = [];
+        foreach (['public', 'private', 'orgs'] as $repoType) {
+            if (!isset($repos[$repoType])) {
+                $filteredRepos[$repoType] = [];
+                continue;
+            }
+
+            $filteredRepos[$repoType] = collect($repos[$repoType])
+                ->filter(function($repo) use ($usedRepoIds) {
+                    return !in_array($repo['id'], $usedRepoIds);
+                })
+                ->values()
+                ->toArray();
+        }
+
+        return $filteredRepos;
     }
 }
