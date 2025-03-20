@@ -51,7 +51,10 @@ return [
     */
 
     'channels' => [
-
+        'webhook' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/webhook.log'),
+        ],
         'stack' => [
             'driver' => 'stack',
             'channels' => explode(',', env('LOG_STACK', 'single')),
@@ -125,11 +128,6 @@ return [
 
         'emergency' => [
             'path' => storage_path('logs/laravel.log'),
-        ],
-
-        'webhook' => [
-            'driver' => 'single',
-            'path' => storage_path('logs/webhook.log'),
         ],
 
     ],
