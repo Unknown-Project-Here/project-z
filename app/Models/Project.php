@@ -17,6 +17,8 @@ class Project extends Model
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
         'is_active' => 'boolean',
+        'is_requestable' => 'boolean',
+        'is_configured' => 'boolean',
     ];
 
     protected $fillable = [
@@ -28,7 +30,14 @@ class Project extends Model
         'created_at',
         'updated_at',
         'skill_level',
-        'repo_id'
+        'repo_id',
+        'is_requestable',
+        'is_configured',
+    ];
+
+    protected $hidden = [
+        'is_requestable',
+        'is_configured',
     ];
 
     // Relationships

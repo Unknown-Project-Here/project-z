@@ -19,6 +19,13 @@ class ProjectController extends Controller
 {
     use AuthorizesRequests;
 
+    protected ProjectService $projectService;
+
+    public function __construct(ProjectService $projectService)
+    {
+        $this->projectService = $projectService;
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -66,13 +73,13 @@ class ProjectController extends Controller
     /**
      * Show the form for creating a new project.
      */
-    public function create(ProjectService $projectService)
+    public function create()
     {
         $this->authorize('create', Project::class);
 
         $user = Auth::user();
         $socialUsernames = $user->getSocialUsernames();
-        $repos = $projectService->getRepositoriesForProjectCreation();
+        $repos = $this->projectService->getRepositoriesForProjectCreation();
 
         return inertia('Project/Create', [
             'usernames' => $socialUsernames,
@@ -86,23 +93,10 @@ class ProjectController extends Controller
     public function show(Project $project): Response|JsonResponse|RedirectResponse
     {
         try {
-            $project->load(['stack.option.category', 'members']);
-
-            // Organize stack by categories
-            $stackByCategory = collect($project->stack)
-                ->groupBy(fn ($stack) => $stack->option->category->name)
-                ->map(fn ($items) => $items->map(fn ($item) => [
-                    'id' => $item->option->id,
-                    'name' => $item->option->name,
-                    'skill_level' => $item->skill_level,
-                ]));
-
-            $projectArray = $project->toArray();
-            $projectArray['stack'] = $stackByCategory;
-            $projectArray['creator'] = $project->creator;
+            $projectData = $this->projectService->show($project);
 
             return Inertia::render('Project/Show', [
-                'project' => $projectArray,
+                'project' => $projectData,
             ]);
         } catch (\Exception $e) {
             logger($e->getMessage());
@@ -119,11 +113,11 @@ class ProjectController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(ProjectRequest $request, ProjectService $projectService): RedirectResponse|JsonResponse
+    public function store(ProjectRequest $request): RedirectResponse|JsonResponse
     {
         $this->authorize('create', Project::class);
 
-        $result = $projectService->store($request->validated());
+        $result = $this->projectService->store($request->validated());
 
         if ($result['success']) {
             return redirect()->route('projects.show', $result['project']->id)

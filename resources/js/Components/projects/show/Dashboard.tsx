@@ -4,7 +4,7 @@ import AssignedIssues from './AssignedIssues';
 import DashboardStats from './DashboardStats';
 import DashboardTabs from './DashboardTabs';
 import IssueCreator from './IssueCreator';
-import { Leaderboard } from './Leaderboard';
+import Leaderboard from './Leaderboard';
 import MembersList from './MembersList';
 
 function Dashboard() {

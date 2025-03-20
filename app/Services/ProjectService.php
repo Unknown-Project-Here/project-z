@@ -7,6 +7,7 @@ use App\Actions\Project\AssignCreatorRole;
 use App\Actions\Project\CreateGitHubWebhook;
 use App\Actions\Project\CreateProject;
 use App\Actions\Project\CreateProjectTechStack;
+use App\Enums\ProjectRole;
 use App\Models\Project;
 use App\Models\User;
 use App\Services\GitHub\GitHubApiService;
@@ -205,5 +206,38 @@ class ProjectService
         }
 
         return $filteredRepos;
+    }
+
+    public function show(Project $project): array
+    {
+        $project->load(['stack.option.category', 'members']);
+
+        $stackByCategory = collect($project->stack)
+            ->groupBy(fn ($stack) => $stack->option->category->name)
+            ->map(fn ($items) => $items->map(fn ($item) => [
+                'id' => $item->option->id,
+                'name' => $item->option->name,
+                'skill_level' => $item->skill_level,
+            ]));
+
+        $projectArray = $project->toArray();
+        $projectArray['stack'] = $stackByCategory;
+        $projectArray['creator'] = $project->creator;
+
+        $user = Auth::user();
+
+        if ($user) {
+            $memberPivot = $project->members()->where('user_id', $user->id)->first()?->pivot;
+
+            if ($memberPivot && in_array($memberPivot->role, [ProjectRole::CREATOR, ProjectRole::ADMIN])) {
+                if (!$project->is_configured && !$project->is_requestable) {
+                    $projectArray['must_configure'] = (object)[
+                        'request' => true
+                    ];
+                }
+            }
+        }
+
+        return $projectArray;
     }
 }

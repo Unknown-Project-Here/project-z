@@ -29,7 +29,7 @@ const MemberCard: React.FC<MemberCardProps> = ({ member, onMessageClick }) => {
     };
 
     return (
-        <Card className="overflow-hidden border-border bg-card transition-shadow hover:shadow-lg">
+        <Card className="overflow-hidden border-border transition-shadow hover:shadow-lg">
             <div className="p-6">
                 <div className="flex items-center gap-4">
                     <Avatar className="h-16 w-16 border-2 border-ring/10">

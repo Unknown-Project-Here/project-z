@@ -66,7 +66,10 @@ Route::prefix('projects')->name('projects.')->group(function () {
     Route::controller(ProjectInvitationController::class)->group(function () {
         Route::get('/{project}/search-users', 'getUsers')->name('search-users');
         Route::post('/{project}/invite', 'store')->name('invite');
-        Route::post('/{project}/request', 'request')->name('request');
+        // Route::post('/{project}/request', 'request')->name('request');
+        Route::get('/{project}/request', function () {
+            return Inertia::render('Project/Request');
+        });
     });
 });
 
