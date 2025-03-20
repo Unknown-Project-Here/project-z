@@ -19,7 +19,7 @@ import { usePageProps } from '@/hooks/usePageProps';
 import { cn } from '@/lib/utils';
 import { ProjectCreateGithubRepoList, ProjectType } from '@/types';
 import { router } from '@inertiajs/react';
-import { Check, ChevronsUpDown, Lock, XIcon } from 'lucide-react';
+import { BuildingIcon, Check, ChevronsUpDown, Lock, XIcon } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 interface GithubRepoSelectorProps {
@@ -129,7 +129,7 @@ export default function GithubRepoSelector({
                                         variant="outline"
                                         role="combobox"
                                         aria-expanded={open}
-                                        className="w-full justify-between hover:bg-transparent"
+                                        className="w-full justify-between"
                                     >
                                         <div className="flex items-center gap-2 overflow-hidden">
                                             {selectedRepo && (
@@ -262,6 +262,37 @@ export default function GithubRepoSelector({
                                                             </CommandItem>
                                                         ),
                                                     )}
+                                                </CommandGroup>
+                                            )}
+
+                                            {repos.orgs.length > 0 && (
+                                                <CommandGroup heading="Organization Repositories">
+                                                    {repos.orgs.map((repo) => (
+                                                        <CommandItem
+                                                            key={repo.id}
+                                                            value={repo.name}
+                                                            onSelect={() =>
+                                                                handleRepoSelect(
+                                                                    repo.id,
+                                                                    repo.name,
+                                                                )
+                                                            }
+                                                        >
+                                                            <Check
+                                                                className={cn(
+                                                                    'mr-2 h-4 w-4',
+                                                                    selectedRepo?.id ===
+                                                                        repo.id
+                                                                        ? 'opacity-100'
+                                                                        : 'opacity-0',
+                                                                )}
+                                                            />
+                                                            <span className="flex items-center gap-2">
+                                                                {repo.name}
+                                                                <BuildingIcon className="h-3 w-3 text-muted-foreground" />
+                                                            </span>
+                                                        </CommandItem>
+                                                    ))}
                                                 </CommandGroup>
                                             )}
                                         </CommandList>

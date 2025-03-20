@@ -2,22 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use App\Actions\Options\CreateMissingOptions;
-use App\Actions\Project\AssignCreatorRole;
-use App\Actions\Project\CreateProject;
-use App\Actions\Project\CreateProjectTechStack;
 use App\Http\Requests\ProjectRenameRequest;
 use App\Http\Requests\ProjectRequest;
 use App\Models\Project;
+use App\Services\GitHub\GitHubApiService;
 use App\Services\ProjectService;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Pipeline;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -72,13 +66,13 @@ class ProjectController extends Controller
     /**
      * Show the form for creating a new project.
      */
-    public function create(Request $request)
+    public function create(ProjectService $projectService)
     {
         $this->authorize('create', Project::class);
 
         $user = Auth::user();
         $socialUsernames = $user->getSocialUsernames();
-        $repos = $user->getGithubRepos();
+        $repos = $projectService->getRepositoriesForProjectCreation();
 
         return inertia('Project/Create', [
             'usernames' => $socialUsernames,

@@ -18,7 +18,7 @@ class HandlePingWebhook implements ShouldQueue
 
     public function handle()
     {
-        logger()->info('GitHub webhook ping received', [
+        logger()->channel('webhook')->info('GitHub webhook ping received', [
             'repository' => $this->webhookCall->payload('repository.full_name'),
             'zen' => $this->webhookCall->payload('zen'),
             'hook_id' => $this->webhookCall->payload('hook_id'),

@@ -19,75 +19,56 @@ class CreateGitHubWebhook
     public function handle($pipeline, Closure $next)
     {
         $project = $pipeline['project'];
-        $data = $pipeline['data'];
+        $repoData = $pipeline['data']['github_repo_data'] ?? null;
+        $repoId = $pipeline['data']['project']['github_repo_id'] ?? null;
 
-        if (isset($data['project']['github_repo_id']) && $data['project']['github_repo_id']) {
-            $this->createWebhook($project, $data['project']['github_repo_id']);
+        if ($repoId && $repoData) {
+            $this->createWebhook($project, $repoId, $repoData);
         }
 
         return $next($pipeline);
     }
 
-    protected function createWebhook(Project $project, int $repoId): bool
+    protected function createWebhook(Project $project, int $repoId, array $repoData): bool
     {
         try {
             $user = Auth::user();
 
-            if (! $user || ! $user->hasSocialProvider('github')) {
-                logger()->warning('Cannot create GitHub webhook: User not authenticated or no GitHub provider', [
+            if (!$user || !$user->hasSocialProvider('github')) {
+                logger()->warning('Cannot create GitHub webhook: Invalid user authentication', [
                     'project_id' => $project->id,
                     'repo_id' => $repoId,
                 ]);
-
-                return false;
-            }
-
-            $accessToken = $user->getAccessToken('github');
-            if (! $accessToken) {
-                logger()->warning('Cannot create GitHub webhook: No access token available', [
-                    'project_id' => $project->id,
-                    'repo_id' => $repoId,
-                ]);
-
                 return false;
             }
 
             $this->githubApiService->setUser($user);
-            $repositories = $this->githubApiService->getRepositories();
 
-            if (! $repositories) {
-                logger()->warning('Cannot create GitHub webhook: Unable to fetch repositories', [
+            if (!$repoData) {
+                logger()->warning('Cannot create GitHub webhook: Repository information not provided', [
                     'project_id' => $project->id,
                     'repo_id' => $repoId,
                 ]);
-
                 return false;
             }
 
-            $repoInfo = null;
-            foreach ($repositories as $repo) {
-                if ($repo['id'] === $repoId) {
-                    $repoInfo = $repo;
-                    break;
-                }
-            }
-
-            if (! $repoInfo) {
-                logger()->warning('Cannot create GitHub webhook: Repository not found', [
+            $nameParts = explode('/', $repoData['name'], 2);
+            if (count($nameParts) !== 2) {
+                logger()->warning('Cannot create GitHub webhook: Invalid repository name format', [
                     'project_id' => $project->id,
                     'repo_id' => $repoId,
+                    'repo_name' => $repoData['name'],
                 ]);
-
                 return false;
             }
 
-            $owner = $repoInfo['owner']['login'];
-            $repoName = $repoInfo['name'];
+            $ownerLogin = $nameParts[0];
+            $repoName = $nameParts[1];
 
-            $webhookData = [
+            $webhookConfig = [
                 'name' => 'web',
                 'config' => [
-                    'url' => 'https://project-z.test/github/webhook',
+                    'url' => config('services.github.webhook_url'),
                     'content_type' => 'json',
                     'secret' => config('github-webhooks.signing_secret'),
                     'insecure_ssl' => '0',
@@ -96,9 +77,19 @@ class CreateGitHubWebhook
                 'active' => true,
             ];
 
-            $this->githubApiService->createWebhook($owner, $repoName, $webhookData);
+            $result = $this->githubApiService->createWebhook($ownerLogin, $repoName, $webhookConfig);
+
+            if ($result) {
+                return true;
+            }
+
+            logger()->warning('GitHub webhook creation returned empty result', [
+                'project_id' => $project->id,
+                'repo_id' => $repoId,
+            ]);
 
             return false;
+
         } catch (\Exception $e) {
             logger()->error('Error creating GitHub webhook', [
                 'project_id' => $project->id,
