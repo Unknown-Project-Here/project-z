@@ -1,7 +1,7 @@
 import ApplicationsList from '@/Components/applications/ApplicationsList';
 
-const MemberApplications: React.FC = () => {
+const MemberApplicationList: React.FC = () => {
     return <ApplicationsList />;
 };
 
-export default MemberApplications;
+export default MemberApplicationList;

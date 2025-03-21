@@ -167,3 +167,14 @@ export interface PaginationMeta {
     to: number;
     total: number;
 }
+
+export interface Application {
+    id: number;
+    project_id?: number;
+    created_at: string;
+    user: {
+        id: number;
+        username: string;
+        avatar: string;
+    };
+}

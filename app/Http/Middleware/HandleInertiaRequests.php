@@ -50,6 +50,7 @@ class HandleInertiaRequests extends Middleware
                     'invite' => $request->user()?->can('invite', $request->route('project')) ?? false,
                     'edit' => $request->user()?->can('edit', $request->route('project')) ?? false,
                     'request' => $request->user()?->can('request', $request->route('project')) && $request->route('project')->is_requestable ?? false,
+                    'manageRequests' => $request->user()?->can('manageRequests', $request->route('project')) ?? false,
                 ],
             ],
             'notifications' => $request->user()?->notifications->take(5)->map(function ($notification) {

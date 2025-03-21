@@ -16,6 +16,7 @@ enum ProjectPermission: string
     case MEMBER_REMOVE = 'member.remove';
     case MEMBER_UPDATE_ROLE = 'member.update_role';
     case MEMBER_VIEW = 'member.view';
+    case MEMBER_MANAGE_REQUESTS = 'member.manage_requests';
 
     // Task Management
     case TASK_CREATE = 'task.create';

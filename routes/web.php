@@ -64,6 +64,9 @@ Route::prefix('projects')->name('projects.')->group(function () {
     Route::prefix('{project}/applications')->name('applications.')->group(function () {
         Route::controller(ProjectRequestController::class)->group(function () {
             Route::get('/', 'index')->name('index');
+            Route::get('/{application}', 'show')->name('show');
+            Route::post('/{application}/accept', 'acceptRequest')->name('accept');
+            Route::post('/{application}/reject', 'rejectRequest')->name('reject');
         });
     });
 

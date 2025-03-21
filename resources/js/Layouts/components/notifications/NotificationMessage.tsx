@@ -71,6 +71,30 @@ export default function NotificationMessage({
                 </span>
             );
         }
+        case NotificationType.PROJECT_REQUEST_REJECTED: {
+            const { project_title } = notification;
+            return (
+                <span>
+                    Your request to join the project {project_title} was
+                    rejected.
+                </span>
+            );
+        }
+        case NotificationType.PROJECT_REQUEST_ACCEPTED: {
+            const { project_title, project_id } = notification;
+            return (
+                <span>
+                    Congrats! Your request to join the project{' '}
+                    <Link
+                        href={route('projects.show', project_id)}
+                        className="font-medium hover:underline"
+                    >
+                        {project_title}
+                    </Link>{' '}
+                    was accepted.
+                </span>
+            );
+        }
         default:
             return <span>Unknown notification type</span>;
     }

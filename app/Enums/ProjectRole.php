@@ -15,11 +15,13 @@ enum ProjectRole: string
             self::ADMIN => in_array($permission, [
                 ProjectPermission::PROJECT_EDIT,
                 ProjectPermission::PROJECT_UPDATE_STATUS,
+
                 ProjectPermission::MEMBER_INVITE,
                 ProjectPermission::MEMBER_REMOVE,
-
                 ProjectPermission::MEMBER_UPDATE_ROLE,
                 ProjectPermission::MEMBER_VIEW,
+                ProjectPermission::MEMBER_ACCEPT_REQUEST,
+
                 ProjectPermission::TASK_CREATE,
                 ProjectPermission::TASK_EDIT,
                 ProjectPermission::TASK_DELETE,

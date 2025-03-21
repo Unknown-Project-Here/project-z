@@ -7,5 +7,6 @@ export function useProjectPermissions() {
         canEditProject: permissions.project.edit,
         canInviteToProject: permissions.project.invite,
         canRequestToJoinProject: permissions.project.request,
+        canManageRequests: permissions.project.manageRequests,
     };
 }

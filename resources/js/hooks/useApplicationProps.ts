@@ -1,16 +1,5 @@
 import { usePageProps } from '@/hooks/usePageProps';
-import { PaginationMeta } from '@/types';
-
-export interface Application {
-    id: number;
-    project_id: number;
-    created_at: string;
-    user: {
-        id: number;
-        username: string;
-        avatar: string;
-    };
-}
+import { Application, PaginationMeta } from '@/types';
 
 interface ApplicationsResult {
     data: Application[];

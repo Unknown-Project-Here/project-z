@@ -4,6 +4,7 @@ export interface ProjectPermissions {
     invite: boolean;
     edit: boolean;
     request: boolean;
+    manageRequests: boolean;
 }
 
 export interface Permissions {

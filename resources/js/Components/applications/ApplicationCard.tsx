@@ -1,19 +1,10 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/Components/ui/avatar';
 import { Button } from '@/Components/ui/button';
 import { Card } from '@/Components/ui/card';
+import { Application } from '@/types';
+import { Link } from '@inertiajs/react';
 import dayjs from 'dayjs';
 import { Eye, MessageCircle } from 'lucide-react';
-
-interface ApplicationUser {
-    username: string;
-    avatar: string;
-}
-
-export interface Application {
-    id: number;
-    user: ApplicationUser;
-    created_at: string;
-}
 
 interface ApplicationCardProps {
     application: Application;
@@ -51,9 +42,16 @@ const ApplicationCard: React.FC<ApplicationCardProps> = ({ application }) => {
                                 <MessageCircle className="mr-2" />
                                 Message
                             </Button>
-                            <Button>
-                                <Eye className="mr-2" />
-                                View Application
+                            <Button asChild>
+                                <Link
+                                    href={route('projects.applications.show', {
+                                        project: application.project_id,
+                                        application: application.id,
+                                    })}
+                                >
+                                    <Eye className="mr-2" />
+                                    View Application
+                                </Link>
                             </Button>
                         </div>
                     </div>
