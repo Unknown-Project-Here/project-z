@@ -165,6 +165,20 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function getSocialUsernames(): array
     {
-        return $this->socialAccounts->pluck('provider', 'username')->flip()->toArray();
+        $socialUsernames = $this->socialAccounts?->pluck('provider', 'username')->flip()->toArray() ?? [];
+
+        if ($this->email
+            && ! array_key_exists('email', $socialUsernames)
+            && ! in_array($this->email, array_intersect_key($socialUsernames, ['google' => '', 'discord' => '', 'github' => '']))
+        ) {
+            $socialUsernames['email'] = $this->email;
+        }
+
+        return $socialUsernames;
+    }
+
+    public function isMemberOf(Project $project): bool
+    {
+        return $this->projects()->where('project_id', $project->id)->exists();
     }
 }

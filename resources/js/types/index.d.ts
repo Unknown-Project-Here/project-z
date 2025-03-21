@@ -43,7 +43,14 @@ export interface BaseProject {
         created_at: string;
     };
     contact?: ProjectContact;
+    must_configure?: ProjectConfiguration;
     skill_level: string;
+}
+
+export interface ProjectConfiguration {
+    questions: boolean;
+    repo: boolean;
+    members_request: boolean;
 }
 
 export interface IndexProject extends BaseProject {

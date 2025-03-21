@@ -1,102 +1,79 @@
 import { FormField } from '@/Components/projects/request/components/FormField';
 import { FormSection } from '@/Components/projects/request/components/FormSection';
 import { GradientHeader } from '@/Components/projects/request/components/GradientHeader';
-import { QuestionList } from '@/Components/projects/request/components/QuestionList';
+import { useProjectQuestionsProps } from '@/Components/projects/request/hooks/useProjectQuestionsProps';
 import { Button } from '@/Components/ui/button';
-import { MessageSquarePlus, Send, UserPlus } from 'lucide-react';
+import { useProjectProps } from '@/hooks/useProjectProps';
+import { router } from '@inertiajs/react';
+import { Send } from 'lucide-react';
 import { useState } from 'react';
 
+type Answer = {
+    question_id: string;
+    answer: string;
+};
+
 export default function Request() {
-    const [questions, setQuestions] = useState([{ id: '1', question: '' }]);
+    const questions = useProjectQuestionsProps();
+    const project = useProjectProps();
+    const [answers, setAnswers] = useState<Answer[]>([]);
 
-    const addQuestion = () => {
-        setQuestions([...questions, { id: crypto.randomUUID(), question: '' }]);
+    const handleAnswerChange = (question_id: string, answer: string) => {
+        setAnswers((prev) => {
+            const existingAnswerIndex = prev.findIndex(
+                (a) => a.question_id === question_id,
+            );
+
+            if (existingAnswerIndex >= 0) {
+                const newAnswers = [...prev];
+                newAnswers[existingAnswerIndex] = { question_id, answer };
+                return newAnswers;
+            }
+
+            return [...prev, { question_id, answer }];
+        });
     };
 
-    const removeQuestion = (id: string) => {
-        if (questions.length > 1) {
-            setQuestions(questions.filter((q) => q.id !== id));
-        }
+    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+
+        router.post(route('projects.request.store', { project: project.id }), {
+            answers,
+        });
     };
+
     return (
-        <div className="to-primary/950 dark:from-primary-950 dark:to-primary-900 min-h-screen bg-gradient-to-b from-primary/50">
+        <div className="relative col-span-2 overflow-hidden border border-[hsl(var(--border))] bg-gradient-to-br from-[hsl(231.4,30%,92%)] via-[hsl(264.7,35%,88%)] to-[hsl(325.5,40%,85%)] shadow-md transition-all duration-300 hover:shadow-lg dark:from-[hsl(231.4,15.3%,16.4%)] dark:via-[hsl(264.7,20%,18%)] dark:to-[hsl(325.5,25%,20%)]">
             <div className="container mx-auto px-4 py-2">
                 <div className="min-h-screen w-full p-4 md:p-8">
                     <div className="mx-auto space-y-8">
                         <GradientHeader
                             title="Join Our Project"
-                            description="We're excited to have you join our community. Please tell us a bit about yourself."
+                            description="We're excited to have you join our project. Please tell us a bit about yourself."
                         />
 
-                        <form className="space-y-6">
-                            <FormSection
-                                title="Introduce Yourself"
-                                icon={UserPlus}
-                            >
-                                <div className="space-y-4">
-                                    <FormField
-                                        id="name"
-                                        label="Full Name"
-                                        placeholder="John Doe"
-                                    />
-                                    <FormField
-                                        id="bio"
-                                        label="Brief Bio"
-                                        type="textarea"
-                                        placeholder="Tell us about your background, interests, and what excites you about this project..."
-                                    />
-                                </div>
-                            </FormSection>
-
-                            <FormSection title="Contact Information">
-                                <div className="grid gap-4 md:grid-cols-2">
-                                    <FormField
-                                        id="email"
-                                        label="Email Address"
-                                        type="email"
-                                        placeholder="john@example.com"
-                                    />
-                                    <FormField
-                                        id="github"
-                                        label="GitHub Username"
-                                        placeholder="johndev"
-                                    />
-                                </div>
-                            </FormSection>
-
+                        <form className="space-y-6" onSubmit={handleSubmit}>
                             <FormSection title="Screening Questions">
                                 <div className="space-y-6">
-                                    <FormField
-                                        id="experience"
-                                        label="What experience do you have with our tech stack?"
-                                        type="textarea"
-                                        placeholder="Describe your experience with React, TypeScript, and related technologies..."
-                                    />
-                                    <FormField
-                                        id="contribution"
-                                        label="How do you plan to contribute to the project?"
-                                        type="textarea"
-                                        placeholder="Tell us about the specific areas where you'd like to contribute..."
-                                    />
+                                    {questions.map((question) => (
+                                        <FormField
+                                            key={question.id}
+                                            id={question.id.toString()}
+                                            name={question.id.toString()}
+                                            label={question.question}
+                                            optional={question.is_optional}
+                                            onChange={(value) =>
+                                                handleAnswerChange(
+                                                    question.id.toString(),
+                                                    value,
+                                                )
+                                            }
+                                        />
+                                    ))}
                                 </div>
                             </FormSection>
-
-                            <FormSection
-                                title="Ask Questions"
-                                icon={MessageSquarePlus}
-                            >
-                                <QuestionList
-                                    questions={questions}
-                                    onAddQuestion={addQuestion}
-                                    onRemoveQuestion={removeQuestion}
-                                />
-                            </FormSection>
-
                             <div className="flex justify-end">
-                                <Button
-                                    size="lg"
-                                    className="gap-2 bg-primary/90 text-lg transition-colors hover:bg-primary"
-                                >
+                                <Button>
                                     <Send className="h-5 w-5" />
                                     Submit Application
                                 </Button>

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\MessageController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\OnboardingController;
 use App\Http\Controllers\ProfileController;
@@ -10,7 +11,6 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
-use App\Http\Controllers\MessageController;
 
 // Welcome routes
 Route::get('/', function () {
@@ -46,30 +46,24 @@ Route::prefix('projects')->name('projects.')->group(function () {
     Route::controller(ProjectController::class)->group(function () {
         // Public routes
         Route::get('/', 'index')->name('index');
-
+        Route::get('/{project}', 'show')->name('show');
         // Protected routes
         Route::middleware(['auth', 'verified'])->group(function () {
             Route::get('/create', 'create')->name('create');
             Route::post('/', 'store')->name('store');
-        });
-
-        Route::get('/{project}', 'show')->name('show');
-
-        Route::middleware(['auth', 'verified'])->group(function () {
             Route::get('/{project}/edit', 'edit')->name('edit');
-            Route::patch('/{project}', 'update')->name('update');
-            Route::patch('/{project}/rename', 'rename')->name('rename');
-            Route::delete('/{project}', 'destroy')->name('destroy');
+            Route::get('/{project}/request', 'request')->name('request');
+            Route::get('/{project}/configure/questions', 'configureRequest')->name('configure.request.questions');
+            Route::post('/{project}/configure/request/toggle', 'toggleRequestable')->name('configure.request.toggle');
+            Route::post('/{project}/configure/request/questions', 'saveApplicationQuestions')->name('configure.request.questions.store');
+            Route::post('/{project}/configure/mark-configured', 'markAsConfigured')->name('configure.mark-configured');
         });
     });
 
     Route::controller(ProjectInvitationController::class)->group(function () {
         Route::get('/{project}/search-users', 'getUsers')->name('search-users');
         Route::post('/{project}/invite', 'store')->name('invite');
-        // Route::post('/{project}/request', 'request')->name('request');
-        Route::get('/{project}/request', function () {
-            return Inertia::render('Project/Request');
-        });
+        Route::post('/{project}/request', 'request')->name('request.store');
     });
 });
 

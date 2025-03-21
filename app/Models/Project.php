@@ -19,6 +19,7 @@ class Project extends Model
         'is_active' => 'boolean',
         'is_requestable' => 'boolean',
         'is_configured' => 'boolean',
+        'is_questions_configured' => 'boolean',
     ];
 
     protected $fillable = [
@@ -33,6 +34,7 @@ class Project extends Model
         'repo_id',
         'is_requestable',
         'is_configured',
+        'is_questions_configured',
     ];
 
     protected $hidden = [
@@ -87,6 +89,11 @@ class Project extends Model
             ->wherePivot('user_id', $user->id)
             ->wherePivot('role', $role)
             ->exists();
+    }
+
+    public function applicationQuestions()
+    {
+        return $this->hasMany(ProjectApplicationRequestQuestions::class);
     }
 
     // Accessors & Mutators

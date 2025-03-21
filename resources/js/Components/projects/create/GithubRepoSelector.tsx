@@ -65,7 +65,7 @@ export default function GithubRepoSelector({
     };
 
     const handleLinkGithub = () => {
-        router.visit(route('social.link', 'github'));
+        router.visit(route('social.login', 'github'));
     };
 
     const handleLinkRepoChange = (checked: boolean) => {

@@ -32,7 +32,7 @@ class ProjectService
      * @param  array  $validatedData  The validated request data
      * @return array Response with project and status information
      */
-   public function store(array $validatedData): array
+    public function store(array $validatedData): array
     {
         try {
             $githubRepoData = null;
@@ -158,7 +158,7 @@ class ProjectService
     {
         $user = Auth::user();
 
-        if (!$user || !$user->hasSocialProvider('github') || !$user->getAccessToken('github')) {
+        if (! $user || ! $user->hasSocialProvider('github') || ! $user->getAccessToken('github')) {
             return [
                 'public' => [],
                 'private' => [],
@@ -169,7 +169,7 @@ class ProjectService
         $this->githubApiService->setUser($user);
         $repos = $this->githubApiService->getPersonandOrganizationRepos();
 
-        if (!$repos) {
+        if (! $repos) {
             return [
                 'public' => [],
                 'private' => [],
@@ -186,20 +186,21 @@ class ProjectService
         }
 
         $usedRepoIds = [];
-        if (!empty($allRepoIds)) {
+        if (! empty($allRepoIds)) {
             $usedRepoIds = Project::whereIn('repo_id', $allRepoIds)->pluck('repo_id')->toArray();
         }
 
         $filteredRepos = [];
         foreach (['public', 'private', 'orgs'] as $repoType) {
-            if (!isset($repos[$repoType])) {
+            if (! isset($repos[$repoType])) {
                 $filteredRepos[$repoType] = [];
+
                 continue;
             }
 
             $filteredRepos[$repoType] = collect($repos[$repoType])
-                ->filter(function($repo) use ($usedRepoIds) {
-                    return !in_array($repo['id'], $usedRepoIds);
+                ->filter(function ($repo) use ($usedRepoIds) {
+                    return ! in_array($repo['id'], $usedRepoIds);
                 })
                 ->values()
                 ->toArray();
@@ -230,14 +231,69 @@ class ProjectService
             $memberPivot = $project->members()->where('user_id', $user->id)->first()?->pivot;
 
             if ($memberPivot && in_array($memberPivot->role, [ProjectRole::CREATOR, ProjectRole::ADMIN])) {
-                if (!$project->is_configured && !$project->is_requestable) {
-                    $projectArray['must_configure'] = (object)[
-                        'request' => true
-                    ];
+                $mustConfigure = [];
+
+                if (! $project->is_configured) {
+                    $mustConfigure['questions'] = $project->is_questions_configured;
+
+                    $mustConfigure['members_request'] = $project->is_requestable;
+
+                    $mustConfigure['repo'] = $project->repo_id ? true : false;
+                }
+
+                if (! empty($mustConfigure)) {
+                    $projectArray['must_configure'] = (object) $mustConfigure;
                 }
             }
         }
 
         return $projectArray;
+    }
+
+    /**
+     * Save project application questions
+     *
+     * @param  Project  $project  The project to save the questions for
+     * @param  array  $questionsData  An array of questions with text and optional status
+     * @return array Response with status information
+     */
+    public function saveApplicationQuestions(Project $project, array $questionsData): array
+    {
+        try {
+            return DB::transaction(function () use ($project, $questionsData) {
+
+                if (empty($questionsData)) {
+                    $project->update(['is_questions_configured' => true]);
+
+                    return [
+                        'success' => true,
+                        'message' => 'Project configured with no application questions.',
+                    ];
+                }
+
+                foreach ($questionsData as $questionData) {
+                    $project->applicationQuestions()->create([
+                        'question' => $questionData['text'],
+                        'is_optional' => $questionData['optional'] ?? false,
+                    ]);
+                }
+
+                $project->update([
+                    'is_questions_configured' => true,
+                ]);
+
+                return [
+                    'success' => true,
+                    'message' => 'Application questions saved successfully.',
+                ];
+            });
+        } catch (\Exception $e) {
+
+            return [
+                'success' => false,
+                'message' => 'Failed to save application questions.',
+                'error' => config('app.debug') ? $e->getMessage() : null,
+            ];
+        }
     }
 }

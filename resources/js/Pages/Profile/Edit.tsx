@@ -1,5 +1,6 @@
 import { PageProps } from '@/types';
 import { Head } from '@inertiajs/react';
+import { useEffect } from 'react';
 import DeleteUserForm from './Partials/DeleteUserForm';
 import UpdatePasswordForm from './Partials/UpdatePasswordForm';
 import UpdateProfileInformationForm from './Partials/UpdateProfileInformationForm';
@@ -9,11 +10,21 @@ export default function Edit({
     status,
     hasPassword,
     auth,
+    flash,
 }: PageProps<{
     mustVerifyEmail: boolean;
     status?: string;
     hasPassword: boolean;
+    flash: {
+        closeTab?: boolean;
+    };
 }>) {
+    useEffect(() => {
+        if (flash.closeTab) {
+            window.close();
+        }
+    }, [flash.closeTab]);
+
     return (
         <>
             <Head title="Profile" />

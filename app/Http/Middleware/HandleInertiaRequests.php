@@ -43,12 +43,13 @@ class HandleInertiaRequests extends Middleware
                 'success' => fn () => $request->session()->get('success'),
                 'message' => fn () => $request->session()->get('message'),
                 'imageUrl' => fn () => $request->session()->get('imageUrl'),
+                'closeTab' => fn () => $request->session()->get('closeTab'),
             ],
             'permissions' => [
                 'project' => [
                     'invite' => $request->user()?->can('invite', $request->route('project')) ?? false,
                     'edit' => $request->user()?->can('edit', $request->route('project')) ?? false,
-                    'request' => $request->user()?->can('request', $request->route('project')) ?? false,
+                    'request' => $request->user()?->can('request', $request->route('project')) && $request->route('project')->is_requestable ?? false,
                 ],
             ],
             'notifications' => $request->user()?->notifications->take(5)->map(function ($notification) {

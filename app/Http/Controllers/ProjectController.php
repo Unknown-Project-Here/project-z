@@ -2,10 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\ProjectRenameRequest;
 use App\Http\Requests\ProjectRequest;
 use App\Models\Project;
-use App\Services\GitHub\GitHubApiService;
 use App\Services\ProjectService;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\JsonResponse;
@@ -90,10 +88,16 @@ class ProjectController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Project $project): Response|JsonResponse|RedirectResponse
+    public function show(Request $request, Project $project): Response|RedirectResponse
     {
         try {
             $projectData = $this->projectService->show($project);
+
+            if ($request->user() && $request->user()->isMemberOf($project)) {
+                return Inertia::render('Project/ProjectDashboard', [
+                    'project' => $projectData,
+                ]);
+            }
 
             return Inertia::render('Project/Show', [
                 'project' => $projectData,
@@ -143,78 +147,101 @@ class ProjectController extends Controller
         ]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(ProjectRequest $request, Project $project): JsonResponse
+    public function configureRequest(Project $project): Response
     {
-        $this->authorize('update', $project);
-
-        try {
-            $project->update($request->validated());
-
-            return response()->json([
-                'success' => true,
-                'data' => $project->fresh()->load('user'),
-                'message' => 'Project updated successfully.',
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to update project.',
-                'error' => config('app.debug') ? $e->getMessage() : null,
-            ], 500);
-        }
+        return Inertia::render('Project/Configure/Request', [
+            'project' => $project,
+        ]);
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Save application questions for the project.
      */
-    public function destroy(Project $project): JsonResponse
+    public function saveApplicationQuestions(Request $request, Project $project): JsonResponse
     {
-        if (request()->user()->cannot('delete', $project)) {
-            abort(403, 'You do not have permission to delete this project.');
+        if ($request->user()->cannot('edit', $project)) {
+            abort(403, 'You do not have permission to configure this project.');
         }
 
-        try {
-            $project->delete();
+        $validated = $request->validate([
+            'questions' => 'present|array',
+            'questions.*.text' => 'required|string|max:500',
+            'questions.*.optional' => 'boolean',
+        ]);
 
+        $result = $this->projectService->saveApplicationQuestions(
+            $project,
+            $validated['questions']
+        );
+
+        if ($result['success']) {
             return response()->json([
                 'success' => true,
-                'message' => 'Project deleted successfully.',
-            ], 204);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to delete project.',
-                'error' => config('app.debug') ? $e->getMessage() : null,
-            ], 500);
+                'message' => $result['message'],
+            ]);
         }
+
+        return response()->json([
+            'success' => false,
+            'message' => $result['message'],
+            'error' => $result['error'] ?? null,
+        ], 500);
     }
 
-    /**
-     * Rename the specified project.
-     */
-    public function rename(ProjectRenameRequest $request, Project $project): JsonResponse
+    public function toggleRequestable(Request $request, Project $project): JsonResponse
     {
-        if ($request->user()->cannot('rename', $project)) {
-            abort(403, 'You do not have permission to rename this project.');
+        if ($request->user()->cannot('edit', $project)) {
+            abort(403, 'You do not have permission to configure this project.');
         }
 
-        try {
-            $project->update(['title' => $request->title]);
+        $project->update(['is_requestable' => ! $project->is_requestable]);
 
-            return response()->json([
-                'success' => true,
-                'data' => $project->fresh(),
-                'message' => 'Project renamed successfully.',
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to rename project.',
-                'error' => config('app.debug') ? $e->getMessage() : null,
-            ], 500);
+        if ($project->is_requestable && $project->is_questions_configured && $project->repo_id && $project->is_configured === false) {
+            $project->update(['is_configured' => true]);
         }
+
+        $message = $project->is_requestable
+            ? 'Users can now request to join this project.'
+            : 'Users can no longer request to join this project.';
+
+        return response()->json(['success' => true, 'message' => $message]);
+    }
+
+    public function markAsConfigured(Request $request, Project $project): JsonResponse
+    {
+        if ($request->user()->cannot('edit', $project)) {
+            abort(403, 'You do not have permission to configure this project.');
+        }
+
+        $project->update(['is_configured' => true]);
+
+        return response()->json(['success' => true, 'message' => 'Project successfully configured.']);
+    }
+
+    public function request(Project $project): Response|RedirectResponse|JsonResponse
+    {
+        $user = Auth::user();
+
+        if (!$user) {
+            return to_route('login');
+        }
+
+
+        if ($user->isMemberOf($project)) {
+            return to_route('projects.show', $project->id);
+        }
+
+        if (! $user->can('request', $project)) {
+            abort(403, 'You do not have permission to request to join this project.');
+        }
+
+        $socialUsernames = $user->getSocialUsernames();
+        $questions = $project->applicationQuestions;
+
+        return Inertia::render('Project/Request', [
+            'project' => $project,
+            'questions' => $questions,
+            'socialUsernames' => $socialUsernames,
+        ]);
     }
 }

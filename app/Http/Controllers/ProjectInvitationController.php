@@ -6,6 +6,7 @@ use App\Actions\Project\Invite\GetEligibleUsers;
 use App\Actions\Project\Invite\InviteUserToProject;
 use App\Models\Project;
 use App\Models\ProjectRequest;
+use App\Models\ProjectApplicationRequestAnswers;
 use App\Notifications\ProjectJoinRequestNotification;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -96,25 +97,36 @@ class ProjectInvitationController extends Controller
         }
     }
 
-    /**
-     * Create a request to join the project.
-     */
     public function request(Request $request, Project $project): RedirectResponse
     {
-        $response = Gate::inspect('request', $project);
-
-        if ($response->denied()) {
-            return back()->withErrors([
-                'success' => false,
-                'message' => $response->message(),
-            ]);
+        if ($request->user()?->cannot('request', $project)) {
+            abort(403, 'You do not have permission to request to join this project.');
         }
 
         try {
+            $validated = $request->validate([
+                'answers' => 'sometimes|array',
+                'answers.*.question_id' => 'required|string|exists:project_application_request_questions,id',
+                'answers.*.answer' => 'required|string|max:255',
+            ]);
+
+            if ($request->has('answers') && !empty($validated['answers'])) {
+                $answersToInsert = collect($validated['answers'])->map(function ($answer) use ($project, $request) {
+                    return [
+                        'answer' => $answer['answer'],
+                        'user_id' => $request->user()->id,
+                        'question_id' => $answer['question_id'],
+                        'project_id' => $project->id,
+                    ];
+                })->toArray();
+                ProjectApplicationRequestAnswers::insert($answersToInsert);
+            }
+
             $projectRequest = ProjectRequest::create([
                 'project_id' => $project->id,
                 'user_id' => $request->user()->id,
             ]);
+
 
             $projectMembers = $project->members()
                 ->wherePivotIn('role', ['creator', 'admin'])
@@ -122,10 +134,7 @@ class ProjectInvitationController extends Controller
 
             Notification::send($projectMembers, new ProjectJoinRequestNotification($projectRequest));
 
-            return back()->with([
-                'success' => true,
-                'message' => 'Your request to join the project has been sent.',
-            ]);
+            return redirect()->route('projects.show', $project)->with('success', 'Your request to join the project has been sent.');
         } catch (\Exception $e) {
             return back()->withErrors([
                 'success' => false,
