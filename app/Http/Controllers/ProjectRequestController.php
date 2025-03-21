@@ -2,110 +2,95 @@
 
 namespace App\Http\Controllers;
 
-use App\Enums\ProjectRole;
+use App\Exceptions\UnauthorizedAccessException;
 use App\Models\Project;
-use App\Models\ProjectApplicationRequestAnswers;
 use App\Models\ProjectRequest;
-use App\Notifications\ProjectRequestAcceptedNotification;
-use App\Notifications\ProjectRequestRejectedNotification;
-use Illuminate\Support\Facades\Notification;
+use App\Services\ProjectRequestService;
+use Illuminate\Http\JsonResponse;
 use Inertia\Inertia;
+use Inertia\Response;
 
 class ProjectRequestController extends Controller
 {
-    public function index(Project $project)
+    protected ProjectRequestService $projectRequestService;
+
+    public function __construct(ProjectRequestService $projectRequestService)
     {
-        if (! request()->user()?->can('edit', $project)) {
-            abort(403, 'You do not have permission to view this page.');
-        }
-
-        $applications = $project->applications()
-            ->with('user:id,username,avatar')
-            ->paginate(10)
-            ->through(function ($application) {
-                return [
-                    'id' => $application->id,
-                    'project_id' => $application->project_id,
-                    'user' => [
-                        'user_id' => $application->user->id,
-                        'username' => $application->user->username,
-                        'avatar' => $application->user->avatar,
-                    ],
-                    'created_at' => $application->created_at,
-                ];
-            });
-
-        return Inertia::render('Project/MemberApplicationList', [
-            'project' => $project,
-            'applications' => $applications,
-        ]);
+        $this->projectRequestService = $projectRequestService;
     }
 
-    public function show(Project $project, ProjectRequest $application)
+    public function index(Project $project): Response
     {
-        if (! request()->user()?->can('edit', $project)) {
-            abort(403, 'You do not have permission to view this page.');
+        try {
+            $result = $this->projectRequestService->getApplications(
+                $project,
+                request()->user()->id
+            );
+
+            return Inertia::render('Project/MemberApplicationList', $result);
+        } catch (UnauthorizedAccessException $e) {
+            abort(403, $e->getMessage());
         }
-
-        $application->load('user:id,username,avatar');
-
-        $user_id = $application->user_id;
-        $project_id = $application->project_id;
-
-        $questions = $project->applicationQuestions()->pluck('question', 'id')->toArray();
-
-        $answers = ProjectApplicationRequestAnswers::where('user_id', $user_id)
-            ->where('project_id', $project_id)
-            ->whereIn('question_id', array_keys($questions))
-            ->pluck('answer', 'question_id')
-            ->all();
-
-        $questions_and_answers = array_map(function ($questionId) use ($questions, $answers) {
-            return [
-                'question' => $questions[$questionId],
-                'answer' => $answers[$questionId] ?? null,
-            ];
-        }, array_keys($questions));
-
-        $application['questions_and_answers'] = $questions_and_answers;
-        $applicationData = $application->only(['id', 'project_id', 'created_at', 'user', 'questions_and_answers']);
-
-        return Inertia::render('Project/MemberApplication', [
-            'project' => ['id' => $project->id],
-            'application' => $applicationData,
-        ]);
     }
 
-    public function acceptRequest(Project $project, ProjectRequest $application)
+    public function show(Project $project, ProjectRequest $application): Response
     {
-        if (! request()->user()?->can('manageRequests', $project)) {
-            abort(403, 'You do not have permission to view this page.');
+        try {
+            $result = $this->projectRequestService->getApplication(
+                $project,
+                $application,
+                request()->user()->id
+            );
+
+            return Inertia::render('Project/MemberApplication', $result);
+        } catch (UnauthorizedAccessException $e) {
+            abort(403, $e->getMessage());
         }
-
-        $project->members()->attach($application->user_id, ['role' => ProjectRole::CONTRIBUTOR]);
-        Notification::send($application->user, new ProjectRequestAcceptedNotification($application));
-        ProjectApplicationRequestAnswers::where('project_id', $project->id)->where('user_id', $application->user_id)->delete();
-        $application->delete();
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Request accepted successfully.',
-        ]);
     }
 
-    public function rejectRequest(Project $project, ProjectRequest $application)
+    public function acceptRequest(Project $project, ProjectRequest $application): JsonResponse
     {
-        if (! request()->user()?->can('manageRequests', $project)) {
-            abort(403, 'You do not have permission to view this page.');
+        try {
+            $result = $this->projectRequestService->acceptRequest(
+                $project,
+                $application,
+                request()->user()->id
+            );
+
+            return response()->json($result);
+        } catch (UnauthorizedAccessException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ], 403);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to accept request. Please try again.',
+            ], 500);
         }
+    }
 
-        Notification::send($application->user, new ProjectRequestRejectedNotification($application));
-        ProjectApplicationRequestAnswers::where('project_id', $project->id)->where('user_id', $application->user_id)->delete();
-        $application->delete();
+    public function rejectRequest(Project $project, ProjectRequest $application): JsonResponse
+    {
+        try {
+            $result = $this->projectRequestService->rejectRequest(
+                $project,
+                $application,
+                request()->user()->id
+            );
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Application rejected successfully.',
-        ]);
+            return response()->json($result);
+        } catch (UnauthorizedAccessException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ], 403);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to reject request. Please try again.',
+            ], 500);
+        }
     }
 }
