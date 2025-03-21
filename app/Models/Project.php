@@ -96,6 +96,11 @@ class Project extends Model
         return $this->hasMany(ProjectApplicationRequestQuestions::class);
     }
 
+    public function applications()
+    {
+        return $this->hasMany(ProjectRequest::class);
+    }
+
     // Accessors & Mutators
     protected function title(): Attribute
     {

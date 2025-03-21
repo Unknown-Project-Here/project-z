@@ -3,7 +3,10 @@ import { Users } from 'lucide-react';
 import React, { useCallback, useMemo } from 'react';
 import MemberCard, { MemberType } from './MemberCard';
 
+import { useProjectProps } from '@/hooks/useProjectProps';
+import { Link } from '@inertiajs/react';
 function MembersList() {
+    const project = useProjectProps();
     const members: MemberType[] = useMemo(
         () => [
             {
@@ -110,13 +113,28 @@ function MembersList() {
                         project.
                     </p>
                 </div>
-                <Button
-                    className="bg-primary text-primary-foreground hover:bg-primary/90"
-                    onClick={handleAddMember}
-                >
-                    <Users className="mr-2 h-4 w-4" />
-                    Add Member
-                </Button>
+                <div className="flex gap-2">
+                    <Button
+                        className="bg-primary text-primary-foreground hover:bg-primary/90"
+                        asChild
+                    >
+                        <Link
+                            href={route('projects.applications.index', {
+                                project: project.id,
+                            })}
+                        >
+                            <Users className="mr-2 h-4 w-4" />
+                            View Applications
+                        </Link>
+                    </Button>
+                    <Button
+                        className="bg-primary text-primary-foreground hover:bg-primary/90"
+                        onClick={handleAddMember}
+                    >
+                        <Users className="mr-2 h-4 w-4" />
+                        Add Member
+                    </Button>
+                </div>
             </div>
 
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">

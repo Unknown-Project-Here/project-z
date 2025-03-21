@@ -78,5 +78,9 @@ export default {
         },
     },
 
-    plugins: [forms, require('tailwindcss-animate')],
+    plugins: [
+        forms,
+        require('tailwindcss-animate'),
+        require('@tailwindcss/container-queries'),
+    ],
 };

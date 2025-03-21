@@ -6,6 +6,7 @@ use App\Http\Controllers\OnboardingController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\ProjectInvitationController;
+use App\Http\Controllers\ProjectRequestController;
 use App\Http\Controllers\UserController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Auth;
@@ -57,6 +58,12 @@ Route::prefix('projects')->name('projects.')->group(function () {
             Route::post('/{project}/configure/request/toggle', 'toggleRequestable')->name('configure.request.toggle');
             Route::post('/{project}/configure/request/questions', 'saveApplicationQuestions')->name('configure.request.questions.store');
             Route::post('/{project}/configure/mark-configured', 'markAsConfigured')->name('configure.mark-configured');
+        });
+    });
+
+    Route::prefix('{project}/applications')->name('applications.')->group(function () {
+        Route::controller(ProjectRequestController::class)->group(function () {
+            Route::get('/', 'index')->name('index');
         });
     });
 
