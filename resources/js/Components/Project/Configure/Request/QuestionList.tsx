@@ -26,11 +26,7 @@ export function QuestionList({
     return (
         <Card className="mb-6 p-6">
             <h2 className="mb-4 text-xl font-semibold">{title}</h2>
-            {description && (
-                <p className="mb-4 text-sm text-muted-foreground">
-                    {description}
-                </p>
-            )}
+            {description && <p className="mb-4 text-sm">{description}</p>}
             <div className="space-y-2 overflow-y-auto rounded pr-2">
                 {questions.map((question) => (
                     <QuestionItem

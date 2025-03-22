@@ -97,7 +97,7 @@ export function AssignedIssues({ fullView = false }: AssignedIssuesProps) {
                         {!fullView && issues.length > 5 && (
                             <a
                                 href="#"
-                                className="flex items-center justify-center rounded-md p-2 text-sm text-[hsl(var(--primary))] hover:bg-primary/5 hover:underline"
+                                className="flex items-center justify-center rounded-md p-2 text-sm hover:bg-primary/5 hover:underline"
                                 onClick={handleViewAll}
                             >
                                 View all {issues.length} issues

@@ -29,7 +29,7 @@ export function CustomQuestionInput({
     return (
         <Card className="mb-6 p-6">
             <h2 className="mb-4 text-xl font-semibold">Add Custom Questions</h2>
-            <p className="mb-4 text-sm text-muted-foreground">
+            <p className="mb-4 text-sm">
                 Add your own custom questions to the application form.
             </p>
             <div className="flex items-stretch space-x-2">

@@ -36,7 +36,7 @@ export function QuestionItem({
                 <div className="flex items-center space-x-2">
                     <Label
                         htmlFor={`optional-${id}`}
-                        className="cursor-pointer text-xs text-muted-foreground"
+                        className="cursor-pointer text-xs"
                     >
                         Optional
                     </Label>

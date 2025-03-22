@@ -29,7 +29,7 @@ const DashboardTabs: React.FC<DashboardTabsProps> = ({
                         key={tab.value}
                         value={tab.value}
                         onClick={() => onTabChange(tab.value)}
-                        className="dark:data-[state=active]:bg-primary-800 data-[state=active]:bg-accent data-[state=active]:text-primary data-[state=active]:shadow-sm"
+                        className="dark:data-[state=active]:bg-primary-800 text-black data-[state=active]:bg-accent data-[state=active]:shadow-sm dark:text-white"
                     >
                         {tab.label}
                     </TabsTrigger>

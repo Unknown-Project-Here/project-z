@@ -33,9 +33,7 @@ export function LeaderboardItem({ contributor }: LeaderboardItemProps) {
                 <div className="text-lg font-bold text-[hsl(var(--primary))]">
                     {contributor.contributions}
                 </div>
-                <div className="text-xs text-muted-foreground">
-                    contributions
-                </div>
+                <div className="text-xs">contributions</div>
             </div>
         </div>
     );

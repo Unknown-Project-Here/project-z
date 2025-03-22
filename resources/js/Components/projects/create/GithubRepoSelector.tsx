@@ -111,8 +111,8 @@ export default function GithubRepoSelector({
                       (repos.public.length === 0 &&
                           repos.private.length === 0) ? (
                         <div className="rounded-md border border-dashed p-6 text-center">
-                            <Icons.githubIcon className="mx-auto h-10 w-10 text-muted-foreground" />
-                            <p className="mt-2 text-sm text-muted-foreground">
+                            <Icons.githubIcon className="mx-auto h-10 w-10" />
+                            <p className="mt-2 text-sm">
                                 No repositories found in your GitHub account.
                             </p>
                         </div>
@@ -155,7 +155,7 @@ export default function GithubRepoSelector({
                                                         repo.id ===
                                                         selectedRepo.id,
                                                 ) && (
-                                                    <Lock className="h-3 w-3 flex-shrink-0 text-muted-foreground" />
+                                                    <Lock className="h-3 w-3 flex-shrink-0" />
                                                 )}
                                         </div>
                                         <div className="flex items-center gap-1">
@@ -257,7 +257,7 @@ export default function GithubRepoSelector({
                                                                 />
                                                                 <span className="flex items-center gap-2">
                                                                     {repo.name}
-                                                                    <Lock className="h-3 w-3 text-muted-foreground" />
+                                                                    <Lock className="h-3 w-3" />
                                                                 </span>
                                                             </CommandItem>
                                                         ),
@@ -289,7 +289,7 @@ export default function GithubRepoSelector({
                                                             />
                                                             <span className="flex items-center gap-2">
                                                                 {repo.name}
-                                                                <BuildingIcon className="h-3 w-3 text-muted-foreground" />
+                                                                <BuildingIcon className="h-3 w-3" />
                                                             </span>
                                                         </CommandItem>
                                                     ))}

@@ -31,7 +31,7 @@ export function QuestionPreview({ questions }: QuestionPreviewProps) {
                     ))}
                 </div>
             ) : (
-                <p className="text-muted-foreground">
+                <p className="">
                     No questions selected for project application form. Confirm?
                 </p>
             )}
