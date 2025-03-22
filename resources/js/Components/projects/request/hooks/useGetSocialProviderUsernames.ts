@@ -1,11 +1,5 @@
 import { usePageProps } from '@/hooks/usePageProps';
-
-type Provider = 'github' | 'discord' | 'google' | 'email';
-
-type SocialProviderUsername = {
-    provider: Provider;
-    username: string;
-};
+import { SocialProviderUsername } from '@/types';
 
 export const useGetSocialProviderUsernames = () => {
     const { props } = usePageProps();

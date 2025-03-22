@@ -13459,7 +13459,7 @@ namespace Illuminate\Support\Facades {
         }
 
         /**
-         * Return the Request instance.
+         * Return the ConfigureRequestQuestions instance.
          *
          * @return \Illuminate\Http\Request 
          * @static 
@@ -13881,7 +13881,7 @@ namespace Illuminate\Support\Facades {
          * Whether the request contains a Session object.
          * 
          * This method does not give any information about the state of the session object,
-         * like whether the session is started or not. It is just a way to check if this Request
+         * like whether the session is started or not. It is just a way to check if this ConfigureRequestQuestions
          * is associated with a Session instance.
          *
          * @param bool $skipIfUninitialized When true, ignores factories injected by `setSessionFactory`
@@ -14141,7 +14141,7 @@ namespace Illuminate\Support\Facades {
          */
         public static function initialize($query = [], $request = [], $attributes = [], $cookies = [], $files = [], $server = [], $content = null)
         {
-            //Method inherited from \Symfony\Component\HttpFoundation\Request 
+            //Method inherited from \Symfony\Component\HttpFoundation\ConfigureRequestQuestions
             /** @var \Illuminate\Http\Request $instance */
             return $instance->initialize($query, $request, $attributes, $cookies, $files, $server, $content);
         }
@@ -14153,12 +14153,12 @@ namespace Illuminate\Support\Facades {
          */
         public static function createFromGlobals()
         {
-            //Method inherited from \Symfony\Component\HttpFoundation\Request 
+            //Method inherited from \Symfony\Component\HttpFoundation\ConfigureRequestQuestions
             return \Illuminate\Http\Request::createFromGlobals();
         }
 
         /**
-         * Creates a Request based on a given URI and configuration.
+         * Creates a ConfigureRequestQuestions based on a given URI and configuration.
          * 
          * The information contained in the URI always take precedence
          * over the other information (server and parameters).
@@ -14175,14 +14175,14 @@ namespace Illuminate\Support\Facades {
          */
         public static function create($uri, $method = 'GET', $parameters = [], $cookies = [], $files = [], $server = [], $content = null)
         {
-            //Method inherited from \Symfony\Component\HttpFoundation\Request 
+            //Method inherited from \Symfony\Component\HttpFoundation\ConfigureRequestQuestions
             return \Illuminate\Http\Request::create($uri, $method, $parameters, $cookies, $files, $server, $content);
         }
 
         /**
-         * Sets a callable able to create a Request instance.
+         * Sets a callable able to create a ConfigureRequestQuestions instance.
          * 
-         * This is mainly useful when you need to override the Request class
+         * This is mainly useful when you need to override the ConfigureRequestQuestions class
          * to keep BC with an existing system. It should not be used for any
          * other purpose.
          *
@@ -14190,7 +14190,7 @@ namespace Illuminate\Support\Facades {
          */
         public static function setFactory($callable)
         {
-            //Method inherited from \Symfony\Component\HttpFoundation\Request 
+            //Method inherited from \Symfony\Component\HttpFoundation\ConfigureRequestQuestions
             return \Illuminate\Http\Request::setFactory($callable);
         }
 
@@ -14204,7 +14204,7 @@ namespace Illuminate\Support\Facades {
          */
         public static function overrideGlobals()
         {
-            //Method inherited from \Symfony\Component\HttpFoundation\Request 
+            //Method inherited from \Symfony\Component\HttpFoundation\ConfigureRequestQuestions
             /** @var \Illuminate\Http\Request $instance */
             return $instance->overrideGlobals();
         }
@@ -14220,7 +14220,7 @@ namespace Illuminate\Support\Facades {
          */
         public static function setTrustedProxies($proxies, $trustedHeaderSet)
         {
-            //Method inherited from \Symfony\Component\HttpFoundation\Request 
+            //Method inherited from \Symfony\Component\HttpFoundation\ConfigureRequestQuestions
             return \Illuminate\Http\Request::setTrustedProxies($proxies, $trustedHeaderSet);
         }
 
@@ -14232,19 +14232,19 @@ namespace Illuminate\Support\Facades {
          */
         public static function getTrustedProxies()
         {
-            //Method inherited from \Symfony\Component\HttpFoundation\Request 
+            //Method inherited from \Symfony\Component\HttpFoundation\ConfigureRequestQuestions
             return \Illuminate\Http\Request::getTrustedProxies();
         }
 
         /**
          * Gets the set of trusted headers from trusted proxies.
          *
-         * @return int A bit field of Request::HEADER_* that defines which headers are trusted from your proxies
+         * @return int A bit field of ConfigureRequestQuestions::HEADER_* that defines which headers are trusted from your proxies
          * @static 
          */
         public static function getTrustedHeaderSet()
         {
-            //Method inherited from \Symfony\Component\HttpFoundation\Request 
+            //Method inherited from \Symfony\Component\HttpFoundation\ConfigureRequestQuestions
             return \Illuminate\Http\Request::getTrustedHeaderSet();
         }
 
@@ -14258,7 +14258,7 @@ namespace Illuminate\Support\Facades {
          */
         public static function setTrustedHosts($hostPatterns)
         {
-            //Method inherited from \Symfony\Component\HttpFoundation\Request 
+            //Method inherited from \Symfony\Component\HttpFoundation\ConfigureRequestQuestions
             return \Illuminate\Http\Request::setTrustedHosts($hostPatterns);
         }
 
@@ -14270,7 +14270,7 @@ namespace Illuminate\Support\Facades {
          */
         public static function getTrustedHosts()
         {
-            //Method inherited from \Symfony\Component\HttpFoundation\Request 
+            //Method inherited from \Symfony\Component\HttpFoundation\ConfigureRequestQuestions
             return \Illuminate\Http\Request::getTrustedHosts();
         }
 
@@ -14284,7 +14284,7 @@ namespace Illuminate\Support\Facades {
          */
         public static function normalizeQueryString($qs)
         {
-            //Method inherited from \Symfony\Component\HttpFoundation\Request 
+            //Method inherited from \Symfony\Component\HttpFoundation\ConfigureRequestQuestions
             return \Illuminate\Http\Request::normalizeQueryString($qs);
         }
 
@@ -14303,7 +14303,7 @@ namespace Illuminate\Support\Facades {
          */
         public static function enableHttpMethodParameterOverride()
         {
-            //Method inherited from \Symfony\Component\HttpFoundation\Request 
+            //Method inherited from \Symfony\Component\HttpFoundation\ConfigureRequestQuestions
             return \Illuminate\Http\Request::enableHttpMethodParameterOverride();
         }
 
@@ -14314,7 +14314,7 @@ namespace Illuminate\Support\Facades {
          */
         public static function getHttpMethodParameterOverride()
         {
-            //Method inherited from \Symfony\Component\HttpFoundation\Request 
+            //Method inherited from \Symfony\Component\HttpFoundation\ConfigureRequestQuestions
             return \Illuminate\Http\Request::getHttpMethodParameterOverride();
         }
 
@@ -14326,7 +14326,7 @@ namespace Illuminate\Support\Facades {
          */
         public static function hasPreviousSession()
         {
-            //Method inherited from \Symfony\Component\HttpFoundation\Request 
+            //Method inherited from \Symfony\Component\HttpFoundation\ConfigureRequestQuestions
             /** @var \Illuminate\Http\Request $instance */
             return $instance->hasPreviousSession();
         }
@@ -14338,7 +14338,7 @@ namespace Illuminate\Support\Facades {
          */
         public static function setSession($session)
         {
-            //Method inherited from \Symfony\Component\HttpFoundation\Request 
+            //Method inherited from \Symfony\Component\HttpFoundation\ConfigureRequestQuestions
             /** @var \Illuminate\Http\Request $instance */
             return $instance->setSession($session);
         }
@@ -14352,7 +14352,7 @@ namespace Illuminate\Support\Facades {
          */
         public static function setSessionFactory($factory)
         {
-            //Method inherited from \Symfony\Component\HttpFoundation\Request 
+            //Method inherited from \Symfony\Component\HttpFoundation\ConfigureRequestQuestions
             /** @var \Illuminate\Http\Request $instance */
             return $instance->setSessionFactory($factory);
         }
@@ -14371,7 +14371,7 @@ namespace Illuminate\Support\Facades {
          */
         public static function getClientIps()
         {
-            //Method inherited from \Symfony\Component\HttpFoundation\Request 
+            //Method inherited from \Symfony\Component\HttpFoundation\ConfigureRequestQuestions
             /** @var \Illuminate\Http\Request $instance */
             return $instance->getClientIps();
         }
@@ -14387,7 +14387,7 @@ namespace Illuminate\Support\Facades {
          * 
          * If your reverse proxy uses a different header name than "X-Forwarded-For",
          * ("Client-Ip" for instance), configure it via the $trustedHeaderSet
-         * argument of the Request::setTrustedProxies() method instead.
+         * argument of the ConfigureRequestQuestions::setTrustedProxies() method instead.
          *
          * @see getClientIps()
          * @see https://wikipedia.org/wiki/X-Forwarded-For
@@ -14395,7 +14395,7 @@ namespace Illuminate\Support\Facades {
          */
         public static function getClientIp()
         {
-            //Method inherited from \Symfony\Component\HttpFoundation\Request 
+            //Method inherited from \Symfony\Component\HttpFoundation\ConfigureRequestQuestions
             /** @var \Illuminate\Http\Request $instance */
             return $instance->getClientIp();
         }
@@ -14407,7 +14407,7 @@ namespace Illuminate\Support\Facades {
          */
         public static function getScriptName()
         {
-            //Method inherited from \Symfony\Component\HttpFoundation\Request 
+            //Method inherited from \Symfony\Component\HttpFoundation\ConfigureRequestQuestions
             /** @var \Illuminate\Http\Request $instance */
             return $instance->getScriptName();
         }
@@ -14429,7 +14429,7 @@ namespace Illuminate\Support\Facades {
          */
         public static function getPathInfo()
         {
-            //Method inherited from \Symfony\Component\HttpFoundation\Request 
+            //Method inherited from \Symfony\Component\HttpFoundation\ConfigureRequestQuestions
             /** @var \Illuminate\Http\Request $instance */
             return $instance->getPathInfo();
         }
@@ -14449,7 +14449,7 @@ namespace Illuminate\Support\Facades {
          */
         public static function getBasePath()
         {
-            //Method inherited from \Symfony\Component\HttpFoundation\Request 
+            //Method inherited from \Symfony\Component\HttpFoundation\ConfigureRequestQuestions
             /** @var \Illuminate\Http\Request $instance */
             return $instance->getBasePath();
         }
@@ -14467,7 +14467,7 @@ namespace Illuminate\Support\Facades {
          */
         public static function getBaseUrl()
         {
-            //Method inherited from \Symfony\Component\HttpFoundation\Request 
+            //Method inherited from \Symfony\Component\HttpFoundation\ConfigureRequestQuestions
             /** @var \Illuminate\Http\Request $instance */
             return $instance->getBaseUrl();
         }
@@ -14479,7 +14479,7 @@ namespace Illuminate\Support\Facades {
          */
         public static function getScheme()
         {
-            //Method inherited from \Symfony\Component\HttpFoundation\Request 
+            //Method inherited from \Symfony\Component\HttpFoundation\ConfigureRequestQuestions
             /** @var \Illuminate\Http\Request $instance */
             return $instance->getScheme();
         }
@@ -14497,7 +14497,7 @@ namespace Illuminate\Support\Facades {
          */
         public static function getPort()
         {
-            //Method inherited from \Symfony\Component\HttpFoundation\Request 
+            //Method inherited from \Symfony\Component\HttpFoundation\ConfigureRequestQuestions
             /** @var \Illuminate\Http\Request $instance */
             return $instance->getPort();
         }
@@ -14509,7 +14509,7 @@ namespace Illuminate\Support\Facades {
          */
         public static function getUser()
         {
-            //Method inherited from \Symfony\Component\HttpFoundation\Request 
+            //Method inherited from \Symfony\Component\HttpFoundation\ConfigureRequestQuestions
             /** @var \Illuminate\Http\Request $instance */
             return $instance->getUser();
         }
@@ -14521,7 +14521,7 @@ namespace Illuminate\Support\Facades {
          */
         public static function getPassword()
         {
-            //Method inherited from \Symfony\Component\HttpFoundation\Request 
+            //Method inherited from \Symfony\Component\HttpFoundation\ConfigureRequestQuestions
             /** @var \Illuminate\Http\Request $instance */
             return $instance->getPassword();
         }
@@ -14534,7 +14534,7 @@ namespace Illuminate\Support\Facades {
          */
         public static function getUserInfo()
         {
-            //Method inherited from \Symfony\Component\HttpFoundation\Request 
+            //Method inherited from \Symfony\Component\HttpFoundation\ConfigureRequestQuestions
             /** @var \Illuminate\Http\Request $instance */
             return $instance->getUserInfo();
         }
@@ -14548,7 +14548,7 @@ namespace Illuminate\Support\Facades {
          */
         public static function getHttpHost()
         {
-            //Method inherited from \Symfony\Component\HttpFoundation\Request 
+            //Method inherited from \Symfony\Component\HttpFoundation\ConfigureRequestQuestions
             /** @var \Illuminate\Http\Request $instance */
             return $instance->getHttpHost();
         }
@@ -14561,7 +14561,7 @@ namespace Illuminate\Support\Facades {
          */
         public static function getRequestUri()
         {
-            //Method inherited from \Symfony\Component\HttpFoundation\Request 
+            //Method inherited from \Symfony\Component\HttpFoundation\ConfigureRequestQuestions
             /** @var \Illuminate\Http\Request $instance */
             return $instance->getRequestUri();
         }
@@ -14576,20 +14576,20 @@ namespace Illuminate\Support\Facades {
          */
         public static function getSchemeAndHttpHost()
         {
-            //Method inherited from \Symfony\Component\HttpFoundation\Request 
+            //Method inherited from \Symfony\Component\HttpFoundation\ConfigureRequestQuestions
             /** @var \Illuminate\Http\Request $instance */
             return $instance->getSchemeAndHttpHost();
         }
 
         /**
-         * Generates a normalized URI (URL) for the Request.
+         * Generates a normalized URI (URL) for the ConfigureRequestQuestions.
          *
          * @see getQueryString()
          * @static 
          */
         public static function getUri()
         {
-            //Method inherited from \Symfony\Component\HttpFoundation\Request 
+            //Method inherited from \Symfony\Component\HttpFoundation\ConfigureRequestQuestions
             /** @var \Illuminate\Http\Request $instance */
             return $instance->getUri();
         }
@@ -14602,13 +14602,13 @@ namespace Illuminate\Support\Facades {
          */
         public static function getUriForPath($path)
         {
-            //Method inherited from \Symfony\Component\HttpFoundation\Request 
+            //Method inherited from \Symfony\Component\HttpFoundation\ConfigureRequestQuestions
             /** @var \Illuminate\Http\Request $instance */
             return $instance->getUriForPath($path);
         }
 
         /**
-         * Returns the path as relative reference from the current Request path.
+         * Returns the path as relative reference from the current ConfigureRequestQuestions path.
          * 
          * Only the URIs path component (no schema, host etc.) is relevant and must be given.
          * Both paths must be absolute and not contain relative parts.
@@ -14626,13 +14626,13 @@ namespace Illuminate\Support\Facades {
          */
         public static function getRelativeUriForPath($path)
         {
-            //Method inherited from \Symfony\Component\HttpFoundation\Request 
+            //Method inherited from \Symfony\Component\HttpFoundation\ConfigureRequestQuestions
             /** @var \Illuminate\Http\Request $instance */
             return $instance->getRelativeUriForPath($path);
         }
 
         /**
-         * Generates the normalized query string for the Request.
+         * Generates the normalized query string for the ConfigureRequestQuestions.
          * 
          * It builds a normalized query string, where keys/value pairs are alphabetized
          * and have consistent escaping.
@@ -14641,7 +14641,7 @@ namespace Illuminate\Support\Facades {
          */
         public static function getQueryString()
         {
-            //Method inherited from \Symfony\Component\HttpFoundation\Request 
+            //Method inherited from \Symfony\Component\HttpFoundation\ConfigureRequestQuestions
             /** @var \Illuminate\Http\Request $instance */
             return $instance->getQueryString();
         }
@@ -14658,7 +14658,7 @@ namespace Illuminate\Support\Facades {
          */
         public static function isSecure()
         {
-            //Method inherited from \Symfony\Component\HttpFoundation\Request 
+            //Method inherited from \Symfony\Component\HttpFoundation\ConfigureRequestQuestions
             /** @var \Illuminate\Http\Request $instance */
             return $instance->isSecure();
         }
@@ -14676,7 +14676,7 @@ namespace Illuminate\Support\Facades {
          */
         public static function getHost()
         {
-            //Method inherited from \Symfony\Component\HttpFoundation\Request 
+            //Method inherited from \Symfony\Component\HttpFoundation\ConfigureRequestQuestions
             /** @var \Illuminate\Http\Request $instance */
             return $instance->getHost();
         }
@@ -14688,7 +14688,7 @@ namespace Illuminate\Support\Facades {
          */
         public static function setMethod($method)
         {
-            //Method inherited from \Symfony\Component\HttpFoundation\Request 
+            //Method inherited from \Symfony\Component\HttpFoundation\ConfigureRequestQuestions
             /** @var \Illuminate\Http\Request $instance */
             return $instance->setMethod($method);
         }
@@ -14709,7 +14709,7 @@ namespace Illuminate\Support\Facades {
          */
         public static function getMethod()
         {
-            //Method inherited from \Symfony\Component\HttpFoundation\Request 
+            //Method inherited from \Symfony\Component\HttpFoundation\ConfigureRequestQuestions
             /** @var \Illuminate\Http\Request $instance */
             return $instance->getMethod();
         }
@@ -14722,7 +14722,7 @@ namespace Illuminate\Support\Facades {
          */
         public static function getRealMethod()
         {
-            //Method inherited from \Symfony\Component\HttpFoundation\Request 
+            //Method inherited from \Symfony\Component\HttpFoundation\ConfigureRequestQuestions
             /** @var \Illuminate\Http\Request $instance */
             return $instance->getRealMethod();
         }
@@ -14734,7 +14734,7 @@ namespace Illuminate\Support\Facades {
          */
         public static function getMimeType($format)
         {
-            //Method inherited from \Symfony\Component\HttpFoundation\Request 
+            //Method inherited from \Symfony\Component\HttpFoundation\ConfigureRequestQuestions
             /** @var \Illuminate\Http\Request $instance */
             return $instance->getMimeType($format);
         }
@@ -14747,7 +14747,7 @@ namespace Illuminate\Support\Facades {
          */
         public static function getMimeTypes($format)
         {
-            //Method inherited from \Symfony\Component\HttpFoundation\Request 
+            //Method inherited from \Symfony\Component\HttpFoundation\ConfigureRequestQuestions
             return \Illuminate\Http\Request::getMimeTypes($format);
         }
 
@@ -14758,7 +14758,7 @@ namespace Illuminate\Support\Facades {
          */
         public static function getFormat($mimeType)
         {
-            //Method inherited from \Symfony\Component\HttpFoundation\Request 
+            //Method inherited from \Symfony\Component\HttpFoundation\ConfigureRequestQuestions
             /** @var \Illuminate\Http\Request $instance */
             return $instance->getFormat($mimeType);
         }
@@ -14771,7 +14771,7 @@ namespace Illuminate\Support\Facades {
          */
         public static function setFormat($format, $mimeTypes)
         {
-            //Method inherited from \Symfony\Component\HttpFoundation\Request 
+            //Method inherited from \Symfony\Component\HttpFoundation\ConfigureRequestQuestions
             /** @var \Illuminate\Http\Request $instance */
             return $instance->setFormat($format, $mimeTypes);
         }
@@ -14790,7 +14790,7 @@ namespace Illuminate\Support\Facades {
          */
         public static function getRequestFormat($default = 'html')
         {
-            //Method inherited from \Symfony\Component\HttpFoundation\Request 
+            //Method inherited from \Symfony\Component\HttpFoundation\ConfigureRequestQuestions
             /** @var \Illuminate\Http\Request $instance */
             return $instance->getRequestFormat($default);
         }
@@ -14802,7 +14802,7 @@ namespace Illuminate\Support\Facades {
          */
         public static function setRequestFormat($format)
         {
-            //Method inherited from \Symfony\Component\HttpFoundation\Request 
+            //Method inherited from \Symfony\Component\HttpFoundation\ConfigureRequestQuestions
             /** @var \Illuminate\Http\Request $instance */
             return $instance->setRequestFormat($format);
         }
@@ -14815,7 +14815,7 @@ namespace Illuminate\Support\Facades {
          */
         public static function getContentTypeFormat()
         {
-            //Method inherited from \Symfony\Component\HttpFoundation\Request 
+            //Method inherited from \Symfony\Component\HttpFoundation\ConfigureRequestQuestions
             /** @var \Illuminate\Http\Request $instance */
             return $instance->getContentTypeFormat();
         }
@@ -14827,7 +14827,7 @@ namespace Illuminate\Support\Facades {
          */
         public static function setDefaultLocale($locale)
         {
-            //Method inherited from \Symfony\Component\HttpFoundation\Request 
+            //Method inherited from \Symfony\Component\HttpFoundation\ConfigureRequestQuestions
             /** @var \Illuminate\Http\Request $instance */
             return $instance->setDefaultLocale($locale);
         }
@@ -14839,7 +14839,7 @@ namespace Illuminate\Support\Facades {
          */
         public static function getDefaultLocale()
         {
-            //Method inherited from \Symfony\Component\HttpFoundation\Request 
+            //Method inherited from \Symfony\Component\HttpFoundation\ConfigureRequestQuestions
             /** @var \Illuminate\Http\Request $instance */
             return $instance->getDefaultLocale();
         }
@@ -14851,7 +14851,7 @@ namespace Illuminate\Support\Facades {
          */
         public static function setLocale($locale)
         {
-            //Method inherited from \Symfony\Component\HttpFoundation\Request 
+            //Method inherited from \Symfony\Component\HttpFoundation\ConfigureRequestQuestions
             /** @var \Illuminate\Http\Request $instance */
             return $instance->setLocale($locale);
         }
@@ -14863,7 +14863,7 @@ namespace Illuminate\Support\Facades {
          */
         public static function getLocale()
         {
-            //Method inherited from \Symfony\Component\HttpFoundation\Request 
+            //Method inherited from \Symfony\Component\HttpFoundation\ConfigureRequestQuestions
             /** @var \Illuminate\Http\Request $instance */
             return $instance->getLocale();
         }
@@ -14876,7 +14876,7 @@ namespace Illuminate\Support\Facades {
          */
         public static function isMethod($method)
         {
-            //Method inherited from \Symfony\Component\HttpFoundation\Request 
+            //Method inherited from \Symfony\Component\HttpFoundation\ConfigureRequestQuestions
             /** @var \Illuminate\Http\Request $instance */
             return $instance->isMethod($method);
         }
@@ -14889,7 +14889,7 @@ namespace Illuminate\Support\Facades {
          */
         public static function isMethodSafe()
         {
-            //Method inherited from \Symfony\Component\HttpFoundation\Request 
+            //Method inherited from \Symfony\Component\HttpFoundation\ConfigureRequestQuestions
             /** @var \Illuminate\Http\Request $instance */
             return $instance->isMethodSafe();
         }
@@ -14901,7 +14901,7 @@ namespace Illuminate\Support\Facades {
          */
         public static function isMethodIdempotent()
         {
-            //Method inherited from \Symfony\Component\HttpFoundation\Request 
+            //Method inherited from \Symfony\Component\HttpFoundation\ConfigureRequestQuestions
             /** @var \Illuminate\Http\Request $instance */
             return $instance->isMethodIdempotent();
         }
@@ -14914,7 +14914,7 @@ namespace Illuminate\Support\Facades {
          */
         public static function isMethodCacheable()
         {
-            //Method inherited from \Symfony\Component\HttpFoundation\Request 
+            //Method inherited from \Symfony\Component\HttpFoundation\ConfigureRequestQuestions
             /** @var \Illuminate\Http\Request $instance */
             return $instance->isMethodCacheable();
         }
@@ -14932,7 +14932,7 @@ namespace Illuminate\Support\Facades {
          */
         public static function getProtocolVersion()
         {
-            //Method inherited from \Symfony\Component\HttpFoundation\Request 
+            //Method inherited from \Symfony\Component\HttpFoundation\ConfigureRequestQuestions
             /** @var \Illuminate\Http\Request $instance */
             return $instance->getProtocolVersion();
         }
@@ -14947,7 +14947,7 @@ namespace Illuminate\Support\Facades {
          */
         public static function getContent($asResource = false)
         {
-            //Method inherited from \Symfony\Component\HttpFoundation\Request 
+            //Method inherited from \Symfony\Component\HttpFoundation\ConfigureRequestQuestions
             /** @var \Illuminate\Http\Request $instance */
             return $instance->getContent($asResource);
         }
@@ -14960,7 +14960,7 @@ namespace Illuminate\Support\Facades {
          */
         public static function getPayload()
         {
-            //Method inherited from \Symfony\Component\HttpFoundation\Request 
+            //Method inherited from \Symfony\Component\HttpFoundation\ConfigureRequestQuestions
             /** @var \Illuminate\Http\Request $instance */
             return $instance->getPayload();
         }
@@ -14972,7 +14972,7 @@ namespace Illuminate\Support\Facades {
          */
         public static function getETags()
         {
-            //Method inherited from \Symfony\Component\HttpFoundation\Request 
+            //Method inherited from \Symfony\Component\HttpFoundation\ConfigureRequestQuestions
             /** @var \Illuminate\Http\Request $instance */
             return $instance->getETags();
         }
@@ -14984,7 +14984,7 @@ namespace Illuminate\Support\Facades {
          */
         public static function isNoCache()
         {
-            //Method inherited from \Symfony\Component\HttpFoundation\Request 
+            //Method inherited from \Symfony\Component\HttpFoundation\ConfigureRequestQuestions
             /** @var \Illuminate\Http\Request $instance */
             return $instance->isNoCache();
         }
@@ -15001,7 +15001,7 @@ namespace Illuminate\Support\Facades {
          */
         public static function getPreferredFormat($default = 'html')
         {
-            //Method inherited from \Symfony\Component\HttpFoundation\Request 
+            //Method inherited from \Symfony\Component\HttpFoundation\ConfigureRequestQuestions
             /** @var \Illuminate\Http\Request $instance */
             return $instance->getPreferredFormat($default);
         }
@@ -15014,7 +15014,7 @@ namespace Illuminate\Support\Facades {
          */
         public static function getPreferredLanguage($locales = null)
         {
-            //Method inherited from \Symfony\Component\HttpFoundation\Request 
+            //Method inherited from \Symfony\Component\HttpFoundation\ConfigureRequestQuestions
             /** @var \Illuminate\Http\Request $instance */
             return $instance->getPreferredLanguage($locales);
         }
@@ -15027,7 +15027,7 @@ namespace Illuminate\Support\Facades {
          */
         public static function getLanguages()
         {
-            //Method inherited from \Symfony\Component\HttpFoundation\Request 
+            //Method inherited from \Symfony\Component\HttpFoundation\ConfigureRequestQuestions
             /** @var \Illuminate\Http\Request $instance */
             return $instance->getLanguages();
         }
@@ -15040,7 +15040,7 @@ namespace Illuminate\Support\Facades {
          */
         public static function getCharsets()
         {
-            //Method inherited from \Symfony\Component\HttpFoundation\Request 
+            //Method inherited from \Symfony\Component\HttpFoundation\ConfigureRequestQuestions
             /** @var \Illuminate\Http\Request $instance */
             return $instance->getCharsets();
         }
@@ -15053,7 +15053,7 @@ namespace Illuminate\Support\Facades {
          */
         public static function getEncodings()
         {
-            //Method inherited from \Symfony\Component\HttpFoundation\Request 
+            //Method inherited from \Symfony\Component\HttpFoundation\ConfigureRequestQuestions
             /** @var \Illuminate\Http\Request $instance */
             return $instance->getEncodings();
         }
@@ -15066,7 +15066,7 @@ namespace Illuminate\Support\Facades {
          */
         public static function getAcceptableContentTypes()
         {
-            //Method inherited from \Symfony\Component\HttpFoundation\Request 
+            //Method inherited from \Symfony\Component\HttpFoundation\ConfigureRequestQuestions
             /** @var \Illuminate\Http\Request $instance */
             return $instance->getAcceptableContentTypes();
         }
@@ -15082,7 +15082,7 @@ namespace Illuminate\Support\Facades {
          */
         public static function isXmlHttpRequest()
         {
-            //Method inherited from \Symfony\Component\HttpFoundation\Request 
+            //Method inherited from \Symfony\Component\HttpFoundation\ConfigureRequestQuestions
             /** @var \Illuminate\Http\Request $instance */
             return $instance->isXmlHttpRequest();
         }
@@ -15095,7 +15095,7 @@ namespace Illuminate\Support\Facades {
          */
         public static function preferSafeContent()
         {
-            //Method inherited from \Symfony\Component\HttpFoundation\Request 
+            //Method inherited from \Symfony\Component\HttpFoundation\ConfigureRequestQuestions
             /** @var \Illuminate\Http\Request $instance */
             return $instance->preferSafeContent();
         }
@@ -15110,7 +15110,7 @@ namespace Illuminate\Support\Facades {
          */
         public static function isFromTrustedProxy()
         {
-            //Method inherited from \Symfony\Component\HttpFoundation\Request 
+            //Method inherited from \Symfony\Component\HttpFoundation\ConfigureRequestQuestions
             /** @var \Illuminate\Http\Request $instance */
             return $instance->isFromTrustedProxy();
         }

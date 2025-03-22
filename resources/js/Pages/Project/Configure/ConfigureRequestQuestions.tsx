@@ -8,7 +8,7 @@ import { router } from '@inertiajs/react';
 import axios from 'axios';
 import { toast } from 'sonner';
 
-function Request() {
+function ConfigureRequestQuestions() {
     const {
         questions,
         toggleSelection,
@@ -19,7 +19,6 @@ function Request() {
     } = useQuestionsStore();
     const project = useProjectProps();
 
-    // Derived states from the store
     const predefinedQuestions = questions.filter((q) => !q.isCustom);
     const customQuestions = questions.filter((q) => q.isCustom);
 
@@ -98,4 +97,4 @@ function Request() {
     );
 }
 
-export default Request;
+export default ConfigureRequestQuestions;

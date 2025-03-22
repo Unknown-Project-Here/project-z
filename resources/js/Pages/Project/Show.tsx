@@ -49,7 +49,6 @@ export default function ProjectShow({ project }: { project: Project }) {
                                     Request to Join
                                 </Link>
                             </Button>
-                            // <ProjectRequestDialog project={project} />
                         )}
                         {canEditProject && (
                             <Button asChild>

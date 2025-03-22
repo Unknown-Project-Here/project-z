@@ -24,9 +24,7 @@ function ProjectDashboard() {
                 >
                     <DashboardTabs onTabChange={setActiveTab} />
 
-                    {projectProps.must_configure && (
-                        <ConfigurationBanner onConfigure={() => {}} />
-                    )}
+                    {projectProps.must_configure && <ConfigurationBanner />}
 
                     <TabsContent value="dashboard" className="mt-4">
                         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">

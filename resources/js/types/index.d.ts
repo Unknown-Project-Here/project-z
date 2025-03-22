@@ -16,6 +16,7 @@ export interface User {
     onboarded: boolean;
     created_at: string;
     skill_level: SkillLevel;
+    social_usernames: SocialProviderUsernames;
 }
 
 export interface Member {
@@ -144,7 +145,7 @@ export type ProjectCreateGithubRepoList = {
     orgs: ProjectCreateGithubRepo[];
 };
 
-type ProjectCreateGithubRepo = {
+export type ProjectCreateGithubRepo = {
     id: number;
     name: string;
 };
@@ -178,3 +179,12 @@ export interface Application {
         avatar: string;
     };
 }
+
+export type Provider = 'github' | 'discord' | 'google' | 'email';
+
+export type SocialProviderUsername = {
+    provider: Provider;
+    username: string;
+};
+
+export type SocialProviderUsernames = Record<Provider, string>;

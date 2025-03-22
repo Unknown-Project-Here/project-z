@@ -23,6 +23,7 @@ Route::get('/', function () {
     ]);
 });
 
+Route::get('/user/repositories', [UserController::class, 'getUserRepositories'])->name('user.repositories')->middleware(['auth', 'verified']);
 Route::get('/user/{username}', [UserController::class, 'show'])->name('user.profile');
 
 Route::get('/dashboard', function () {
@@ -54,10 +55,11 @@ Route::prefix('projects')->name('projects.')->group(function () {
         Route::middleware(['auth', 'verified'])->group(function () {
             Route::get('/{project}/edit', 'edit')->name('edit');
             Route::get('/{project}/request', 'request')->name('request');
-            Route::get('/{project}/configure/questions', 'configureRequest')->name('configure.request.questions');
+            Route::get('/{project}/configure/questions', 'configureRequest')->name('configure.questions');
             Route::post('/{project}/configure/request/toggle', 'toggleRequestable')->name('configure.request.toggle');
             Route::post('/{project}/configure/request/questions', 'saveApplicationQuestions')->name('configure.request.questions.store');
             Route::post('/{project}/configure/mark-configured', 'markAsConfigured')->name('configure.mark-configured');
+            Route::post('/{project}/configure/repository', 'connectRepository')->name('configure.repository');
         });
     });
 
@@ -69,7 +71,6 @@ Route::prefix('projects')->name('projects.')->group(function () {
             Route::post('/{application}/reject', 'rejectRequest')->name('reject');
         });
     });
-
 
     Route::prefix('{project}/invite')->name('invite.')->middleware(['auth', 'verified'])->group(function () {
         Route::controller(ProjectInvitationController::class)->group(function () {

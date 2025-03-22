@@ -58,6 +58,8 @@ class User extends Authenticatable implements MustVerifyEmail
         ];
     }
 
+    protected $appends = ['social_usernames'];
+
     /**
      * Get the social accounts for the user
      */
@@ -171,8 +173,22 @@ class User extends Authenticatable implements MustVerifyEmail
             && ! array_key_exists('email', $socialUsernames)
             && ! in_array($this->email, array_intersect_key($socialUsernames, ['google' => '', 'discord' => '', 'github' => '']))
         ) {
-            $socialUsernames['email'] = $this->email;
         }
+        $socialUsernames['email'] = $this->email;
+
+        return $socialUsernames;
+    }
+
+    public function getSocialUsernamesAttribute(): array
+    {
+        $socialUsernames = $this->socialAccounts?->pluck('provider', 'username')->flip()->toArray() ?? [];
+
+        if ($this->email
+            && ! array_key_exists('email', $socialUsernames)
+            && ! in_array($this->email, array_intersect_key($socialUsernames, ['google' => '', 'discord' => '', 'github' => '']))
+        ) {
+        }
+        $socialUsernames['email'] = $this->email;
 
         return $socialUsernames;
     }

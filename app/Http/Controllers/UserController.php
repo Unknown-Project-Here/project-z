@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Services\GitHub\GitHubApiService;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -33,5 +34,25 @@ class UserController extends Controller
             'skills' => $skills,
             'isOwnProfile' => $isOwnProfile,
         ]);
+    }
+
+    public function getUserRepositories(GitHubApiService $githubApiService)
+    {
+        try {
+            $user = Auth::user();
+            if (! $user) {
+                return response()->json([]);
+            }
+
+            $githubApiService->setUser($user);
+            $repositories = $githubApiService->getPersonandOrganizationRepos();
+
+            return response()->json(["success" => true, "data" => $repositories]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'data' => null,
+            ], 500);
+        }
     }
 }

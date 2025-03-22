@@ -14,7 +14,6 @@ return new class extends Migration
         Schema::table('projects', function (Blueprint $table) {
             $table->boolean('is_requestable')->default(false);
             $table->boolean('is_questions_configured')->default(false);
-            $table->boolean('is_configured')->default(false);
         });
     }
 
@@ -26,7 +25,6 @@ return new class extends Migration
         Schema::table('projects', function (Blueprint $table) {
             $table->dropColumn('is_requestable');
             $table->dropColumn('is_questions_configured');
-            $table->dropColumn('is_configured');
         });
     }
 };

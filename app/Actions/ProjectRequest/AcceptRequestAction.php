@@ -41,7 +41,7 @@ class AcceptRequestAction
 
             return [
                 'success' => true,
-                'message' => 'Request accepted successfully.',
+                'message' => 'ConfigureRequestQuestions accepted successfully.',
             ];
         } catch (\Exception $e) {
             DB::rollBack();

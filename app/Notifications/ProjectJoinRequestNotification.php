@@ -25,10 +25,10 @@ class ProjectJoinRequestNotification extends Notification implements ShouldQueue
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject('New Project Join Request')
+            ->subject('New Project Join ConfigureRequestQuestions')
             ->line('A user has requested to join your project: '.$this->request->project->title)
             ->line('User: '.$this->request->user->username)
-            ->action('View Request', url('/projects/'.$this->request->project_id))
+            ->action('View ConfigureRequestQuestions', url('/projects/'.$this->request->project_id))
             ->line('Please review this request at your earliest convenience.');
     }
 

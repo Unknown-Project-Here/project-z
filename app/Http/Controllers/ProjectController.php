@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\ProjectRequest;
 use App\Models\Project;
 use App\Services\ProjectService;
+use Gate;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -149,7 +150,11 @@ class ProjectController extends Controller
 
     public function configureRequest(Project $project): Response
     {
-        return Inertia::render('Project/Configure/Request', [
+        if (! request()->user()->can('manageRequests', $project)) {
+            abort(403, 'You do not have permission to configure application questions forthis project.');
+        }
+
+        return Inertia::render('Project/Configure/ConfigureRequestQuestions', [
             'project' => $project,
         ]);
     }
@@ -196,10 +201,6 @@ class ProjectController extends Controller
 
         $project->update(['is_requestable' => ! $project->is_requestable]);
 
-        if ($project->is_requestable && $project->is_questions_configured && $project->repo_id && $project->is_configured === false) {
-            $project->update(['is_configured' => true]);
-        }
-
         $message = $project->is_requestable
             ? 'Users can now request to join this project.'
             : 'Users can no longer request to join this project.';
@@ -207,25 +208,13 @@ class ProjectController extends Controller
         return response()->json(['success' => true, 'message' => $message]);
     }
 
-    public function markAsConfigured(Request $request, Project $project): JsonResponse
-    {
-        if ($request->user()->cannot('edit', $project)) {
-            abort(403, 'You do not have permission to configure this project.');
-        }
-
-        $project->update(['is_configured' => true]);
-
-        return response()->json(['success' => true, 'message' => 'Project successfully configured.']);
-    }
-
     public function request(Project $project): Response|RedirectResponse|JsonResponse
     {
         $user = Auth::user();
 
-        if (!$user) {
+        if (! $user) {
             return to_route('login');
         }
-
 
         if ($user->isMemberOf($project)) {
             return to_route('projects.show', $project->id);
@@ -238,10 +227,49 @@ class ProjectController extends Controller
         $socialUsernames = $user->getSocialUsernames();
         $questions = $project->applicationQuestions;
 
-        return Inertia::render('Project/Request', [
+        return Inertia::render('Project/ProjectRequestApplicationForm', [
             'project' => $project,
             'questions' => $questions,
             'socialUsernames' => $socialUsernames,
         ]);
+    }
+
+    public function connectRepository(Request $request, Project $project): JsonResponse
+    {
+        try {
+            Gate::inspect('edit', $project);
+
+            $user = Auth::user();
+
+            $validated = $request->validate([
+                'repo' => 'required|array',
+                'repo.id' => 'required|integer',
+                'repo.name' => 'required|string',
+                'repo.owner' => 'required|string',
+            ]);
+
+            $repoExists = Project::where('repo_id', $validated['repo']['id'])->exists();
+
+            if ($repoExists) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Repository already connected.',
+                ], 400);
+            }
+
+            $this->projectService->connectRepository($user, $project, $validated['repo']);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Repository connected successfully.',
+            ]);
+        } catch (\Exception $e) {
+            logger($e->getMessage());
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to connect repository.',
+            ], 500);
+        }
     }
 }

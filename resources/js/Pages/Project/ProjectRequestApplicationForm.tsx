@@ -13,7 +13,7 @@ type Answer = {
     answer: string;
 };
 
-export default function Request() {
+export default function ProjectRequestApplicationForm() {
     const questions = useProjectQuestionsProps();
     const project = useProjectProps();
     const [answers, setAnswers] = useState<Answer[]>([]);
@@ -47,31 +47,40 @@ export default function Request() {
             <div className="container mx-auto px-4 py-2">
                 <div className="min-h-screen w-full p-4 md:p-8">
                     <div className="mx-auto space-y-8">
-                        <GradientHeader
-                            title="Join Our Project"
-                            description="We're excited to have you join our project. Please tell us a bit about yourself."
-                        />
+                        {questions.length ? (
+                            <GradientHeader
+                                title="Join Our Project"
+                                description="We're excited to have you join our project. Please tell us a bit about yourself."
+                            />
+                        ) : (
+                            <GradientHeader
+                                title="Join Our Project"
+                                description="We're excited to have you join our project! You can directly submit an application.    "
+                            />
+                        )}
 
                         <form className="space-y-6" onSubmit={handleSubmit}>
-                            <FormSection title="Screening Questions">
-                                <div className="space-y-6">
-                                    {questions.map((question) => (
-                                        <FormField
-                                            key={question.id}
-                                            id={question.id.toString()}
-                                            name={question.id.toString()}
-                                            label={question.question}
-                                            optional={question.is_optional}
-                                            onChange={(value) =>
-                                                handleAnswerChange(
-                                                    question.id.toString(),
-                                                    value,
-                                                )
-                                            }
-                                        />
-                                    ))}
-                                </div>
-                            </FormSection>
+                            {questions.length > 0 && (
+                                <FormSection title="Screening Questions">
+                                    <div className="space-y-6">
+                                        {questions.map((question) => (
+                                            <FormField
+                                                key={question.id}
+                                                id={question.id.toString()}
+                                                name={question.id.toString()}
+                                                label={question.question}
+                                                optional={question.is_optional}
+                                                onChange={(value) =>
+                                                    handleAnswerChange(
+                                                        question.id.toString(),
+                                                        value,
+                                                    )
+                                                }
+                                            />
+                                        ))}
+                                    </div>
+                                </FormSection>
+                            )}
                             <div className="flex justify-end">
                                 <Button>
                                     <Send className="h-5 w-5" />

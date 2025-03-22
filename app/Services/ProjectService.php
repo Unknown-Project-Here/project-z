@@ -233,13 +233,11 @@ class ProjectService
             if ($memberPivot && in_array($memberPivot->role, [ProjectRole::CREATOR, ProjectRole::ADMIN])) {
                 $mustConfigure = [];
 
-                if (! $project->is_configured) {
-                    $mustConfigure['questions'] = $project->is_questions_configured;
+                $mustConfigure['questions'] = ! $project->is_questions_configured;
 
-                    $mustConfigure['members_request'] = $project->is_requestable;
+                $mustConfigure['members_request'] = ! $project->is_requestable;
 
-                    $mustConfigure['repo'] = $project->repo_id ? true : false;
-                }
+                $mustConfigure['repo'] = ! $project->repo_id;
 
                 if (! empty($mustConfigure)) {
                     $projectArray['must_configure'] = (object) $mustConfigure;
@@ -295,5 +293,27 @@ class ProjectService
                 'error' => config('app.debug') ? $e->getMessage() : null,
             ];
         }
+    }
+
+    public function connectRepository(User $user, Project $project, array $repoData): void
+    {
+        $project->update([
+            'repo_id' => $repoData['id'],
+        ]);
+
+        $webhookConfig = [
+            'name' => 'web',
+            'config' => [
+                'url' => config('services.github.webhook_url'),
+                'content_type' => 'json',
+                'secret' => config('github-webhooks.signing_secret'),
+                'insecure_ssl' => '0',
+            ],
+            'events' => ['ping', 'issues'],
+            'active' => true,
+        ];
+
+        $this->githubApiService->setUser($user);
+        $this->githubApiService->createWebhook($repoData['owner'], $repoData['name'], $webhookConfig);
     }
 }

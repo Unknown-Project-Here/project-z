@@ -80,6 +80,6 @@ class ProjectPolicy
     {
         return $user->hasPermission($project, ProjectPermission::MEMBER_MANAGE_REQUESTS)
             ? Response::allow()
-            : Response::deny('You do not have permission to accept requests to join this project.');
+            : Response::deny('You do not have permission to accept requests for this project.');
     }
 }

@@ -1,5 +1,4 @@
 import { CheckCircle2, CircleDashed } from 'lucide-react';
-import { RequestConfigButtons } from './RequestConfigButtons';
 
 export interface ConfigStep {
     id: string;
@@ -7,15 +6,12 @@ export interface ConfigStep {
     completed: boolean;
 }
 
-interface ConfigurationStepProps {
+type ConfigurationStepProps = {
     step: ConfigStep;
-    onConfigUpdate?: () => void;
-}
+    children?: React.ReactNode;
+};
 
-export function ConfigurationStep({
-    step,
-    onConfigUpdate,
-}: ConfigurationStepProps) {
+export function ConfigurationStep({ step, children }: ConfigurationStepProps) {
     return (
         <div className="flex flex-col gap-2 rounded-lg border border-border/50 bg-background/50 p-3">
             <div className="flex items-center gap-2">
@@ -27,12 +23,7 @@ export function ConfigurationStep({
                 <span className="text-sm font-medium">{step.label}</span>
             </div>
 
-            {!step.completed && (
-                <RequestConfigButtons
-                    stepId={step.id}
-                    onSuccess={onConfigUpdate}
-                />
-            )}
+            {!step.completed && children}
         </div>
     );
 }

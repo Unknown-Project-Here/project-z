@@ -18,7 +18,6 @@ class Project extends Model
         'updated_at' => 'datetime',
         'is_active' => 'boolean',
         'is_requestable' => 'boolean',
-        'is_configured' => 'boolean',
         'is_questions_configured' => 'boolean',
     ];
 
@@ -33,13 +32,11 @@ class Project extends Model
         'skill_level',
         'repo_id',
         'is_requestable',
-        'is_configured',
         'is_questions_configured',
     ];
 
     protected $hidden = [
         'is_requestable',
-        'is_configured',
     ];
 
     // Relationships
