@@ -1,5 +1,6 @@
 import { ProjectCard } from '@/Components/projects/index/ProjectCard';
 import { Button } from '@/Components/ui/button';
+import Heading from '@/Components/ui/typography/Heading';
 import { usePageProps } from '@/hooks/usePageProps';
 import { IndexProject } from '@/types';
 import { Head, Link } from '@inertiajs/react';
@@ -13,7 +14,7 @@ export default function ProjectIndex() {
             <Head title="Projects Home" />
             <div className="container mx-auto px-4 py-8">
                 <div className="flex items-start justify-between">
-                    <h1 className="mb-8 text-3xl font-bold">Projects</h1>
+                    <Heading level={1}>Projects</Heading>
                     {projects.length > 0 && (
                         <Button asChild>
                             <Link href={route('projects.create')}>

@@ -95,9 +95,9 @@ function MembersList() {
         [],
     );
 
-    const handleAddMember = useCallback(() => {
-        router.visit(route('projects.invite', { project: project.id }));
-    }, []);
+    const handleAddMember = () => {
+        router.visit(route('projects.invite.show', { project: project.id }));
+    };
 
     const handleMessageMember = useCallback((memberId: string) => {
         console.log(`Message member ${memberId}`);

@@ -63,8 +63,10 @@ export function AppSidebar() {
                         href="/"
                         className="flex items-center justify-center py-1.5 text-3xl"
                     >
-                        <FeatherIcon className="mr-2 h-8 w-8" />
-                        Project Hub
+                        <FeatherIcon className="mr-2 h-8 w-8 text-black dark:text-white" />
+                        <span className="text-black dark:text-white">
+                            Project Hub
+                        </span>
                     </Link>
                 </SidebarMenu>
             </SidebarHeader>

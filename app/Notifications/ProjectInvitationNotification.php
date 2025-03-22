@@ -37,7 +37,6 @@ class ProjectInvitationNotification extends Notification
             'project_id' => $this->invitation->project_id,
             'project_title' => $this->invitation->project->title,
             'inviter_name' => $this->invitation->inviter->username,
-            'role' => $this->invitation->role,
         ];
     }
 
@@ -48,7 +47,6 @@ class ProjectInvitationNotification extends Notification
             'project_id' => $this->invitation->project_id,
             'project_title' => $this->invitation->project->title,
             'inviter_name' => $this->invitation->inviter->username,
-            'role' => $this->invitation->role,
             'created_at' => $this->invitation->created_at,
         ]);
     }

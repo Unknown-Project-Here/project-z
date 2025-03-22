@@ -4,6 +4,7 @@ namespace App\Actions\Project\Invite;
 
 use App\Models\Project;
 use App\Models\User;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
 
@@ -19,7 +20,7 @@ class GetEligibleUsers
      *
      * @throws \Exception If fetching users fails
      */
-    public function __invoke(Project $project, string $search): Collection
+    public function __invoke(Project $project, string $search): LengthAwarePaginator
     {
         try {
             $memberIds = $project->members()->pluck('users.id');
@@ -28,13 +29,22 @@ class GetEligibleUsers
                 ->where('expires_at', '>', now())
                 ->pluck('invitee_id');
 
-            return User::select('id as user_id', 'username')
+            $query = User::select('id as user_id', 'username', 'avatar')
                 ->whereNotIn('id', $memberIds)
                 ->whereNotIn('id', $invitedUserIds)
                 ->when($search, function ($query, $search) {
                     return $query->where('username', 'like', "%{$search}%");
-                })
-                ->get();
+                });
+
+            $users = $query->paginate(20)->through(function ($user) {
+                if (is_null($user->avatar) || $user->avatar === '') {
+                    unset($user->avatar);
+                }
+
+                return $user;
+            });
+
+            return $users;
         } catch (\Exception $e) {
             Log::error('Failed to fetch eligible users:', [
                 'error' => $e->getMessage(),

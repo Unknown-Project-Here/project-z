@@ -47,11 +47,11 @@ Route::prefix('projects')->name('projects.')->group(function () {
     Route::controller(ProjectController::class)->group(function () {
         // Public routes
         Route::get('/', 'index')->name('index');
+        Route::get('/create', 'create')->name('create')->middleware(['auth', 'verified']);
+        Route::post('/', 'store')->name('store')->middleware(['auth', 'verified']);
         Route::get('/{project}', 'show')->name('show');
         // Protected routes
         Route::middleware(['auth', 'verified'])->group(function () {
-            Route::get('/create', 'create')->name('create');
-            Route::post('/', 'store')->name('store');
             Route::get('/{project}/edit', 'edit')->name('edit');
             Route::get('/{project}/request', 'request')->name('request');
             Route::get('/{project}/configure/questions', 'configureRequest')->name('configure.request.questions');
@@ -61,7 +61,7 @@ Route::prefix('projects')->name('projects.')->group(function () {
         });
     });
 
-    Route::prefix('{project}/applications')->name('applications.')->group(function () {
+    Route::prefix('{project}/applications')->name('applications.')->middleware(['auth', 'verified'])->group(function () {
         Route::controller(ProjectRequestController::class)->group(function () {
             Route::get('/', 'index')->name('index');
             Route::get('/{application}', 'show')->name('show');
@@ -70,11 +70,13 @@ Route::prefix('projects')->name('projects.')->group(function () {
         });
     });
 
-    Route::controller(ProjectInvitationController::class)->group(function () {
-        Route::get('/{project}/invite', 'show')->name('invite');
-        Route::get('/{project}/search-users', 'getUsers')->name('search-users');
-        Route::post('/{project}/invite', 'store')->name('invite');
-        Route::post('/{project}/request', 'request')->name('request.store');
+
+    Route::prefix('{project}/invite')->name('invite.')->middleware(['auth', 'verified'])->group(function () {
+        Route::controller(ProjectInvitationController::class)->group(function () {
+            Route::get('/', 'show')->name('show');
+            Route::get('/searchUsers', 'searchUsers')->name('searchUsers');
+            Route::post('/', 'store')->name('store');
+        });
     });
 });
 

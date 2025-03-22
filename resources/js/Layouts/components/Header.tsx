@@ -95,7 +95,7 @@ export function Header() {
                 </Breadcrumb>
             </div>
             <div className="flex items-center gap-2">
-                {!open && (
+                {!open && !user && (
                     <>
                         <Button asChild className="min-w-[100px]">
                             <Link href="/login" className="btn btn-primary">

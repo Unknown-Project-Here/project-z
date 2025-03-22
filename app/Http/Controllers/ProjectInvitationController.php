@@ -31,6 +31,21 @@ class ProjectInvitationController extends Controller
 
         return Inertia::render('Project/InviteUser', [
             'project' => $project,
+            'users' => [
+                'data' => [],
+                'current_page' => 1,
+                'first_page_url' => '',
+                'from' => 0,
+                'last_page' => 1,
+                'last_page_url' => '',
+                'links' => [],
+                'next_page_url' => null,
+                'path' => '',
+                'per_page' => 20,
+                'prev_page_url' => null,
+                'to' => 0,
+                'total' => 0,
+            ],
         ]);
     }
 
@@ -39,7 +54,7 @@ class ProjectInvitationController extends Controller
      *
      * Excludes current project members and users with pending invitations.
      */
-    public function getUsers(Request $request, Project $project): JsonResponse
+    public function searchUsers(Request $request, Project $project)
     {
         if ($request->user()->cannot('invite', $project)) {
             abort(403, 'You do not have permission to invite users to this project.');
@@ -55,16 +70,15 @@ class ProjectInvitationController extends Controller
                 $validated['search']
             );
 
-            return response()->json([
-                'success' => true,
+            return Inertia::render('Project/InviteUser', [
+                'project' => $project,
                 'users' => $users,
             ]);
         } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to fetch eligible users.',
-                'error' => config('app.debug') ? $e->getMessage() : null,
-            ], 500);
+            return Inertia::render('Project/InviteUser', [
+                'project' => $project,
+                'error' => 'Failed to fetch eligible users.',
+            ]);
         }
     }
 
@@ -79,7 +93,6 @@ class ProjectInvitationController extends Controller
 
         $validated = $request->validate([
             'invitee_id' => 'required|exists:users,id',
-            'role' => 'required|in:creator,admin,contributor',
         ]);
 
         try {
@@ -87,7 +100,6 @@ class ProjectInvitationController extends Controller
                 $project,
                 $request->user(),
                 $validated['invitee_id'],
-                $validated['role']
             );
 
             if (! $result['success']) {

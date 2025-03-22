@@ -20,7 +20,7 @@ class InviteUserToProject
      *
      * @throws \Exception If the invitation fails
      */
-    public function __invoke(Project $project, User $inviter, int $invitee_id, string $role): array
+    public function __invoke(Project $project, User $inviter, int $invitee_id): array
     {
         try {
             $existingInvitation = $project->invitations()
@@ -45,7 +45,6 @@ class InviteUserToProject
             $invitation = $project->invitations()->create([
                 'inviter_id' => $inviter->id,
                 'invitee_id' => $invitee_id,
-                'role' => $role,
             ]);
 
             $invitee = User::find($invitee_id);

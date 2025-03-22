@@ -27,7 +27,7 @@ export function StepConnector({
             {...props}
         >
             <div className="relative h-full w-full">
-                <div className="absolute inset-0 bg-muted" />
+                <div className="absolute inset-0 bg-black/20 dark:bg-white/50" />
                 <div
                     className={cn(
                         'absolute inset-0 bg-primary transition-all duration-200',
