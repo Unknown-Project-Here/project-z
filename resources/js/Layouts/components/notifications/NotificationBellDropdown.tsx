@@ -5,7 +5,7 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from '@/Components/ui/dropdown-menu';
-import H3 from '@/Components/ui/typography/H3';
+import Heading from '@/Components/ui/typography/Heading';
 import NotificationItemBellDropdown from '@/Layouts/components/notifications/NotificationItemBellDropdown';
 import { useNotificationStore } from '@/Layouts/components/notifications/store/notifications';
 import { Notification } from '@/Layouts/components/notifications/types';
@@ -48,7 +48,7 @@ export default function NotificationBellDropdown({
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="max-w-[350px] p-4">
-                <H3>Notifications</H3>
+                <Heading level={3}>Notifications</Heading>
                 <div className="max-h-[300px] overflow-y-auto">
                     {notifications && notifications.length > 0 ? (
                         notifications.map((notification) => (

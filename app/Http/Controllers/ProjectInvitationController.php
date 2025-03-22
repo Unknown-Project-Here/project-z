@@ -13,6 +13,8 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Notification;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class ProjectInvitationController extends Controller
 {
@@ -20,6 +22,17 @@ class ProjectInvitationController extends Controller
         private readonly GetEligibleUsers $getEligibleUsers,
         private readonly InviteUserToProject $inviteUserToProject,
     ) {}
+
+    public function show(Request $request, Project $project): Response
+    {
+        if ($request->user()->cannot('invite', $project)) {
+            abort(403, 'You do not have permission to invite users to this project.');
+        }
+
+        return Inertia::render('Project/InviteUser', [
+            'project' => $project,
+        ]);
+    }
 
     /**
      * Get users that can be invited to the project.

@@ -3,7 +3,7 @@ import { Button } from '@/Components/ui/button';
 import { CardContent, CardHeader, CardTitle } from '@/Components/ui/card';
 import FancyCard from '@/Components/ui/fancy-card';
 import { Separator } from '@/Components/ui/separator';
-import H3 from '@/Components/ui/typography/H3';
+import Heading from '@/Components/ui/typography/Heading';
 import { useMemberApplicationProps } from '@/hooks/useMemberApplicationProps';
 import { router } from '@inertiajs/react';
 import axios from 'axios';
@@ -69,7 +69,7 @@ function MemberApplication() {
             <FancyCard>
                 <CardHeader className="space-y-1">
                     <CardTitle>
-                        <H3>Application from :</H3>
+                        <Heading level={3}>Application from :</Heading>
                     </CardTitle>
                     <div className="@container">
                         <div className="@[350px]:flex-row flex flex-col items-center justify-between">

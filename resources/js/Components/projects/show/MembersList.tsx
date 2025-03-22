@@ -1,7 +1,7 @@
 import { Button } from '@/Components/ui/button';
 import { useProjectPermissions } from '@/hooks/useProjectPermissions';
 import { useProjectProps } from '@/hooks/useProjectProps';
-import { Link } from '@inertiajs/react';
+import { Link, router } from '@inertiajs/react';
 import { PlusIcon, Users } from 'lucide-react';
 import React, { useCallback, useMemo } from 'react';
 import MemberCard, { MemberType } from './MemberCard';
@@ -96,7 +96,7 @@ function MembersList() {
     );
 
     const handleAddMember = useCallback(() => {
-        console.log('Add member clicked');
+        router.visit(route('projects.invite', { project: project.id }));
     }, []);
 
     const handleMessageMember = useCallback((memberId: string) => {

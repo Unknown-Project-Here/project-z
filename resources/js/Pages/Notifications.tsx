@@ -1,12 +1,13 @@
 import { Button } from '@/Components/ui/button';
 import { Card, CardContent } from '@/Components/ui/card';
-import H3 from '@/Components/ui/typography/H3';
-import { usePageProps } from '@/hooks/usePageProps';
 import NotificationItemPage from '@/Layouts/components/notifications/NotificationItemPage';
 import { useNotificationStore } from '@/Layouts/components/notifications/store/notifications';
 import { Notification } from '@/Layouts/components/notifications/types';
 import { Head, router, usePage } from '@inertiajs/react';
 import { useEffect } from 'react';
+import Heading from '@/Components/ui/typography/Heading';
+import { usePageProps } from '@/hooks/usePageProps';
+
 
 export default function Notifications() {
     const { allNotifications: initialNotifications, shouldShowMarkAllAsRead } =
@@ -40,7 +41,7 @@ export default function Notifications() {
             <Head title="Notifications" />
             <div className="container mx-auto px-4 py-8">
                 <div className="mb-6 flex items-center justify-between">
-                    <H3>Notifications</H3>
+                    <Heading level={3}>Notifications</Heading>
                     {shouldShowMarkAllAsRead && (
                         <Button variant="outline" onClick={markAllAsRead}>
                             Mark all as read
