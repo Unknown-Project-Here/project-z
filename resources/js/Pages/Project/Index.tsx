@@ -14,7 +14,9 @@ export default function ProjectIndex() {
             <Head title="Projects Home" />
             <div className="container mx-auto px-4 py-8">
                 <div className="flex items-start justify-between">
-                    <Heading level={1}>Projects</Heading>
+                    <Heading level={2} className="mb-2">
+                        Projects
+                    </Heading>
                     {projects.length > 0 && (
                         <Button asChild>
                             <Link href={route('projects.create')}>
