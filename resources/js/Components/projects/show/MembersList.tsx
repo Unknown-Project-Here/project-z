@@ -2,7 +2,7 @@ import { Button } from '@/Components/ui/button';
 import { useProjectPermissions } from '@/hooks/useProjectPermissions';
 import { useProjectProps } from '@/hooks/useProjectProps';
 import { Link } from '@inertiajs/react';
-import { Users } from 'lucide-react';
+import { PlusIcon, Users } from 'lucide-react';
 import React, { useCallback, useMemo } from 'react';
 import MemberCard, { MemberType } from './MemberCard';
 
@@ -136,7 +136,7 @@ function MembersList() {
                             className="bg-primary text-primary-foreground hover:bg-primary/90"
                             onClick={handleAddMember}
                         >
-                            <Users className="mr-2 h-4 w-4" />
+                            <PlusIcon className="mr-2 h-4 w-4" />
                             Add Member
                         </Button>
                     )}
