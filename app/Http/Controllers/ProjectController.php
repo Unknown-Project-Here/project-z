@@ -186,6 +186,14 @@ class ProjectController extends Controller
                 ]);
             }
 
+            if ($activeTab === 'dashboard' && $activeSection === 'configure-questions') {
+                return Inertia::render('Project/ProjectDashboard', [
+                    'project' => $project,
+                    'activeTab' => $activeTab,
+                    'activeSection' => $activeSection,
+                ]);
+            }
+
             $projectData = $this->projectService->show($project);
 
             if ($request->user() && $request->user()->isMemberOf($project)) {
@@ -241,17 +249,6 @@ class ProjectController extends Controller
 
         return Inertia::render('Project/Edit', [
             'project' => $project->load('user'),
-        ]);
-    }
-
-    public function configureRequest(Project $project): Response
-    {
-        if (! request()->user()->can('manageRequests', $project)) {
-            abort(403, 'You do not have permission to configure application questions forthis project.');
-        }
-
-        return Inertia::render('Project/Configure/ConfigureRequestQuestions', [
-            'project' => $project,
         ]);
     }
 

@@ -46,16 +46,15 @@ Route::middleware(['auth', 'verified'])->prefix('settings')->name('settings.')->
 // Projects routes
 Route::prefix('projects')->name('projects.')->group(function () {
     Route::controller(ProjectController::class)->group(function () {
-        // Public routes
+
         Route::get('/', 'index')->name('index');
         Route::get('/create', 'create')->name('create')->middleware(['auth', 'verified']);
         Route::post('/', 'store')->name('store')->middleware(['auth', 'verified']);
         Route::get('/{project}', 'show')->name('show');
-        // Protected routes
+
         Route::middleware(['auth', 'verified'])->group(function () {
             Route::get('/{project}/edit', 'edit')->name('edit');
             Route::get('/{project}/request', 'request')->name('request');
-            Route::get('/{project}/configure/questions', 'configureRequest')->name('configure.questions');
             Route::post('/{project}/configure/request/toggle', 'handleAllowRequestConfiguration')->name('configure.request.toggle');
             Route::post('/{project}/configure/request/questions', 'saveApplicationQuestions')->name('configure.request.questions.store');
             Route::post('/{project}/configure/repository', 'connectRepository')->name('configure.repository');

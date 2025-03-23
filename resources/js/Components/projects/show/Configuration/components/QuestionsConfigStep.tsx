@@ -13,7 +13,13 @@ export function QuestionsConfigStep({ step }: QuestionsConfigStepProps) {
     return (
         <ConfigurationStep step={step}>
             <Button asChild>
-                <Link href={route('projects.configure.questions', project.id)}>
+                <Link
+                    href={route('projects.show', {
+                        project: project.id,
+                        activeSection: 'configure-questions',
+                        activeTab: 'dashboard',
+                    })}
+                >
                     Configure Questions
                 </Link>
             </Button>

@@ -10,12 +10,13 @@ import ProjectDashboardTabHelper from '@/Components/projects/show/ProjectDashboa
 import { TabsContent } from '@/Components/ui/tabs';
 import { ActiveTab, Project } from '@/types';
 import { router } from '@inertiajs/react';
+import ConfigureRequestQuestions from './Configure/ConfigureRequestQuestions';
 import InviteUser from './InviteUser';
 import MemberApplication from './MemberApplication';
 
 interface ProjectDashboardProps {
     activeTab: ActiveTab;
-    activeSection?: MemberSection;
+    activeSection?: MemberSection | DashboardSection;
     project: Project;
     applicationsData?: {
         applications: any[];
@@ -23,6 +24,7 @@ interface ProjectDashboardProps {
     };
 }
 type MemberSection = 'view-applications' | 'invite' | 'application' | null;
+type DashboardSection = 'configure-questions' | null;
 
 function ProjectDashboard({
     activeTab,
@@ -44,11 +46,20 @@ function ProjectDashboard({
                 {project.must_configure && <ConfigurationBanner />}
 
                 <TabsContent value="dashboard" className="mt-4">
-                    <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-                        <DashboardStats />
-                        <AssignedIssues />
-                        <Leaderboard />
-                    </div>
+                    {(() => {
+                        switch (activeSection) {
+                            case 'configure-questions':
+                                return <ConfigureRequestQuestions />;
+                            default:
+                                return (
+                                    <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+                                        <DashboardStats />
+                                        <AssignedIssues />
+                                        <Leaderboard />
+                                    </div>
+                                );
+                        }
+                    })()}
                 </TabsContent>
 
                 <TabsContent value="issues" className="mt-4">
