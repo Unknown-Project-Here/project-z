@@ -193,19 +193,38 @@ class ProjectController extends Controller
         ], 500);
     }
 
-    public function toggleRequestable(Request $request, Project $project): JsonResponse
+    public function handleAllowRequestConfiguration(Request $request, Project $project): JsonResponse
     {
-        if ($request->user()->cannot('edit', $project)) {
-            abort(403, 'You do not have permission to configure this project.');
+        try {
+            $validated = $request->validate([
+                'is_requestable' => 'required|boolean',
+            ]);
+
+            if ($request->user()->cannot('edit', $project)) {
+                abort(403, 'You do not have permission to configure this project.');
+            }
+
+            $project->configuration->update([
+                'is_requestable' => $validated['is_requestable'],
+                'request_configured_at' => now(),
+            ]);
+
+            $project->refresh();
+
+            $message = $project->configuration->is_requestable
+                ? 'Configured - Users can now request to join this project.'
+                : 'Configured - Users cannot request to join this project.';
+
+            return response()->json(['success' => true, 'message' => $message]);
+        } catch (\Exception $e) {
+            logger($e->getMessage());
+            logger($e->getTraceAsString());
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to configure request configuration.',
+            ], 500);
         }
-
-        $project->update(['is_requestable' => ! $project->is_requestable]);
-
-        $message = $project->is_requestable
-            ? 'Users can now request to join this project.'
-            : 'Users can no longer request to join this project.';
-
-        return response()->json(['success' => true, 'message' => $message]);
     }
 
     public function request(Project $project): Response|RedirectResponse|JsonResponse

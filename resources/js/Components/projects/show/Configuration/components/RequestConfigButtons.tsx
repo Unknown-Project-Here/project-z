@@ -14,48 +14,32 @@ export function RequestConfigButtons({
 }: RequestConfigButtonsProps) {
     const project = useProjectProps();
 
-    if (stepId !== 'members_request') {
-        return null;
-    }
+    if (stepId !== 'members_request') return null;
 
-    const handleAllowRequests = async () => {
+    const updateProjectRequestable = (isRequestable: boolean) => async () => {
         try {
             const response = await axios.post(
                 route('projects.configure.request.toggle', project.id),
+                { is_requestable: isRequestable },
             );
 
-            if (response.data.success) {
-                toast.success(response.data.message);
-                if (onSuccess) onSuccess();
-            } else {
-                toast.error('Failed to configure member requests.');
-            }
-        } catch (error) {
-            toast.error('An error occurred while configuring member requests.');
-        }
-    };
-
-    const handleDoLater = async () => {
-        try {
-            const response = await axios.post(
-                route('projects.configure.mark-configured', project.id),
+            toast[response.data.success ? 'success' : 'error'](
+                response.data.success
+                    ? response.data.message
+                    : `Failed to ${isRequestable ? 'configure member requests' : 'mark as configured'}`,
             );
 
-            if (response.data.success) {
-                toast.success(response.data.message);
-                if (onSuccess) onSuccess();
-            } else {
-                toast.error('Failed to mark as configured.');
-            }
+            if (response.data.success && onSuccess) onSuccess();
         } catch (error) {
-            toast.error('An error occurred while marking as configured.');
+            console.log(error);
+            toast.error('An error occurred while processing the request');
         }
     };
 
     return (
         <div className="mt-2 flex w-full max-w-full flex-col gap-2 sm:flex-row">
             <Button
-                onClick={handleAllowRequests}
+                onClick={updateProjectRequestable(true)}
                 variant="default"
                 size="sm"
                 className="w-full shrink-0 sm:flex-1"
@@ -63,7 +47,7 @@ export function RequestConfigButtons({
                 Allow Requests
             </Button>
             <Button
-                onClick={handleDoLater}
+                onClick={updateProjectRequestable(false)}
                 variant="outline"
                 size="sm"
                 className="w-full shrink-0 sm:flex-1"

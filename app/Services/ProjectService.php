@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Actions\Options\CreateMissingOptions;
 use App\Actions\Project\AssignCreatorRole;
+use App\Actions\Project\CreateConfigurationRow;
 use App\Actions\Project\CreateGitHubWebhook;
 use App\Actions\Project\CreateProject;
 use App\Actions\Project\CreateProjectTechStack;
@@ -62,6 +63,7 @@ class ProjectService
                         CreateProjectTechStack::class,
                         AssignCreatorRole::class,
                         CreateGitHubWebhook::class,
+                        CreateConfigurationRow::class,
                     ])
                     ->then(function ($data) {
                         return $data['project'];
@@ -211,7 +213,7 @@ class ProjectService
 
     public function show(Project $project): array
     {
-        $project->load(['stack.option.category', 'members']);
+        $project->load(['stack.option.category', 'members', 'configuration']);
 
         $stackByCategory = collect($project->stack)
             ->groupBy(fn ($stack) => $stack->option->category->name)
@@ -233,9 +235,9 @@ class ProjectService
             if ($memberPivot && in_array($memberPivot->role, [ProjectRole::CREATOR, ProjectRole::ADMIN])) {
                 $mustConfigure = [];
 
-                $mustConfigure['questions'] = ! $project->is_questions_configured;
+                $mustConfigure['questions'] = ! $project->configuration->isQuestionsStepConfigured();
 
-                $mustConfigure['members_request'] = ! $project->is_requestable;
+                $mustConfigure['members_request'] = ! $project->configuration->isRequestStepConfigured();
 
                 $mustConfigure['repo'] = ! $project->repo_id;
 
@@ -261,7 +263,7 @@ class ProjectService
             return DB::transaction(function () use ($project, $questionsData) {
 
                 if (empty($questionsData)) {
-                    $project->update(['is_questions_configured' => true]);
+                    $project->configuration->update(['is_questions_configured' => true]);
 
                     return [
                         'success' => true,
@@ -276,7 +278,7 @@ class ProjectService
                     ]);
                 }
 
-                $project->update([
+                $project->configuration->update([
                     'is_questions_configured' => true,
                 ]);
 

@@ -73,6 +73,10 @@ class ProjectPolicy
             return Response::deny('You have already requested to join this project.');
         }
 
+        if (! $project->configuration->is_requestable) {
+            return Response::deny('This project is not accepting requests.');
+        }
+
         return Response::allow();
     }
 

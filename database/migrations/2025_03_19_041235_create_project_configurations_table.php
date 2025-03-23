@@ -11,9 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('projects', function (Blueprint $table) {
-            $table->boolean('is_requestable')->default(false);
+        Schema::create('project_configurations', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('project_id')->constrained()->onDelete('cascade');
             $table->boolean('is_questions_configured')->default(false);
+            $table->boolean('is_requestable')->default(false);
+            $table->timestamp('request_configured_at')->nullable();
         });
     }
 
@@ -22,9 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('projects', function (Blueprint $table) {
-            $table->dropColumn('is_requestable');
-            $table->dropColumn('is_questions_configured');
-        });
+        Schema::dropIfExists('project_configurations');
     }
 };
