@@ -22,7 +22,7 @@ const DashboardTabs: React.FC<DashboardTabsProps> = ({
     ],
 }) => {
     return (
-        <TabsList className="mb-6 w-full justify-start rounded-lg bg-muted/50 p-1">
+        <TabsList className="w-full justify-start rounded-lg bg-muted/50 p-1">
             <div className="flex items-center overflow-x-auto">
                 {tabs.map((tab) => (
                     <TabsTrigger
