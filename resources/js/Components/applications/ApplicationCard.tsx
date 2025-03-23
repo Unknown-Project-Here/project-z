@@ -44,9 +44,11 @@ const ApplicationCard: React.FC<ApplicationCardProps> = ({ application }) => {
                             </Button>
                             <Button asChild>
                                 <Link
-                                    href={route('projects.applications.show', {
+                                    href={route('projects.show', {
                                         project: application.project_id,
                                         application: application.id,
+                                        activeTab: 'members',
+                                        activeSection: 'application',
                                     })}
                                 >
                                     <Eye className="mr-2" />

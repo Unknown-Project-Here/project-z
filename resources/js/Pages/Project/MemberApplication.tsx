@@ -1,14 +1,14 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/Components/ui/avatar';
 import { Button } from '@/Components/ui/button';
-import { CardContent, CardHeader, CardTitle } from '@/Components/ui/card';
+import { CardContent, CardHeader } from '@/Components/ui/card';
 import FancyCard from '@/Components/ui/fancy-card';
 import { Separator } from '@/Components/ui/separator';
 import Heading from '@/Components/ui/typography/Heading';
 import { useMemberApplicationProps } from '@/hooks/useMemberApplicationProps';
-import { router } from '@inertiajs/react';
+import { Link, router } from '@inertiajs/react';
 import axios from 'axios';
 import dayjs from 'dayjs';
-import { Check, MessageCircle, X } from 'lucide-react';
+import { Check, ChevronLeft, MessageCircle, X } from 'lucide-react';
 import { toast } from 'sonner';
 
 function MemberApplication() {
@@ -28,8 +28,10 @@ function MemberApplication() {
                 if (response.data.success) {
                     toast.success(response.data.message);
                     router.visit(
-                        route('projects.applications.index', {
+                        route('projects.show', {
                             project: application.project_id,
+                            activeTab: 'members',
+                            activeSection: 'view-applications',
                         }),
                     );
                 } else {
@@ -52,8 +54,10 @@ function MemberApplication() {
                 if (response.data.success) {
                     toast.success(response.data.message);
                     router.visit(
-                        route('projects.applications.index', {
+                        route('projects.show', {
                             project: application.project_id,
+                            activeTab: 'members',
+                            activeSection: 'view-applications',
                         }),
                     );
                 } else {
@@ -64,15 +68,28 @@ function MemberApplication() {
                 toast.error('Failed to accept application.');
             });
     };
+
+    const backButton = route('projects.show', {
+        project: application.project_id,
+        activeTab: 'members',
+        activeSection: 'view-applications',
+    });
+
     return (
-        <div className="flex flex-col gap-y-4 p-4">
+        <div className="flex flex-col gap-y-4">
+            <div className="flex w-full justify-between">
+                <Heading level={3}>Application from: </Heading>
+                <Button asChild>
+                    <Link href={backButton}>
+                        <ChevronLeft className="mr-2 size-4" />
+                        Back
+                    </Link>
+                </Button>
+            </div>
             <FancyCard>
                 <CardHeader className="space-y-1">
-                    <CardTitle>
-                        <Heading level={3}>Application from :</Heading>
-                    </CardTitle>
                     <div className="@container">
-                        <div className="@[350px]:flex-row flex flex-col items-center justify-between">
+                        <div className="flex flex-col items-center justify-between @[350px]:flex-row">
                             <div className="flex items-center space-x-4">
                                 <Avatar>
                                     <AvatarImage
@@ -101,7 +118,7 @@ function MemberApplication() {
                                 variant="outline"
                                 size="sm"
                                 onClick={handleMessage}
-                                className="@[350px]:mt-0 @[350px]:min-w-fit mt-4 flex min-w-full items-center gap-2"
+                                className="mt-4 flex min-w-full items-center gap-2 @[350px]:mt-0 @[350px]:min-w-fit"
                             >
                                 <MessageCircle className="mr-2 h-4 w-4" />
                                 Message

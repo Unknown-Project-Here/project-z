@@ -19,35 +19,6 @@ class ProjectRequestController extends Controller
         $this->projectRequestService = $projectRequestService;
     }
 
-    public function index(Project $project): Response
-    {
-        try {
-            $result = $this->projectRequestService->getApplications(
-                $project,
-                request()->user()->id
-            );
-
-            return Inertia::render('Project/MemberApplicationList', $result);
-        } catch (UnauthorizedAccessException $e) {
-            abort(403, $e->getMessage());
-        }
-    }
-
-    public function show(Project $project, ProjectRequest $application): Response
-    {
-        try {
-            $result = $this->projectRequestService->getApplication(
-                $project,
-                $application,
-                request()->user()->id
-            );
-
-            return Inertia::render('Project/MemberApplication', $result);
-        } catch (UnauthorizedAccessException $e) {
-            abort(403, $e->getMessage());
-        }
-    }
-
     public function acceptRequest(Project $project, ProjectRequest $application): JsonResponse
     {
         try {

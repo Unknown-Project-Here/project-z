@@ -1,4 +1,5 @@
 import { Button } from '@/Components/ui/button';
+import Heading from '@/Components/ui/typography/Heading';
 import { useProjectPermissions } from '@/hooks/useProjectPermissions';
 import { useProjectProps } from '@/hooks/useProjectProps';
 import { Link, router } from '@inertiajs/react';
@@ -96,7 +97,13 @@ function MembersList() {
     );
 
     const handleAddMember = () => {
-        router.visit(route('projects.invite.show', { project: project.id }));
+        router.visit(
+            route('projects.show', {
+                project: project.id,
+                activeTab: 'members',
+                activeSection: 'invite',
+            }),
+        );
     };
 
     const handleMessageMember = useCallback((memberId: string) => {
@@ -105,11 +112,9 @@ function MembersList() {
 
     return (
         <div className="space-y-6">
-            <div className="flex items-center justify-between">
+            <div className="flex justify-between">
                 <div>
-                    <h2 className="text-2xl font-bold text-foreground">
-                        Team Members
-                    </h2>
+                    <Heading level={3}>Team Members</Heading>
                     <p className="text-muted-foreground">
                         Manage and view all team members working on this
                         project.
@@ -122,8 +127,10 @@ function MembersList() {
                             asChild
                         >
                             <Link
-                                href={route('projects.applications.index', {
+                                href={route('projects.show', {
                                     project: project.id,
+                                    activeTab: 'members',
+                                    activeSection: 'view-applications',
                                 })}
                             >
                                 <Users className="mr-2 h-4 w-4" />

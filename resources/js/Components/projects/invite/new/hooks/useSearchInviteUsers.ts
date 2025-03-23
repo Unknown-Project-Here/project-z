@@ -42,7 +42,11 @@ export function useSearchInviteUsers(
     useEffect(() => {
         if (search.length >= 2 && search.length <= 16) {
             router.get(
-                route('projects.invite.searchUsers', { project: projectId }),
+                route('projects.show', {
+                    project: projectId,
+                    activeTab: 'members',
+                    activeSection: 'invite',
+                }),
                 { search, page },
                 {
                     preserveState: true,

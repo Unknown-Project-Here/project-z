@@ -26,7 +26,7 @@ class ProjectRequestService
      *
      * @throws UnauthorizedAccessException
      */
-    public function getApplications(Project $project, int $userId, int $perPage = 10): array
+    public function getApplications(Project $project, int $userId, int $perPage = 20): array
     {
         $this->validateProjectAccess($project, $userId);
 
@@ -54,19 +54,20 @@ class ProjectRequestService
      *
      * @throws UnauthorizedAccessException
      */
-    public function getApplication(Project $project, ProjectRequest $application, int $userId): array
+    public function getApplication(Project $project, int $application_id, int $userId): array
     {
         $this->validateProjectAccess($project, $userId);
 
         try {
+            $application = ProjectRequest::findOrFail($application_id);
             $application->load('user:id,username,avatar');
 
-            $user_id = $application->user_id;
+            $applicant_id = $application->user_id;
             $project_id = $application->project_id;
 
             $questions = $project->applicationQuestions()->pluck('question', 'id')->toArray();
 
-            $answers = ProjectApplicationRequestAnswers::where('user_id', $user_id)
+            $answers = ProjectApplicationRequestAnswers::where('user_id', $applicant_id)
                 ->where('project_id', $project_id)
                 ->whereIn('question_id', array_keys($questions))
                 ->pluck('answer', 'question_id')
@@ -83,7 +84,7 @@ class ProjectRequestService
             $applicationData = $application->only(['id', 'project_id', 'created_at', 'user', 'questions_and_answers']);
 
             return [
-                'project' => ['id' => $project->id],
+                'project' => $project,
                 'application' => $applicationData,
             ];
         } catch (\Exception $e) {

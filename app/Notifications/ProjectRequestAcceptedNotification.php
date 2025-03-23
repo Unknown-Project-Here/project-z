@@ -36,7 +36,7 @@ class ProjectRequestAcceptedNotification extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject('Your Project Join ConfigureRequestQuestions Has Been Accepted')
+            ->subject('Your Project Join Request Has Been Accepted')
             ->line('Your join request to the project: '.$this->request->project->title.' has been accepted.')
             ->action('View Project', url('/projects/'.$this->request->project->id))
             ->line('You can now start contributing to the project.');

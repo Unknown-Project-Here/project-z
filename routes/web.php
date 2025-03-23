@@ -64,8 +64,6 @@ Route::prefix('projects')->name('projects.')->group(function () {
 
     Route::prefix('{project}/applications')->name('applications.')->middleware(['auth', 'verified'])->group(function () {
         Route::controller(ProjectRequestController::class)->group(function () {
-            Route::get('/', 'index')->name('index');
-            Route::get('/{application}', 'show')->name('show');
             Route::post('/{application}/accept', 'acceptRequest')->name('accept');
             Route::post('/{application}/reject', 'rejectRequest')->name('reject');
         });
@@ -73,7 +71,6 @@ Route::prefix('projects')->name('projects.')->group(function () {
 
     Route::prefix('{project}/invite')->name('invite.')->middleware(['auth', 'verified'])->group(function () {
         Route::controller(ProjectInvitationController::class)->group(function () {
-            Route::get('/', 'show')->name('show');
             Route::get('/searchUsers', 'searchUsers')->name('searchUsers');
             Route::post('/', 'store')->name('store');
         });

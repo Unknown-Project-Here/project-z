@@ -36,7 +36,7 @@ class ProjectRequestRejectedNotification extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject('Your Project Join ConfigureRequestQuestions Has Been Rejected')
+            ->subject('Your Project Join Request Has Been Rejected')
             ->line('Your join request to the project: '.$this->request->project->title.' has been rejected.');
     }
 

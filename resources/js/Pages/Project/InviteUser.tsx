@@ -15,10 +15,10 @@ import Pagination from '@/Components/ui/pagination';
 import Heading from '@/Components/ui/typography/Heading';
 import { useDebouncedValue } from '@/hooks/use-debounced-value';
 import { useProjectProps } from '@/hooks/useProjectProps';
-import { router } from '@inertiajs/react';
+import { Link, router } from '@inertiajs/react';
 import { DialogClose } from '@radix-ui/react-dialog';
 import axios from 'axios';
-import { MessageCircle, UserPlusIcon } from 'lucide-react';
+import { ChevronLeft, MessageCircle, UserPlusIcon } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
 
@@ -61,9 +61,22 @@ function InviteUser() {
             });
     };
 
+    const backButton = route('projects.show', {
+        project: project.id,
+        activeTab: 'members',
+    });
+
     return (
-        <div className="space-y-4 p-4">
-            <Heading level={2}>Invite User</Heading>
+        <div className="w-full space-y-4">
+            <div className="flex justify-between">
+                <Heading level={3}>Invite User</Heading>
+                <Button className="w-fit" asChild>
+                    <Link href={backButton}>
+                        <ChevronLeft className="mr-2 size-4" />
+                        Back
+                    </Link>
+                </Button>
+            </div>
 
             <div className="">
                 <InputWithCounter

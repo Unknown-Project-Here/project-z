@@ -23,32 +23,6 @@ class ProjectInvitationController extends Controller
         private readonly InviteUserToProject $inviteUserToProject,
     ) {}
 
-    public function show(Request $request, Project $project): Response
-    {
-        if ($request->user()->cannot('invite', $project)) {
-            abort(403, 'You do not have permission to invite users to this project.');
-        }
-
-        return Inertia::render('Project/InviteUser', [
-            'project' => $project,
-            'users' => [
-                'data' => [],
-                'current_page' => 1,
-                'first_page_url' => '',
-                'from' => 0,
-                'last_page' => 1,
-                'last_page_url' => '',
-                'links' => [],
-                'next_page_url' => null,
-                'path' => '',
-                'per_page' => 20,
-                'prev_page_url' => null,
-                'to' => 0,
-                'total' => 0,
-            ],
-        ]);
-    }
-
     /**
      * Get users that can be invited to the project.
      *
