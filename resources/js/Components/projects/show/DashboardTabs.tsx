@@ -1,18 +1,18 @@
 import { TabsList, TabsTrigger } from '@/Components/ui/tabs';
+import { ActiveTab } from '@/types';
 import React from 'react';
 
 interface TabItem {
-    value: string;
+    value: ActiveTab;
     label: string;
 }
 
 interface DashboardTabsProps {
-    onTabChange: (value: string) => void;
     tabs?: TabItem[];
+    onTabChange: (value: ActiveTab) => void;
 }
 
 const DashboardTabs: React.FC<DashboardTabsProps> = ({
-    onTabChange,
     tabs = [
         { value: 'dashboard', label: 'Dashboard' },
         { value: 'members', label: 'Members' },
@@ -20,6 +20,7 @@ const DashboardTabs: React.FC<DashboardTabsProps> = ({
         { value: 'assigned', label: 'Assigned Issues' },
         { value: 'leaderboard', label: 'Leaderboard' },
     ],
+    onTabChange,
 }) => {
     return (
         <TabsList className="w-full justify-start rounded-lg bg-muted/50 p-1">

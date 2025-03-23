@@ -188,3 +188,10 @@ export type SocialProviderUsername = {
 };
 
 export type SocialProviderUsernames = Record<Provider, string>;
+
+export type ActiveTab =
+    | 'dashboard'
+    | 'members'
+    | 'issues'
+    | 'assigned'
+    | 'leaderboard';

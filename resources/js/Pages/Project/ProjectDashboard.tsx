@@ -7,11 +7,17 @@ import Leaderboard from '@/Components/projects/show/Leaderboard';
 import MembersList from '@/Components/projects/show/MembersList';
 import { Tabs, TabsContent } from '@/Components/ui/tabs';
 import { useProjectProps } from '@/hooks/useProjectProps';
-import { useState } from 'react';
+import { ActiveTab } from '@/types';
+import { router } from '@inertiajs/react';
 
-function ProjectDashboard() {
-    const [activeTab, setActiveTab] = useState('dashboard');
+function ProjectDashboard({ activeTab }: { activeTab: ActiveTab }) {
     const projectProps = useProjectProps();
+
+    const handleTabChange = (tab: ActiveTab) => {
+        router.visit(
+            route('projects.show', { project: projectProps.id, page: tab }),
+        );
+    };
 
     return (
         <div className="to-primary/950 dark:from-primary-950 dark:to-primary-900 min-h-screen bg-gradient-to-b from-primary/50">
@@ -19,10 +25,9 @@ function ProjectDashboard() {
                 <Tabs
                     defaultValue="dashboard"
                     value={activeTab}
-                    onValueChange={setActiveTab}
                     className="w-full"
                 >
-                    <DashboardTabs onTabChange={setActiveTab} />
+                    <DashboardTabs onTabChange={handleTabChange} />
 
                     {projectProps.must_configure && <ConfigurationBanner />}
 

@@ -92,11 +92,17 @@ class ProjectController extends Controller
     public function show(Request $request, Project $project): Response|RedirectResponse
     {
         try {
+
+            $validated = $request->validate([
+                'page' => 'nullable|string|in:dashboard,members,issues,assigned,leaderboard',
+            ]);
+
             $projectData = $this->projectService->show($project);
 
             if ($request->user() && $request->user()->isMemberOf($project)) {
                 return Inertia::render('Project/ProjectDashboard', [
                     'project' => $projectData,
+                    'activeTab' => $validated['page'] ?? 'dashboard',
                 ]);
             }
 
