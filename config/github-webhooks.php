@@ -22,8 +22,6 @@ return [
      */
     'jobs' => [
         'ping' => \App\Jobs\GitHubWebhooks\HandlePingWebhook::class,
-        'issues.opened' => \App\Jobs\GitHubWebhooks\HandleIssueOpenedWebhookJob::class,
-        'issues.closed' => \App\Jobs\GitHubWebhooks\HandleIssueClosedWebhookJob::class,
         'issues.assigned' => \App\Jobs\GitHubWebhooks\HandleIssueAssignedWebhookJob::class,
         'issues.unassigned' => \App\Jobs\GitHubWebhooks\HandleIssueUnassignedWebhookJob::class,
         // '*' => \App\Jobs\GitHubWebhooks\HandleAllWebhooks::class
