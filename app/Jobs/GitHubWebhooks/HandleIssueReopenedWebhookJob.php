@@ -9,7 +9,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Spatie\GitHubWebhooks\Models\GitHubWebhookCall;
 
-class HandleIssueUnassignedWebhookJob implements ShouldQueue
+class HandleIssueReopenedWebhookJob implements ShouldQueue
 {
     use InteractsWithQueue, Queueable, SerializesModels;
 
@@ -20,6 +20,6 @@ class HandleIssueUnassignedWebhookJob implements ShouldQueue
     public function handle(GitHubWebhookService $service)
     {
         $payload = $this->webhookCall->payload();
-        $service->handleUnassignedFromIssue($payload);
+        $service->handleIssueReopened($payload);
     }
 }

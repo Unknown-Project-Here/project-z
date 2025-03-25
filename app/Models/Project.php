@@ -104,6 +104,11 @@ class Project extends Model
         return $this->hasMany(ProjectRequest::class);
     }
 
+    public function issues(): HasMany
+    {
+        return $this->hasMany(ProjectIssue::class);
+    }
+
     // Accessors & Mutators
     protected function title(): Attribute
     {
