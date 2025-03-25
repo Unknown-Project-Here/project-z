@@ -63,6 +63,7 @@ export interface Project extends BaseProject {
         [category: string]: ProjectStack[];
     };
     members: Member[];
+    issues: ProjectIssue[];
 }
 
 export interface PaginationLink {
@@ -195,3 +196,17 @@ export type ActiveTab =
     | 'issues'
     | 'assigned'
     | 'leaderboard';
+
+export interface ProjectIssue {
+    issue_id: number;
+    issue_title: string;
+    issue_url: string;
+    issue_creator: IssueUser;
+    issue_assignees: IssueUser[];
+}
+
+export interface IssueUser {
+    id: number;
+    avatar: string | null;
+    username: string;
+}

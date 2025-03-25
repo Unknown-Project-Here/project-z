@@ -6,53 +6,22 @@ import {
     CardHeader,
     CardTitle,
 } from '@/Components/ui/card';
+import { useAssignedIssuesProps } from '@/hooks/useAssignedIssuesProps';
 import { Filter } from 'lucide-react';
 import React, { useCallback, useMemo } from 'react';
-import IssueCard, { IssueType } from './IssueCard';
+import IssueCard from './IssueCard';
 
 interface AssignedIssuesProps {
     fullView?: boolean;
 }
 
 export function AssignedIssues({ fullView = false }: AssignedIssuesProps) {
-    const issues: IssueType[] = useMemo(
-        () => [
-            {
-                id: 'GH-123',
-                title: 'Fix authentication bug in login flow',
-                assignee: {
-                    name: 'Alex Johnson',
-                    avatar: '/placeholder.svg?height=40&width=40',
-                },
-                priority: 'p0',
-                difficulty: 'mountain',
-                status: 'in-progress',
-                dueDate: '2023-04-15',
-            },
-            {
-                id: 'GH-124',
-                title: 'Implement dark mode toggle',
-                assignee: {
-                    name: 'Sarah Miller',
-                    avatar: '/placeholder.svg?height=40&width=40',
-                },
-                priority: 'p2',
-                difficulty: 'hill',
-                status: 'todo',
-                dueDate: '2023-04-18',
-            },
-        ],
-        [],
-    );
+    const issues = useAssignedIssuesProps();
 
     const displayIssues = useMemo(
         () => (fullView ? issues : issues.slice(0, 5)),
         [fullView, issues],
     );
-
-    const handleViewDetails = useCallback((issueId: string) => {
-        console.log(`View details for issue ${issueId}`);
-    }, []);
 
     const handleViewAll = useCallback((e: React.MouseEvent) => {
         e.preventDefault();
@@ -88,11 +57,7 @@ export function AssignedIssues({ fullView = false }: AssignedIssuesProps) {
                 <CardContent>
                     <div className="space-y-4">
                         {displayIssues.map((issue) => (
-                            <IssueCard
-                                key={issue.id}
-                                issue={issue}
-                                onViewDetails={handleViewDetails}
-                            />
+                            <IssueCard key={issue.issue_id} issue={issue} />
                         ))}
                         {!fullView && issues.length > 5 && (
                             <a
@@ -109,5 +74,3 @@ export function AssignedIssues({ fullView = false }: AssignedIssuesProps) {
         </div>
     );
 }
-
-export default React.memo(AssignedIssues);
