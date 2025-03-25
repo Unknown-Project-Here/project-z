@@ -9,7 +9,7 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Storage;
 use Spatie\GitHubWebhooks\Models\GitHubWebhookCall;
 
-class HandleIssueOpenedWebhookJob implements ShouldQueue
+class HandleIssueClosedWebhookJob implements ShouldQueue
 {
     use InteractsWithQueue, Queueable, SerializesModels;
 
@@ -19,17 +19,22 @@ class HandleIssueOpenedWebhookJob implements ShouldQueue
 
     public function handle()
     {
-        logger()->channel('webhook')->info('---START ISSUE OPENED---');
-
+        logger()->channel('webhook')->info('---START ISSUE CLOSED---');
+        // logger()->channel('webhook')->info('payload', $this->webhookCall->payload());
+        // logger()->channel('webhook')->info('---END ISSUE CLOSED---');
+        // Get the payload
         $payload = $this->webhookCall->payload();
 
-        $filename = 'webhook_issue_opened_' . now()->format('Ymd_His') . '_' . uniqid() . '.json';
+        // Generate a unique filename with timestamp
+        $filename = 'webhook_issue_closed_' . now()->format('Ymd_His') . '_' . uniqid() . '.json';
+
+        // Store the JSON file in storage/app/webhooks directory
         Storage::put(
             'webhooks/' . $filename,
             json_encode($payload, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)
         );
 
         logger()->channel('webhook')->info('Payload stored in: ' . $filename);
-        logger()->channel('webhook')->info('---END ISSUE OPENED---');
+        logger()->channel('webhook')->info('---END ISSUE CLOSED---');
     }
 }

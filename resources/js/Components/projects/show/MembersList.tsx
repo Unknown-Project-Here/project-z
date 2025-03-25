@@ -1,100 +1,17 @@
 import { Button } from '@/Components/ui/button';
+import Pagination from '@/Components/ui/pagination';
 import Heading from '@/Components/ui/typography/Heading';
+import { useMemberListProps } from '@/hooks/useMemberListProps';
 import { useProjectPermissions } from '@/hooks/useProjectPermissions';
 import { useProjectProps } from '@/hooks/useProjectProps';
 import { Link, router } from '@inertiajs/react';
 import { PlusIcon, Users } from 'lucide-react';
-import React, { useCallback, useMemo } from 'react';
-import MemberCard, { MemberType } from './MemberCard';
+import { MemberCard } from './MemberCard';
 
-function MembersList() {
+export function MembersList() {
     const project = useProjectProps();
     const { canManageRequests, canInviteToProject } = useProjectPermissions();
-    const members: MemberType[] = useMemo(
-        () => [
-            {
-                id: '1',
-                name: 'Alex Johnson',
-                role: 'Project Lead',
-                avatar: '/placeholder.svg?height=80&width=80',
-                email: 'alex@example.com',
-                github: 'alexj',
-                assignedIssues: 5,
-                status: 'active',
-            },
-            {
-                id: '2',
-                name: 'Sarah Miller',
-                role: 'Frontend Developer',
-                avatar: '/placeholder.svg?height=80&width=80',
-                email: 'sarah@example.com',
-                github: 'sarahm',
-                assignedIssues: 7,
-                status: 'active',
-            },
-            {
-                id: '3',
-                name: 'David Chen',
-                role: 'Backend Developer',
-                avatar: '/placeholder.svg?height=80&width=80',
-                email: 'david@example.com',
-                github: 'davidc',
-                assignedIssues: 4,
-                status: 'active',
-            },
-            {
-                id: '4',
-                name: 'Emma Wilson',
-                role: 'UX Designer',
-                avatar: '/placeholder.svg?height=80&width=80',
-                email: 'emma@example.com',
-                github: 'emmaw',
-                assignedIssues: 2,
-                status: 'away',
-            },
-            {
-                id: '5',
-                name: 'James Taylor',
-                role: 'DevOps Engineer',
-                avatar: '/placeholder.svg?height=80&width=80',
-                email: 'james@example.com',
-                github: 'jamest',
-                assignedIssues: 3,
-                status: 'active',
-            },
-            {
-                id: '6',
-                name: 'Olivia Brown',
-                role: 'QA Engineer',
-                avatar: '/placeholder.svg?height=80&width=80',
-                email: 'olivia@example.com',
-                github: 'oliviab',
-                assignedIssues: 6,
-                status: 'active',
-            },
-            {
-                id: '7',
-                name: 'Michael Davis',
-                role: 'Full Stack Developer',
-                avatar: '/placeholder.svg?height=80&width=80',
-                email: 'michael@example.com',
-                github: 'michaeld',
-                assignedIssues: 8,
-                status: 'away',
-            },
-            {
-                id: '8',
-                name: 'Sophia Martinez',
-                role: 'Product Manager',
-                avatar: '/placeholder.svg?height=80&width=80',
-                email: 'sophia@example.com',
-                github: 'sophiam',
-                assignedIssues: 0,
-                status: 'inactive',
-            },
-        ],
-        [],
-    );
+    const { members, meta } = useMemberListProps();
 
     const handleAddMember = () => {
         router.visit(
@@ -105,10 +22,6 @@ function MembersList() {
             }),
         );
     };
-
-    const handleMessageMember = useCallback((memberId: string) => {
-        console.log(`Message member ${memberId}`);
-    }, []);
 
     return (
         <div className="space-y-6">
@@ -152,15 +65,21 @@ function MembersList() {
 
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                 {members.map((member) => (
-                    <MemberCard
-                        key={member.id}
-                        member={member}
-                        onMessageClick={handleMessageMember}
-                    />
+                    <MemberCard key={member.id} member={member} />
                 ))}
             </div>
+            <Pagination
+                pagination={meta}
+                onPageChange={(page) => {
+                    router.visit(
+                        route('projects.show', {
+                            project: project.id,
+                            activeTab: 'members',
+                            page,
+                        }),
+                    );
+                }}
+            />
         </div>
     );
 }
-
-export default React.memo(MembersList);

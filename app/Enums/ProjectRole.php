@@ -20,7 +20,6 @@ enum ProjectRole: string
                 ProjectPermission::MEMBER_REMOVE,
                 ProjectPermission::MEMBER_UPDATE_ROLE,
                 ProjectPermission::MEMBER_VIEW,
-                ProjectPermission::MEMBER_ACCEPT_REQUEST,
 
                 ProjectPermission::TASK_CREATE,
                 ProjectPermission::TASK_EDIT,

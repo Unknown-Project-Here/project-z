@@ -84,8 +84,6 @@ const Pagination: React.FC<PaginationProps> = ({
     // Handle direct navigation to specific page
     const handlePageChange = useCallback(
         (page: number) => {
-            console.log('Page changed to:', page);
-
             // Call the parent's onPageChange if provided
             if (onPageChange) {
                 onPageChange(page);
@@ -139,8 +137,6 @@ const Pagination: React.FC<PaginationProps> = ({
     // Handle per page change
     const handlePerPageChange = useCallback(
         (perPage: number) => {
-            console.log('Per page changed to:', perPage);
-
             // Call the parent's onPerPageChange if provided
             if (onPerPageChange) {
                 onPerPageChange(perPage);

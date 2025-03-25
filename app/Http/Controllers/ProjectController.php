@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Actions\Project\Invite\GetEligibleUsers;
+use App\Http\Requests\ProjectShowRequest;
 use App\Models\Project;
 use App\Models\ProjectRequest;
+use App\Services\ProjectDashboardService;
 use App\Services\ProjectRequestService;
 use App\Services\ProjectService;
 use Gate;
@@ -26,11 +28,18 @@ class ProjectController extends Controller
 
     protected GetEligibleUsers $getEligibleUsers;
 
-    public function __construct(ProjectService $projectService, ProjectRequestService $projectRequestService, GetEligibleUsers $getEligibleUsers)
-    {
+    protected ProjectDashboardService $projectDashboardService;
+
+    public function __construct(
+        ProjectService $projectService,
+        ProjectRequestService $projectRequestService,
+        GetEligibleUsers $getEligibleUsers,
+        ProjectDashboardService $projectDashboardService
+    ) {
         $this->projectService = $projectService;
         $this->projectRequestService = $projectRequestService;
         $this->getEligibleUsers = $getEligibleUsers;
+        $this->projectDashboardService = $projectDashboardService;
     }
 
     /**
@@ -94,129 +103,9 @@ class ProjectController extends Controller
         ]);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Request $request, Project $project): Response|RedirectResponse
+    public function show(ProjectShowRequest $request, Project $project): Response|RedirectResponse
     {
-        try {
-
-            $validated = $request->validate([
-                'activeTab' => 'nullable|string|in:dashboard,members,issues,assigned,leaderboard',
-                'activeSection' => 'nullable|string',
-            ]);
-            $activeTab = $validated['activeTab'] ?? 'dashboard';
-            $activeSection = $validated['activeSection'] ?? null;
-
-            if ($activeTab === 'members' && $activeSection === 'view-applications') {
-                $result = $this->projectRequestService->getApplications(
-                    $project,
-                    request()->user()->id
-                );
-
-                $project = $result['project'];
-                $applications = $result['applications'];
-
-                return Inertia::render('Project/ProjectDashboard', [
-                    'project' => $project,
-                    'activeTab' => $activeTab,
-                    'activeSection' => $activeSection,
-                    'applications' => $applications,
-                ]);
-            }
-
-            if ($activeTab === 'members' && $activeSection === 'invite') {
-
-                if ($request->user()->cannot('invite', $project)) {
-                    abort(403, 'You do not have permission to invite users to this project.');
-                }
-
-                $validated = $request->validate([
-                    'search' => 'sometimes|string|min:2|max:16',
-                ]);
-
-                $users = [];
-
-                if (isset($validated['search'])) {
-                    $users = ($this->getEligibleUsers)(
-                        $project,
-                        $validated['search']
-                    );
-                }
-
-                return Inertia::render('Project/ProjectDashboard', [
-                    'project' => $project,
-                    'activeTab' => $activeTab,
-                    'activeSection' => $activeSection,
-                    'users' => ! empty($users) ? $users : [
-                        'data' => [],
-                        'current_page' => 1,
-                        'first_page_url' => '',
-                        'from' => 0,
-                        'last_page' => 1,
-                        'last_page_url' => '',
-                        'links' => [],
-                        'next_page_url' => null,
-                        'path' => '',
-                        'per_page' => 20,
-                        'prev_page_url' => null,
-                        'to' => 0,
-                        'total' => 0,
-                    ],
-                ]);
-            }
-
-            if ($activeTab === 'members' && $activeSection === 'application') {
-
-                $validated = $request->validate([
-                    'application' => 'required|integer|exists:project_requests,id',
-                ]);
-
-                $result = $this->projectRequestService->getApplication(
-                    $project,
-                    (int) $validated['application'],
-                    request()->user()->id
-                );
-
-                return Inertia::render('Project/ProjectDashboard', [
-                    'project' => $result['project'],
-                    'activeTab' => $activeTab,
-                    'activeSection' => $activeSection,
-                    'application' => $result['application'],
-                ]);
-            }
-
-            if ($activeTab === 'dashboard' && $activeSection === 'configure-questions') {
-                return Inertia::render('Project/ProjectDashboard', [
-                    'project' => $project,
-                    'activeTab' => $activeTab,
-                    'activeSection' => $activeSection,
-                ]);
-            }
-
-            $projectData = $this->projectService->show($project);
-
-            if ($request->user() && $request->user()->isMemberOf($project)) {
-                return Inertia::render('Project/ProjectDashboard', [
-                    'project' => $projectData,
-                    'activeTab' => $activeTab,
-                    'activeSection' => $activeSection,
-                ]);
-            }
-
-            return Inertia::render('Project/Show', [
-                'project' => $projectData,
-            ]);
-        } catch (\Exception $e) {
-            logger($e->getMessage());
-            logger($e->getTraceAsString());
-
-            return back()->with([
-                'success' => false,
-                'message' => 'Failed to retrieve project.',
-                'error' => config('app.debug') ? $e->getMessage() : null,
-            ]);
-        }
+        return $this->projectDashboardService->handleShow($request, $project);
     }
 
     /**
