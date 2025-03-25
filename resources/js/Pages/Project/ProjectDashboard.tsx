@@ -5,7 +5,7 @@ import ConfigurationBanner from '@/Components/projects/show/Configuration/compon
 import DashboardStats from '@/Components/projects/show/DashboardStats';
 import IssueCreator from '@/Components/projects/show/IssueCreator';
 import Leaderboard from '@/Components/projects/show/Leaderboard';
-import MembersList from '@/Components/projects/show/MembersList';
+import { MembersList } from '@/Components/projects/show/MembersList';
 import ProjectDashboardTabHelper from '@/Components/projects/show/ProjectDashboardTabHelper';
 import { TabsContent } from '@/Components/ui/tabs';
 import { ActiveTab, Project } from '@/types';
@@ -79,14 +79,6 @@ function ProjectDashboard({
                                 return <MembersList />;
                         }
                     })()}
-                </TabsContent>
-
-                <TabsContent value="assigned" className="mt-4">
-                    <AssignedIssues fullView />
-                </TabsContent>
-
-                <TabsContent value="leaderboard" className="mt-4">
-                    <Leaderboard fullView />
                 </TabsContent>
             </ProjectDashboardTabHelper>
         </div>
