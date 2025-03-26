@@ -7,6 +7,7 @@ import { useProjectProps } from '@/hooks/useProjectProps';
 import { Link, router } from '@inertiajs/react';
 import { PlusIcon, Users } from 'lucide-react';
 import { MemberCard } from './MemberCard';
+import { SearchMembersList } from './SearchMembersList';
 
 export function MembersList() {
     const project = useProjectProps();
@@ -62,6 +63,8 @@ export function MembersList() {
                     )}
                 </div>
             </div>
+
+            <SearchMembersList />
 
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                 {members.map((member) => (

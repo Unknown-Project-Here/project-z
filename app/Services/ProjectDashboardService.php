@@ -32,6 +32,7 @@ class ProjectDashboardService
         $validated = $request->validated();
         $activeTab = $validated['activeTab'] ?? 'dashboard';
         $activeSection = $validated['activeSection'] ?? null;
+        $search = $validated['search'] ?? null;
         $user = $request->user();
 
         if ($activeTab === 'issues' && $activeSection === null) {
@@ -42,6 +43,14 @@ class ProjectDashboardService
             return $this->renderDashboard($project, $activeTab, $activeSection, [
                 'project' => $projectData,
                 'issues' => $issues,
+            ]);
+        }
+
+        if ($activeTab === 'members' && $activeSection === null && $search) {
+            $members = ($this->getProjectMembersAction)($project, $search);
+
+            return $this->renderDashboard($project, $activeTab, $activeSection, [
+                'members' => $members,
             ]);
         }
 
