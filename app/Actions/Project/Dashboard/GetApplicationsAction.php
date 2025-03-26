@@ -14,7 +14,7 @@ class GetApplicationsAction
                 ->with(['user' => function ($query) {
                     $query->select('id', 'username', 'avatar');
                 }])
-                ->paginate(10),
+                ->paginate(20),
         ];
     }
 }

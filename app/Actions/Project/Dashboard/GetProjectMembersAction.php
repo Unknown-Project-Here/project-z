@@ -18,6 +18,8 @@ class GetProjectMembersAction
                 ELSE 3 END")
             ->paginate(10);
 
+        $members->withPath(route('projects.show', $project->id) . '?activeTab=members');
+
         $members->setCollection(
             $members->getCollection()->map(function ($member) {
                 return [

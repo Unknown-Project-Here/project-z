@@ -47,12 +47,7 @@ const ApplicationsList: React.FC = () => {
                     application={application}
                 />
             ))}
-            {meta.total > 10 && (
-                <Pagination
-                    pagination={meta}
-                    perPageOptions={[10, 20, 30, 50]}
-                />
-            )}
+            <Pagination pagination={meta} perPageOptions={[10, 20, 30, 50]} />
         </div>
     );
 };

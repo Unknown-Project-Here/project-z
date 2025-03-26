@@ -32,6 +32,8 @@ class GetProjectIssuesAction
                 ];
             });
 
+        $projectArray['issues']->withPath(route('projects.show', $project->id) . '?activeTab=issues');
+
         return $projectArray['issues'];
     }
 }

@@ -56,8 +56,12 @@ class ProjectDashboardService
         if ($activeTab === 'members' && $activeSection === 'view-applications') {
             $result = ($this->getApplicationsAction)($project, $user->id);
 
+            $applications = $result['applications'];
+
+            $applications->withPath(route('projects.show', $project->id) . '?activeTab=members&activeSection=view-applications');
+
             return $this->renderDashboard($result['project'], $activeTab, $activeSection, [
-                'applications' => $result['applications'],
+                'applications' => $applications,
             ]);
         }
 
