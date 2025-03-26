@@ -1,3 +1,4 @@
+import { useProjectProps } from '@/hooks/useProjectProps';
 import React from 'react';
 
 interface StatCardProps {
@@ -16,24 +17,31 @@ const StatCard: React.FC<StatCardProps> = ({ title, value }) => (
 );
 
 interface DashboardStatsProps {
-    totalIssues?: number;
-    openIssues?: number;
-    teamMembers?: number;
-    p0Issues?: number;
+    totalIssues: number | null;
+    openIssues: number | null;
+    totalMembers: number | null;
+    p0Issues: number | null;
 }
 
-const DashboardStats: React.FC<DashboardStatsProps> = ({
-    totalIssues = 24,
-    openIssues = 12,
-    teamMembers = 8,
-    p0Issues = 3,
-}) => {
+const DashboardStats: React.FC<DashboardStatsProps> = ({ p0Issues = 3 }) => {
+    const totalIssues = useProjectProps('total_issues');
+    const assignedIssues = useProjectProps('total_assigned_issues');
+    const totalMembers = useProjectProps('total_members');
+
     return (
         <>
-            <StatCard title="Total Issues" value={totalIssues} />
-            <StatCard title="Open Issues" value={openIssues} />
-            <StatCard title="Team Members" value={teamMembers} />
-            <StatCard title="P0 Issues" value={p0Issues} />
+            {totalIssues && (
+                <StatCard title="Total Issues" value={totalIssues} />
+            )}
+            {assignedIssues && (
+                <StatCard title="Assigned Issues" value={assignedIssues} />
+            )}
+            {totalMembers && (
+                <StatCard title="Team Members" value={totalMembers} />
+            )}
+            {p0Issues && (
+                <StatCard title="P0 Issues (placeholder)" value={p0Issues} />
+            )}
         </>
     );
 };

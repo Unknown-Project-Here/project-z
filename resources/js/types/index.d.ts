@@ -64,7 +64,9 @@ export interface Project extends BaseProject {
     };
     members: Member[];
     issues: ProjectIssue[];
-    total_assigned_issues: number;
+    total_assigned_issues: number | null;
+    total_issues: number | null;
+    total_members: number | null;
 }
 
 export interface PaginationLink {

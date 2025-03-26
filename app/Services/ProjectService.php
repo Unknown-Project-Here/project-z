@@ -252,6 +252,8 @@ class ProjectService
             })->toArray();
 
         $projectArray['total_assigned_issues'] = $project->issues()->count();
+        $projectArray['total_issues'] = $project->issue_count;
+        $projectArray['total_members'] = $project->members()->count();
 
         if ($user) {
             $memberPivot = $project->members()->where('user_id', $user->id)->first()?->pivot;

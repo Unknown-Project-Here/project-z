@@ -16,7 +16,7 @@ export default function Leaderboard({ fullView = false }: LeaderboardProps) {
                 <CardHeader className="pb-2">
                     <CardTitle className="flex items-center gap-2 text-xl font-bold">
                         <span className="bg-gradient-to-r from-[hsl(var(--primary))] to-[hsl(var(--secondary))] bg-clip-text text-transparent">
-                            Leaderboard
+                            Leaderboard (placeholder)
                         </span>
                     </CardTitle>
                 </CardHeader>

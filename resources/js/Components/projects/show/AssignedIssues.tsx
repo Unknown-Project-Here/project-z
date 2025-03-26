@@ -62,15 +62,17 @@ export function AssignedIssues({ fullView = false }: AssignedIssuesProps) {
                         {displayIssues.map((issue) => (
                             <IssueCard key={issue.issue_id} issue={issue} />
                         ))}
-                        {!fullView && total_assigned_issues > 3 && (
-                            <a
-                                href="#"
-                                className="flex items-center justify-center rounded-md p-2 text-sm text-primary hover:bg-primary/5 hover:underline"
-                                onClick={handleViewAll}
-                            >
-                                View all {total_assigned_issues} issues
-                            </a>
-                        )}
+                        {!fullView &&
+                            total_assigned_issues &&
+                            total_assigned_issues > 3 && (
+                                <a
+                                    href="#"
+                                    className="flex items-center justify-center rounded-md p-2 text-sm text-primary hover:bg-primary/5 hover:underline"
+                                    onClick={handleViewAll}
+                                >
+                                    View all {total_assigned_issues} issues
+                                </a>
+                            )}
                     </div>
                 </CardContent>
             </Card>
