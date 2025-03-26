@@ -17,8 +17,6 @@ const DashboardTabs: React.FC<DashboardTabsProps> = ({
         { value: 'dashboard', label: 'Dashboard' },
         { value: 'members', label: 'Members' },
         { value: 'issues', label: 'Create Issue' },
-        { value: 'assigned', label: 'Assigned Issues' },
-        { value: 'leaderboard', label: 'Leaderboard' },
     ],
     onTabChange,
 }) => {

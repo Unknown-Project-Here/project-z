@@ -6,11 +6,11 @@ use App\Actions\Project\Dashboard\GetApplicationAction;
 use App\Actions\Project\Dashboard\GetApplicationsAction;
 use App\Actions\Project\Dashboard\GetProjectDataAction;
 use App\Actions\Project\Dashboard\GetProjectMembersAction;
+use App\Actions\Project\Dashboard\Issues\GetProjectIssuesAction;
 use App\Actions\Project\Invite\GetEligibleUsers;
 use App\Http\Requests\ProjectShowRequest;
 use App\Models\Project;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -23,9 +23,9 @@ class ProjectDashboardService
         protected GetApplicationAction $getApplicationAction,
         protected GetProjectDataAction $getProjectDataAction,
         protected ProjectService $projectService,
-        protected ProjectRequestService $projectRequestService
-    ) {
-    }
+        protected ProjectRequestService $projectRequestService,
+        protected GetProjectIssuesAction $getProjectIssuesAction
+    ) {}
 
     public function handleShow(ProjectShowRequest $request, Project $project): Response|RedirectResponse
     {
@@ -33,6 +33,17 @@ class ProjectDashboardService
         $activeTab = $validated['activeTab'] ?? 'dashboard';
         $activeSection = $validated['activeSection'] ?? null;
         $user = $request->user();
+
+        if ($activeTab === 'issues' && $activeSection === null) {
+            $issues = ($this->getProjectIssuesAction)($project);
+
+            $projectData = ['id' => $project->id];
+
+            return $this->renderDashboard($project, $activeTab, $activeSection, [
+                'project' => $projectData,
+                'issues' => $issues,
+            ]);
+        }
 
         if ($activeTab === 'members' && $activeSection === null) {
             $members = ($this->getProjectMembersAction)($project);
@@ -68,7 +79,7 @@ class ProjectDashboardService
         }
 
         if ($activeTab === 'members' && $activeSection === 'application') {
-            if (!isset($validated['application'])) {
+            if (! isset($validated['application'])) {
                 abort(400, 'Application ID is required');
             }
 

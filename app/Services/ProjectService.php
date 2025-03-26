@@ -229,12 +229,13 @@ class ProjectService
 
         $user = Auth::user();
 
-        $projectArray['issues'] = $project->issues()->with(['assignees.user', 'user'])->take(3)->get()
+        $projectArray['issues'] = $project->issues()->with(['assignees.user', 'user'])->limit(3)->get()
             ->map(function ($issue) {
                 return [
                     'issue_id' => $issue->id,
                     'issue_title' => $issue->title,
                     'issue_url' => $issue->url,
+                    'issue_state' => $issue->state,
                     'issue_creator' => [
                         'id' => $issue->user->id ?? null,
                         'avatar' => $issue->user->avatar ?? null,
@@ -249,6 +250,10 @@ class ProjectService
                     })->toArray(),
                 ];
             })->toArray();
+
+        $projectArray['total_assigned_issues'] = $project->issues()
+            ->whereHas('assignees')
+            ->count();
 
         if ($user) {
             $memberPivot = $project->members()->where('user_id', $user->id)->first()?->pivot;

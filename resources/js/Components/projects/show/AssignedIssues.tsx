@@ -1,4 +1,3 @@
-import { Button } from '@/Components/ui/button';
 import {
     Card,
     CardContent,
@@ -7,9 +6,10 @@ import {
     CardTitle,
 } from '@/Components/ui/card';
 import { useAssignedIssuesProps } from '@/hooks/useAssignedIssuesProps';
-import { Filter } from 'lucide-react';
+import { useProjectProps } from '@/hooks/useProjectProps';
+import { router } from '@inertiajs/react';
 import React, { useCallback, useMemo } from 'react';
-import IssueCard from './IssueCard';
+import { IssueCard } from './IssueCard';
 
 interface AssignedIssuesProps {
     fullView?: boolean;
@@ -17,15 +17,28 @@ interface AssignedIssuesProps {
 
 export function AssignedIssues({ fullView = false }: AssignedIssuesProps) {
     const issues = useAssignedIssuesProps();
+    const { id: project_id, total_assigned_issues } = useProjectProps([
+        'id',
+        'total_assigned_issues',
+    ]);
 
     const displayIssues = useMemo(
         () => (fullView ? issues : issues.slice(0, 5)),
         [fullView, issues],
     );
 
-    const handleViewAll = useCallback((e: React.MouseEvent) => {
-        e.preventDefault();
-    }, []);
+    const handleViewAll = useCallback(
+        (e: React.MouseEvent) => {
+            e.preventDefault();
+            router.visit(
+                route('projects.show', {
+                    project: project_id,
+                    activeTab: 'issues',
+                }),
+            );
+        },
+        [project_id],
+    );
 
     return (
         <div className="relative col-span-2 overflow-hidden rounded-xl border border-[hsl(var(--border))] bg-gradient-to-br from-[hsl(231.4,30%,92%)] via-[hsl(264.7,35%,88%)] to-[hsl(325.5,40%,85%)] shadow-md transition-all duration-300 hover:scale-[1.01] hover:shadow-lg dark:from-[hsl(231.4,15.3%,16.4%)] dark:via-[hsl(264.7,20%,18%)] dark:to-[hsl(325.5,25%,20%)]">
@@ -43,29 +56,19 @@ export function AssignedIssues({ fullView = false }: AssignedIssuesProps) {
                             </CardDescription>
                         )}
                     </div>
-                    {fullView && (
-                        <Button
-                            variant="outline"
-                            size="sm"
-                            className="gap-1 bg-background/50 hover:bg-background/80 hover:text-primary"
-                        >
-                            <Filter className="h-4 w-4" />
-                            Filter
-                        </Button>
-                    )}
                 </CardHeader>
                 <CardContent>
                     <div className="space-y-4">
                         {displayIssues.map((issue) => (
                             <IssueCard key={issue.issue_id} issue={issue} />
                         ))}
-                        {!fullView && issues.length > 5 && (
+                        {!fullView && total_assigned_issues > 3 && (
                             <a
                                 href="#"
                                 className="flex items-center justify-center rounded-md p-2 text-sm hover:bg-primary/5 hover:underline"
                                 onClick={handleViewAll}
                             >
-                                View all {issues.length} issues
+                                View all {total_assigned_issues} issues
                             </a>
                         )}
                     </div>

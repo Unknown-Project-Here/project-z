@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import ApplicationsList from '@/Components/applications/ApplicationsList';
 import { AssignedIssues } from '@/Components/projects/show/AssignedIssues';
+import AssignedIssuesFullView from '@/Components/projects/show/AssignedIssuesFullView';
 import ConfigurationBanner from '@/Components/projects/show/Configuration/components/ConfigurationBanner';
 import DashboardStats from '@/Components/projects/show/DashboardStats';
-import IssueCreator from '@/Components/projects/show/IssueCreator';
 import Leaderboard from '@/Components/projects/show/Leaderboard';
 import { MembersList } from '@/Components/projects/show/MembersList';
 import ProjectDashboardTabHelper from '@/Components/projects/show/ProjectDashboardTabHelper';
@@ -16,7 +16,7 @@ import MemberApplication from './MemberApplication';
 
 interface ProjectDashboardProps {
     activeTab: ActiveTab;
-    activeSection?: MemberSection | DashboardSection;
+    activeSection?: MemberSection | DashboardSection | IssuesSection;
     project: Project;
     applicationsData?: {
         applications: any[];
@@ -25,6 +25,7 @@ interface ProjectDashboardProps {
 }
 type MemberSection = 'view-applications' | 'invite' | 'application' | null;
 type DashboardSection = 'configure-questions' | null;
+type IssuesSection = 'assigned' | null;
 
 function ProjectDashboard({
     activeTab,
@@ -63,7 +64,12 @@ function ProjectDashboard({
                 </TabsContent>
 
                 <TabsContent value="issues" className="mt-4">
-                    <IssueCreator />
+                    {(() => {
+                        switch (activeSection) {
+                            default:
+                                return <AssignedIssuesFullView />;
+                        }
+                    })()}
                 </TabsContent>
 
                 <TabsContent value="members" className="mt-4">
