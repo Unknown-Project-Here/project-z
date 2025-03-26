@@ -23,6 +23,8 @@ class GitHubWebhookService
         DB::transaction(function () use ($payload, $project) {
             $issue = $this->upsertIssue($project, $payload['issue'], 'open');
 
+            $this->updateProjectIssueCount($project, $payload['repository']['open_issues_count']);
+
             if (! $issue) {
                 return;
             }
@@ -54,6 +56,8 @@ class GitHubWebhookService
 
             $issue = $this->upsertIssue($project, $payload['issue']);
 
+            $this->updateProjectIssueCount($project, $payload['repository']['open_issues_count']);
+
             if (! $issue || empty($payload['assignee'])) {
                 return;
             }
@@ -76,6 +80,8 @@ class GitHubWebhookService
                 'project_id' => $project->id,
                 'issue_id' => $payload['issue']['id'],
             ])->first();
+
+            $this->updateProjectIssueCount($project, $payload['repository']['open_issues_count']);
 
             if (! $issue) {
                 return;
@@ -106,6 +112,8 @@ class GitHubWebhookService
 
         DB::transaction(function () use ($payload, $project) {
             $this->upsertIssue($project, $payload['issue'], 'closed');
+
+            $this->updateProjectIssueCount($project, $payload['repository']['open_issues_count']);
         });
     }
 
@@ -120,6 +128,8 @@ class GitHubWebhookService
 
         DB::transaction(function () use ($payload, $project) {
             $issue = $this->upsertIssue($project, $payload['issue'], 'open');
+
+            $this->updateProjectIssueCount($project, $payload['repository']['open_issues_count']);
 
             if (! $issue) {
                 return;
@@ -137,6 +147,11 @@ class GitHubWebhookService
                 $this->addAssigneesToIssue($project, $issue, $payload['issue']['assignees']);
             }
         });
+    }
+
+    private function updateProjectIssueCount(Project $project, int $issueCount): void
+    {
+        $project->update(['issue_count' => $issueCount]);
     }
 
     private function findProject(int $repoId): ?Project

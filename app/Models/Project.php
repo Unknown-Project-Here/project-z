@@ -20,6 +20,7 @@ class Project extends Model
         'is_active' => 'boolean',
         'is_requestable' => 'boolean',
         'is_questions_configured' => 'boolean',
+        'issue_count' => 'integer',
     ];
 
     protected $fillable = [
@@ -34,6 +35,7 @@ class Project extends Model
         'repo_id',
         'is_requestable',
         'is_questions_configured',
+        'issue_count',
     ];
 
     protected $hidden = [
