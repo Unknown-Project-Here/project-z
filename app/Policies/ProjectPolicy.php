@@ -3,6 +3,7 @@
 namespace App\Policies;
 
 use App\Enums\ProjectPermission;
+use App\Enums\ProjectRole;
 use App\Models\Project;
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
@@ -85,5 +86,26 @@ class ProjectPolicy
         return $user->hasPermission($project, ProjectPermission::MEMBER_MANAGE_REQUESTS)
             ? Response::allow()
             : Response::deny('You do not have permission to accept requests for this project.');
+    }
+
+    public function removeMember(User $user, Project $project): Response
+    {
+        return $user->hasPermission($project, ProjectPermission::MEMBER_REMOVE)
+            ? Response::allow()
+            : Response::deny('You do not have permission to remove members from this project.');
+    }
+
+    public function updateMemberRole(User $user, Project $project): Response
+    {
+        return $user->hasPermission($project, ProjectPermission::MEMBER_UPDATE_ROLE)
+            ? Response::allow()
+            : Response::deny('You do not have permission to update roles for this project.');
+    }
+
+    public function updateToCreator(User $user, Project $project): Response
+    {
+        return $user->hasPermission($project, ProjectPermission::MEMBER_UPDATE_TO_CREATOR)
+            ? Response::allow()
+            : Response::deny('You do not have permission to update roles for this project.');
     }
 }

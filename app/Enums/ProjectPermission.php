@@ -17,12 +17,5 @@ enum ProjectPermission: string
     case MEMBER_UPDATE_ROLE = 'member.update_role';
     case MEMBER_VIEW = 'member.view';
     case MEMBER_MANAGE_REQUESTS = 'member.manage_requests';
-
-    // Task Management
-    case TASK_CREATE = 'task.create';
-    case TASK_EDIT = 'task.edit';
-    case TASK_DELETE = 'task.delete';
-    case TASK_ASSIGN = 'task.assign';
-    case TASK_MOVE_STAGE = 'task.move_stage';
-    case TASK_SET_PRIORITY = 'task.set_priority';
+    case MEMBER_UPDATE_TO_CREATOR = 'member.update_to_creator';
 }

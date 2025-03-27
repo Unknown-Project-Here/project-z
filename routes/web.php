@@ -74,6 +74,13 @@ Route::prefix('projects')->name('projects.')->group(function () {
             Route::post('/', 'store')->name('store');
         });
     });
+
+    Route::prefix('{project}/members')->name('members.')->middleware(['auth', 'verified'])->group(function () {
+        Route::controller(ProjectController::class)->group(function () {
+            Route::delete('/{user}', 'removeMember')->name('removeMember');
+            Route::post('/updateRole', 'updateMemberRole')->name('updateRole');
+        });
+    });
 });
 
 // Notifications routes

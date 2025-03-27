@@ -4,9 +4,11 @@ import { Card } from '@/Components/ui/card';
 import Heading from '@/Components/ui/typography/Heading';
 import { useHover } from '@/hooks/use-hover';
 import { Member } from '@/hooks/useMemberListProps';
+import { useProjectPermissions } from '@/hooks/useProjectPermissions';
 import { cn } from '@/lib/utils';
 import { Link } from '@inertiajs/react';
 import React from 'react';
+import { ManageMemberSheet } from './ManageMemberSheet';
 
 interface MemberCardProps {
     member: Member;
@@ -20,8 +22,11 @@ const badgeVariant: Record<string, 'secondary' | 'outline' | 'default'> = {
 
 export const MemberCard: React.FC<MemberCardProps> = ({ member }) => {
     const { hovered, ref } = useHover();
+    const { canRemoveMember, canUpdateMemberRole, canUpdateToCreator } =
+        useProjectPermissions();
+
     return (
-        <Card className="h-[132px] overflow-hidden transition-shadow hover:shadow-lg">
+        <Card className="relative h-[132px] overflow-hidden transition-shadow hover:shadow-lg">
             <div className="flex h-full w-full items-center gap-4 py-6 pl-6">
                 <Link href={`/user/${member.username}`}>
                     <Avatar
@@ -66,6 +71,12 @@ export const MemberCard: React.FC<MemberCardProps> = ({ member }) => {
                     </Badge>
                 </div>
             </div>
+            <ManageMemberSheet
+                canRemoveMember={canRemoveMember}
+                canUpdateMemberRole={canUpdateMemberRole}
+                canUpdateToCreator={canUpdateToCreator}
+                managedUser={member}
+            />
         </Card>
     );
 };

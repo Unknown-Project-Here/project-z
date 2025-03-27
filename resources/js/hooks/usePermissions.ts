@@ -5,6 +5,10 @@ export interface ProjectPermissions {
     edit: boolean;
     request: boolean;
     manageRequests: boolean;
+    removeMember: boolean;
+    updateMemberRole: boolean;
+    updateToCreator: boolean;
+    userRole: 'creator' | 'admin' | 'contributor';
 }
 
 export interface Permissions {

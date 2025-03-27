@@ -3,9 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Actions\Project\Invite\GetEligibleUsers;
+use App\Enums\ProjectRole;
+use App\Http\Requests\ProjectRequest;
 use App\Http\Requests\ProjectShowRequest;
 use App\Models\Project;
-use App\Models\ProjectRequest;
+use App\Models\ProjectIssueAssignee;
+use App\Models\User;
 use App\Services\ProjectDashboardService;
 use App\Services\ProjectRequestService;
 use App\Services\ProjectService;
@@ -272,5 +275,117 @@ class ProjectController extends Controller
                 'message' => 'Failed to connect repository.',
             ], 500);
         }
+    }
+
+    public function removeMember(Project $project, User $user)
+    {
+        $requestUser = Auth::user();
+
+        if (! $requestUser) {
+            return to_route('login', [], 302);
+        }
+
+        if ($requestUser->cannot('removeMember', $project)) {
+            abort(403, 'You do not have permission to remove members from this project.');
+        }
+
+        if ($user->id === $requestUser->id) {
+            abort(403, 'You cannot remove yourself from this project.');
+        }
+
+        $requestUserRole = $requestUser->getRole($project);
+        $targetUserRole = $user->getRole($project);
+
+        $roleHierarchy = $this->getRoleHierarchy();
+
+        if ($roleHierarchy[$targetUserRole] >= $roleHierarchy[$requestUserRole]) {
+            abort(403, 'You cannot remove a member with the same or higher role.');
+        }
+
+        $project->blacklistedUsers()->create([
+            'user_id' => $user->id,
+            'project_id' => $project->id,
+        ]);
+
+        try {
+            $project->issues()->where('user_id', $user->id)->delete();
+            ProjectIssueAssignee::where('user_id', $user->id)->delete();
+            $project->members()->detach($user);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Member removed successfully',
+            ], 200);
+        } catch (\Exception $e) {
+            logger($e->getMessage());
+            logger($e->getTraceAsString());
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to remove member',
+            ], 500);
+        }
+    }
+
+    public function updateMemberRole(Request $request, Project $project)
+    {
+        $validated = $request->validate([
+            'role' => 'required|string|in:creator,admin,contributor',
+            'user_id' => 'required|integer|exists:project_user,user_id',
+        ]);
+
+        $requestUser = Auth::user();
+        $targetUser = User::find($validated['user_id']);
+
+        $newRole = $validated['role'];
+
+        if (! $requestUser) {
+            return to_route('login', [], 302);
+        }
+
+        abort_if($requestUser->id === $targetUser->id, 403, 'You cannot update your own role.');
+
+        abort_if($requestUser->cannot('updateMemberRole', $project), 403, 'You do not have permission to update member roles in this project.');
+
+
+        $roleHierarchy = $this->getRoleHierarchy();
+        $requestUserRole = $requestUser->getRole($project);
+        $targetUserRole = $targetUser->getRole($project);
+
+        abort_if($targetUserRole === $newRole, 403, 'Cannot update to the same role the user already has.');
+
+        if ($requestUserRole !== ProjectRole::CREATOR) {
+            abort_if($newRole === ProjectRole::CREATOR, 403, 'Only project creators can assign the creator role.');
+            abort_if($roleHierarchy[$targetUserRole] >= $roleHierarchy[$requestUserRole],
+                403,
+                'You cannot update the role of a member with the same or higher role.'
+            );
+        }
+
+        try {
+            $project->members()->updateExistingPivot($targetUser->id, ['role' => $newRole]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Member role updated successfully',
+            ], 200);
+        } catch (\Exception $e) {
+            logger($e->getMessage());
+            logger($e->getTraceAsString());
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to update member role',
+            ], 500);
+        }
+    }
+
+    private function getRoleHierarchy(): array
+    {
+        return [
+            'creator' => 3,
+            'admin' => 2,
+            'contributor' => 1,
+        ];
     }
 }

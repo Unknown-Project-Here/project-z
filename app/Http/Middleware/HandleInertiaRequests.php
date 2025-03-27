@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Http\Middleware\Actions\HandleProjectPermissions;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 use Tighten\Ziggy\Ziggy;
@@ -14,6 +15,11 @@ class HandleInertiaRequests extends Middleware
      * @var string
      */
     protected $rootView = 'app';
+
+    public function __construct(
+        protected HandleProjectPermissions $projectPermissions
+    ) {
+    }
 
     /**
      * Determine the current asset version.
@@ -46,12 +52,7 @@ class HandleInertiaRequests extends Middleware
                 'closeTab' => fn () => $request->session()->get('closeTab'),
             ],
             'permissions' => [
-                'project' => [
-                    'invite' => $request->user()?->can('invite', $request->route('project')) ?? false,
-                    'edit' => $request->user()?->can('edit', $request->route('project')) ?? false,
-                    'request' => $request->user()?->can('request', $request->route('project')) && $request->route('project')->is_requestable ?? false,
-                    'manageRequests' => $request->user()?->can('manageRequests', $request->route('project')) ?? false,
-                ],
+                'project' => $this->projectPermissions->handle($request),
             ],
             'notifications' => $request->user()?->notifications->take(5)->map(function ($notification) {
                 return array_merge([

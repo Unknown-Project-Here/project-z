@@ -20,6 +20,12 @@ class GitHubWebhookService
             return;
         }
 
+        $issueCreatorUserId = $this->getUserIdFromGithubId($payload['issue']['user']['id']);
+
+        if ($this->isUserBlacklisted($project, $issueCreatorUserId)) {
+            return;
+        }
+
         DB::transaction(function () use ($payload, $project) {
             $issue = $this->upsertIssue($project, $payload['issue'], 'open');
 
@@ -126,6 +132,12 @@ class GitHubWebhookService
             return;
         }
 
+        $issueCreatorUserId = $this->getUserIdFromGithubId($payload['issue']['user']['id']);
+
+        if ($this->isUserBlacklisted($project, $issueCreatorUserId)) {
+            return;
+        }
+
         DB::transaction(function () use ($payload, $project) {
             $issue = $this->upsertIssue($project, $payload['issue'], 'open');
 
@@ -136,8 +148,7 @@ class GitHubWebhookService
             }
 
             $existingAssignees = ProjectIssueAssignee::where('project_issue_id', $issue->id)
-                ->pluck('user_id')
-                ->toArray();
+                ->pluck('user_id')->toArray();
 
             foreach ($existingAssignees as $userId) {
                 $this->addUserToProjectIfNeeded($project, $userId);
@@ -166,8 +177,19 @@ class GitHubWebhookService
             ->value('user_id');
     }
 
+    private function isUserBlacklisted(Project $project, int $userId): bool
+    {
+        return $project->blacklistedUsers()
+            ->where('user_id', $userId)
+            ->exists();
+    }
+
     private function addUserToProjectIfNeeded(Project $project, int $userId): void
     {
+        if ($this->isUserBlacklisted($project, $userId)) {
+            return;
+        }
+
         $isProjectMember = $project->members()
             ->where('user_id', $userId)
             ->exists();
@@ -193,6 +215,10 @@ class GitHubWebhookService
             return null;
         }
 
+        if ($this->isUserBlacklisted($project, $userId)) {
+            return null;
+        }
+
         $issueState = $state ?? $issueData['state'];
 
         return ProjectIssue::updateOrCreate(
@@ -214,6 +240,10 @@ class GitHubWebhookService
         $userId = $this->getUserIdFromGithubId($githubUserId);
 
         if (! $userId) {
+            return;
+        }
+
+        if ($this->isUserBlacklisted($project, $userId)) {
             return;
         }
 
@@ -243,16 +273,20 @@ class GitHubWebhookService
             return;
         }
 
-        $existingAssigneeUserIds = ProjectIssueAssignee::where('project_issue_id', $issue->id)
+        $existingAssigneeUserIdsForIssue = ProjectIssueAssignee::where('project_issue_id', $issue->id)
             ->pluck('user_id')
             ->toArray();
 
         foreach ($socialAccounts as $account) {
-            if (in_array($account->user_id, $existingAssigneeUserIds)) {
+            if (in_array($account->user_id, $existingAssigneeUserIdsForIssue)) {
                 continue;
             }
 
             $this->addUserToProjectIfNeeded($project, $account->user_id);
+
+            if ($this->isUserBlacklisted($project, $account->user_id)) {
+                continue;
+            }
 
             ProjectIssueAssignee::create([
                 'project_issue_id' => $issue->id,
