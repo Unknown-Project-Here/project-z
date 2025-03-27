@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\MessageController;
+use App\Http\Controllers\LandingController;
 
 // Welcome routes
 Route::get('/', function () {
@@ -88,6 +89,8 @@ Route::prefix('messages')->name('messages.')->middleware(['auth', 'verified'])->
         Route::post('/message', 'store')->name('store');
     });
 });
+
+Route::get('/landing', [LandingController::class, 'index'])->name('landing');
 
 Route::githubWebhooks('github/webhook');
 

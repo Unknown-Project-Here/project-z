@@ -6,6 +6,7 @@ import { ThemeProvider } from '@/Providers/ThemeProvider';
 import { createInertiaApp } from '@inertiajs/react';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { createRoot, hydrateRoot } from 'react-dom/client';
+import LandingPageLayout from './Layouts/LandingPageLayout';
 import Layout from './Layouts/Layout';
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
@@ -19,10 +20,18 @@ createInertiaApp({
         ).then((page) => {
             // @ts-expect-error Apply default layout if page doesn't specify one
             const Page = page.default;
-            Page.layout =
-                Page.layout ||
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                ((page: any) => <Layout>{page}</Layout>);
+
+            // Check if the page has a specific layout defined
+            if (!Page.layout) {
+                // Apply LandingPageLayout for /landing route, default Layout otherwise
+                Page.layout = (page: React.ReactNode) => {
+                    const path = window.location.pathname;
+                    if (path === '/landing') {
+                        return <LandingPageLayout>{page}</LandingPageLayout>;
+                    }
+                    return <Layout>{page}</Layout>;
+                };
+            }
             return Page;
         }),
     setup({ el, App, props }) {
