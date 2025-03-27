@@ -17,10 +17,7 @@ const StatCard: React.FC<StatCardProps> = ({ title, value }) => (
 );
 
 interface DashboardStatsProps {
-    totalIssues: number | null;
-    openIssues: number | null;
-    totalMembers: number | null;
-    p0Issues: number | null;
+    p0Issues?: number;
 }
 
 const DashboardStats: React.FC<DashboardStatsProps> = ({ p0Issues = 3 }) => {
@@ -33,7 +30,7 @@ const DashboardStats: React.FC<DashboardStatsProps> = ({ p0Issues = 3 }) => {
             {totalIssues && (
                 <StatCard title="Total Issues" value={totalIssues} />
             )}
-            {assignedIssues && (
+            {!!assignedIssues && (
                 <StatCard title="Assigned Issues" value={assignedIssues} />
             )}
             {totalMembers && (

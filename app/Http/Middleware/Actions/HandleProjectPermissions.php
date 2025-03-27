@@ -11,14 +11,14 @@ class HandleProjectPermissions
         $project = $request->route('project');
         $user = $request->user();
 
-        if (!$project || !$user) {
+        if (! $project || ! $user) {
             return $this->getEmptyPermissions();
         }
 
         return [
             'invite' => $user->can('invite', $project) ?? false,
             'edit' => $user->can('edit', $project) ?? false,
-            'request' => $user->can('request', $project) && $project->is_requestable ?? false,
+            'request' => $user->can('request', $project),
             'manageRequests' => $user->can('manageRequests', $project) ?? false,
             'removeMember' => $user->can('removeMember', $project) ?? false,
             'updateMemberRole' => $user->can('updateMemberRole', $project) ?? false,
