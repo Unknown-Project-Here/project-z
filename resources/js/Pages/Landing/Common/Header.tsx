@@ -93,17 +93,15 @@ function Navigation() {
 }
 
 function WaitlistButton() {
-    const { scrollToElement } = useScroll();
-
     return (
         <Button
             variant="outline"
             className="rounded-full border-zinc-700 hover:bg-zinc-800 hover:text-zinc-100"
             onClick={() => {
-                scrollToElement('#waitlist');
+                window.location.href = '/login';
             }}
         >
-            Join the Waitlist
+            Login
         </Button>
     );
 }

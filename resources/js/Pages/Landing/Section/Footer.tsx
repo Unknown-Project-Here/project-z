@@ -1,3 +1,4 @@
+import { useScroll } from '@/hooks/useScroll';
 import { FeatherIcon } from 'lucide-react';
 
 export function Footer() {
@@ -15,7 +16,12 @@ export function Footer() {
 
 function Logo() {
     return (
-        <div className="flex items-center gap-2">
+        <div
+            className="flex cursor-pointer items-center gap-2"
+            onClick={() => {
+                window.location.href = '/';
+            }}
+        >
             <div className="flex h-8 w-8 items-center justify-center rounded-full bg-zinc-800">
                 <FeatherIcon name="logo" className="h-5 w-5 text-zinc-100" />
             </div>
@@ -25,13 +31,15 @@ function Logo() {
 }
 
 function Navigation() {
+    const { scrollToElement } = useScroll();
+
     const links = [
+        { href: '#hero', label: 'Home' },
         { href: '#features', label: 'Features' },
         { href: '#how-it-works', label: 'How it Works' },
-        { href: '#waitlist', label: 'Join Waitlist' },
         {
-            href: 'https://twitter.com/projecthub',
-            label: 'Twitter',
+            href: 'https://discord.gg/projecthub',
+            label: 'Discord',
             external: true,
         },
         {
@@ -47,6 +55,15 @@ function Navigation() {
                 <a
                     key={href}
                     href={href}
+                    onClick={(e) => {
+                        if (external) {
+                            e.preventDefault();
+                            window.open(href, '_blank');
+                        } else {
+                            e.preventDefault();
+                            scrollToElement(href);
+                        }
+                    }}
                     className="transition-colors hover:text-zinc-100"
                     {...(external && {
                         target: '_blank',

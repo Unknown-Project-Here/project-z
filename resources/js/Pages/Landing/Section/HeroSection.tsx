@@ -1,7 +1,5 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/Components/ui/avatar';
 import { Badge } from '@/Components/ui/badge';
-import { Button } from '@/Components/ui/button';
-import { useScroll } from '@/hooks/useScroll';
 import { GradientText } from '../Common/GradientText';
 
 export function HeroSection() {
@@ -49,36 +47,23 @@ function AvatarStack() {
 }
 
 function HeroContent() {
-    const { scrollToElement } = useScroll();
-
     return (
-        <>
+        <div className="mt-4 flex flex-col items-center justify-center">
             <h4 className="mb-6 text-3xl font-bold md:text-5xl">
-                Project collaboration, <GradientText>simplified</GradientText>
+                Project collaboration, <GradientText>Simplified</GradientText>
             </h4>
             <p className="mx-auto mb-12 max-w-2xl text-xl text-zinc-400">
                 Experience seamless project management with real-time
                 collaboration and powerful integrations built for developers.
             </p>
-            <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
-                <Button
-                    size="lg"
-                    className="rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 text-white ring-4 ring-zinc-700 transition-all duration-300 hover:scale-105 hover:from-indigo-600 hover:to-purple-600 hover:shadow-xl"
-                    onClick={() => {
-                        scrollToElement('#waitlist');
-                    }}
-                >
-                    Join the waitlist
-                </Button>
-            </div>
-        </>
+        </div>
     );
 }
 
 function AppPreview() {
     return (
         <div className="mx-auto max-w-7xl">
-            <div className="relative flex h-[600px] items-center justify-center">
+            <div className="relative flex h-[400px] items-center justify-center">
                 <PreviewImage
                     position="left"
                     imageUrl="/path-to-your-app-screenshot1.png"
