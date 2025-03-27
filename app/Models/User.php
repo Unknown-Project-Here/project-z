@@ -198,8 +198,8 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->projects()->where('project_id', $project->id)->exists();
     }
 
-    public function getRole(Project $project): string
+    public function getRole(Project $project): string | null
     {
-        return $this->projects()->where('project_id', $project->id)->first()->pivot->role->value;
+        return $this->projects()->where('project_id', $project->id)->first()->pivot?->role->value ?? null;
     }
 }
