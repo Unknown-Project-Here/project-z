@@ -118,14 +118,15 @@ class Project extends Model
     }
 
     // Accessors & Mutators
-    protected function title(): Attribute
-    {
-        return new Attribute(
-            function ($value) {
-                return ucwords($value);
-            }
-        );
-    }
+
+    // protected function title(): Attribute
+    // {
+    //     return new Attribute(
+    //         function ($value) {
+    //             return ucwords($value);
+    //         }
+    //     );
+    // }
 
     protected function description(): Attribute
     {

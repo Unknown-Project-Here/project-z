@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Actions\Project\Invite\GetEligibleUsers;
 use App\Enums\ProjectRole;
+use App\Enums\ProjectUserBlacklistEnum;
 use App\Http\Requests\ProjectRequest;
 use App\Http\Requests\ProjectShowRequest;
 use App\Models\Project;
@@ -106,7 +107,7 @@ class ProjectController extends Controller
         ]);
     }
 
-    public function show(ProjectShowRequest $request, Project $project): Response|RedirectResponse
+    public function show(ProjectShowRequest $request, Project $project)
     {
         return $this->projectDashboardService->handleShow($request, $project);
     }
@@ -316,6 +317,7 @@ class ProjectController extends Controller
         $project->blacklistedUsers()->create([
             'user_id' => $user->id,
             'project_id' => $project->id,
+            'reason' => ProjectUserBlacklistEnum::REMOVED,
         ]);
 
         try {
@@ -441,7 +443,7 @@ class ProjectController extends Controller
 
         try {
             $project->update([
-                'title' => $validated['title'],
+                'title' => $validated['title']->ucfirst(),
                 'description' => $validated['description'],
             ]);
 
@@ -489,6 +491,164 @@ class ProjectController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to update project',
+            ], 500);
+        }
+    }
+
+    public function leaveProjectStepOne(Request $request)
+    {
+        $user = Auth::user();
+
+        $validated = $request->validate([
+            'project_id' => 'required|integer|exists:projects,id',
+        ]);
+
+        try {
+            $project = Project::find($validated['project_id']);
+
+            if (! $project->members()->wherePivot('user_id', $user->id)->exists()) {
+                abort(403, 'You are not a member of this project.');
+            }
+
+            // at this point, the user is a member of the project
+
+            if ($project->members()->count() < 2) {
+                return response()->json([
+                    'success' => true,
+                    'allow_leave' => true,
+                    'message' => 'You are the only member of this project, you are allowed to leave the project.',
+                ], 200);
+            }
+
+            // at this point, the user is not the only member of the project
+
+            if ($user->getRole($project) !== ProjectRole::CREATOR->value) {
+                return response()->json([
+                    'success' => true,
+                    'allow_leave' => true,
+                    'message' => 'You are not a creator of this project, you are allowed to leave the project.',
+                ], 200);
+            }
+
+            // at this point, the user is a creator of the project
+
+            $otherCreators = $project->members()->wherePivot('role', ProjectRole::CREATOR)->get();
+
+            if ($otherCreators->count() > 1) {
+                return response()->json([
+                    'success' => true,
+                    'allow_leave' => true,
+                    'message' => 'You are not the only creator of this project, you are allowed to leave the project.',
+                ], 200);
+            }
+
+            // at this point, the user is the only creator of the project, and needs to transfer the creator role to another member
+
+            return response()->json([
+                'success' => false,
+                'allow_leave' => false,
+                'message' => 'You are the only creator of this project, please transfer the creator role to another member before leaving.',
+            ], 403);
+        } catch (\Exception $e) {
+            logger($e->getMessage());
+            logger($e->getTraceAsString());
+
+            return response()->json([
+                'success' => false,
+                'allow_leave' => false,
+                'message' => 'There was an error checking if you can leave the project.',
+            ], 500);
+        }
+    }
+
+    public function confirmLeaveProject(Request $request)
+    {
+        $user = Auth::user();
+
+        if (! $user) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Unauthorized.',
+            ], 403);
+        }
+
+        $validated = $request->validate([
+            'project_id' => 'required|integer|exists:projects,id',
+            'project_title' => 'required|string',
+        ]);
+
+        try {
+            $project = Project::where('id', $validated['project_id'])
+                ->where('title', $validated['project_title'])->first();
+
+            if (! $project) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'The provided project title does not match the project.',
+                ], 400);
+            }
+
+            $isUserMemberOfProject = $user->isMemberOf($project);
+
+            if (! $isUserMemberOfProject) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'You are not a member of this project.',
+                ], 403);
+            }
+
+            $userRole = $user->getRole($project);
+
+            if ($userRole !== ProjectRole::CREATOR) {
+                $project->blacklistedUsers()->create([
+                    'user_id' => $user->id,
+                    'project_id' => $project->id,
+                    'reason' => ProjectUserBlacklistEnum::LEFT,
+                ]);
+                $project->members()->detach($user);
+            }
+
+            // User is a creator of the project
+
+            if ($project->members()->count() < 2) {
+                $project->delete();
+
+                return response()->json([
+                    'success' => true,
+                    'message' => 'You have left the project successfully.',
+                ], 200);
+            }
+
+            // check if there are other creators of the project
+            $otherCreators = $project->members()->wherePivot('role', ProjectRole::CREATOR)->get();
+
+            if ($otherCreators->count() > 1) {
+                $project->blacklistedUsers()->create([
+                    'user_id' => $user->id,
+                    'project_id' => $project->id,
+                    'reason' => ProjectUserBlacklistEnum::LEFT,
+                ]);
+                $project->members()->detach($user);
+
+                // TODO: send notification to other admins and users
+
+                return response()->json([
+                    'success' => true,
+                    'message' => 'You have left the project successfully.',
+                ], 200);
+            }
+
+            return response()->json([
+                'success' => false,
+                'message' => 'You are the only creator of this project, please transfer the creator role to another member before leaving.',
+            ], 403);
+        } catch (\Exception $e) {
+            logger($e->getMessage());
+            logger($e->getTraceAsString());
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to leave the project.',
             ], 500);
         }
     }

@@ -11,7 +11,7 @@ use App\Actions\Project\Dashboard\Issues\GetProjectIssuesAction;
 use App\Actions\Project\Invite\GetEligibleUsers;
 use App\Http\Requests\ProjectShowRequest;
 use App\Models\Project;
-use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -29,13 +29,32 @@ class ProjectDashboardService
         protected GetBlocklistAction $getBlocklistAction
     ) {}
 
-    public function handleShow(ProjectShowRequest $request, Project $project): Response|RedirectResponse
+    public function handleShow(ProjectShowRequest $request, Project $project)
     {
         $validated = $request->validated();
         $activeTab = $validated['activeTab'] ?? 'dashboard';
         $activeSection = $validated['activeSection'] ?? null;
         $search = $validated['search'] ?? null;
         $user = $request->user();
+
+        if (! $user || ! $user->isMemberOf($project)) {
+
+            $projectData = $this->projectService->show($project);
+
+            return Inertia::render('Project/Show', [
+                'project' => $projectData,
+            ]);
+
+            abort(403, 'Unauthorized.');
+        }
+
+        if ($activeTab === 'settings' && $activeSection === null) {
+            $projectData = ['id' => $project->id, 'title' => $project->title];
+
+            return $this->renderDashboard($project, $activeTab, $activeSection, [
+                'project' => $projectData,
+            ]);
+        }
 
         if ($activeTab === 'issues' && $activeSection === null) {
             $issues = ($this->getProjectIssuesAction)($project);
@@ -69,7 +88,7 @@ class ProjectDashboardService
 
             $applications = $result['applications'];
 
-            $applications->withPath(route('projects.show', $project->id) . '?activeTab=members&activeSection=view-applications');
+            $applications->withPath(route('projects.show', $project->id).'?activeTab=members&activeSection=view-applications');
 
             return $this->renderDashboard($result['project'], $activeTab, $activeSection, [
                 'applications' => $applications,
@@ -134,10 +153,7 @@ class ProjectDashboardService
             return $this->renderDashboard($projectData, $activeTab, $activeSection);
         }
 
-        // Show page for non-members
-        return Inertia::render('Project/Show', [
-            'project' => $projectData,
-        ]);
+
     }
 
     private function renderDashboard(

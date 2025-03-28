@@ -56,6 +56,8 @@ Route::prefix('projects')->name('projects.')->group(function () {
             Route::post('/updateTitleOrDescription', 'updateTitleAndDescription')->name('updateTitleAndDescription');
             Route::post('/handleUpdateStatusAndRequestable', 'handleUpdateStatusAndRequestable')->name('handleUpdateStatusAndRequestable');
             Route::get('/{project}/edit', 'edit')->name('edit');
+            Route::post('/leave', 'leaveProjectStepOne')->name('leave');
+            Route::post('/confirmLeave', 'confirmLeaveProject')->name('confirmLeave');
             Route::get('/{project}/request', 'request')->name('request');
             Route::post('/{project}/configure/request/toggle', 'handleAllowRequestConfiguration')->name('configure.request.toggle');
             Route::post('/{project}/configure/request/questions', 'saveApplicationQuestions')->name('configure.request.questions.store');
@@ -84,6 +86,7 @@ Route::prefix('projects')->name('projects.')->group(function () {
             Route::post('/removeFromBlocklist', 'removeFromBlocklist')->name('removeFromBlocklist');
         });
     });
+
 });
 
 // Notifications routes

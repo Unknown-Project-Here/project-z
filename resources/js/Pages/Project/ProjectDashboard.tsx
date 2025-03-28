@@ -15,6 +15,7 @@ import { router } from '@inertiajs/react';
 import { BlockList } from './BlockList';
 import ConfigureRequestQuestions from './Configure/ConfigureRequestQuestions';
 import InviteUser from './InviteUser';
+import LeaveProjectDialog from './LeaveProjectDialog';
 import MemberApplication from './MemberApplication';
 
 interface ProjectDashboardProps {
@@ -97,6 +98,23 @@ function ProjectDashboard({
                                 return <BlockList />;
                             default:
                                 return <MembersList />;
+                        }
+                    })()}
+                </TabsContent>
+
+                <TabsContent value="settings" className="mt-4">
+                    {(() => {
+                        switch (activeSection) {
+                            case 'view-applications':
+                                return <ApplicationsList />;
+                            case 'invite':
+                                return <InviteUser />;
+                            case 'application':
+                                return <MemberApplication />;
+                            case 'blocklist':
+                                return <BlockList />;
+                            default:
+                                return <LeaveProjectDialog />;
                         }
                     })()}
                 </TabsContent>

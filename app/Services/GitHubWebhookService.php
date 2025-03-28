@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Enums\ProjectRole;
+use App\Enums\ProjectUserBlacklistEnum;
 use App\Models\Project;
 use App\Models\ProjectIssue;
 use App\Models\ProjectIssueAssignee;
@@ -181,6 +182,7 @@ class GitHubWebhookService
     {
         return $project->blacklistedUsers()
             ->where('user_id', $userId)
+            ->where('reason', ProjectUserBlacklistEnum::REMOVED)
             ->exists();
     }
 

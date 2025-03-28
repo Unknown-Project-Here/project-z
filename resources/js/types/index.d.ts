@@ -197,6 +197,7 @@ export type ActiveTab =
     | 'dashboard'
     | 'members'
     | 'issues'
+    | 'settings'
     | 'assigned'
     | 'leaderboard';
 

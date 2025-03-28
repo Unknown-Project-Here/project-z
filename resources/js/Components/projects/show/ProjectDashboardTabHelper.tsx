@@ -20,6 +20,7 @@ const ProjectDashboardTabHelper: React.FC<TabHelperProps> = ({
         { value: 'dashboard', label: 'Dashboard' },
         { value: 'members', label: 'Members' },
         { value: 'issues', label: 'Issues' },
+        { value: 'settings', label: 'Settings' },
     ],
     onTabChange,
     children,

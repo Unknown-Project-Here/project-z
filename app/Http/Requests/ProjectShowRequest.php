@@ -14,7 +14,7 @@ class ProjectShowRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'activeTab' => 'nullable|string|in:dashboard,members,issues,assigned,leaderboard',
+            'activeTab' => 'nullable|string|in:dashboard,members,issues,assigned,leaderboard,settings',
             'activeSection' => 'nullable|string',
             'search' => 'sometimes|string|min:2|max:16',
             'application' => 'sometimes|integer|exists:project_requests,id',

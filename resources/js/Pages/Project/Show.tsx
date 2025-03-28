@@ -21,7 +21,7 @@ dayjs.extend(advancedFormat);
 dayjs.extend(relativeTime);
 
 export default function ProjectShow({ project }: { project: Project }) {
-    const { canEditProject, canInviteToProject, canRequestToJoinProject } =
+    const { canManageProject, canInviteToProject, canRequestToJoinProject } =
         useProjectPermissions();
 
     const projectStats = {
@@ -50,7 +50,7 @@ export default function ProjectShow({ project }: { project: Project }) {
                                 </Link>
                             </Button>
                         )}
-                        {canEditProject && (
+                        {canManageProject && (
                             <Button asChild>
                                 <Link href={route('projects.edit', project.id)}>
                                     Edit
@@ -216,7 +216,7 @@ export default function ProjectShow({ project }: { project: Project }) {
                                             </div>
                                         ),
                                     )
-                                ) : canEditProject ? (
+                                ) : canManageProject ? (
                                     <div className="flex flex-col items-center justify-center space-y-4 rounded-lg border border-dashed border-gray-300 bg-gray-50/50 px-6 py-8 text-center">
                                         <div className="space-y-2">
                                             <h3 className="font-medium text-gray-900">
