@@ -25,9 +25,10 @@ import Heading from '@/Components/ui/typography/Heading';
 import { useProjectEditProps } from '@/hooks/useProjectEditProps';
 import { router } from '@inertiajs/react';
 import axios from 'axios';
-import { LogOut, Trash2 } from 'lucide-react';
+import { Trash2 } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
+import LeaveProjectDialog from './LeaveProjectDialog';
 export default function Edit() {
     const { id, title, description, is_active, is_requestable } =
         useProjectEditProps();
@@ -138,7 +139,7 @@ export default function Edit() {
                         <div className="space-y-0.5">
                             <Heading level={6}>Project Status</Heading>
                             <p className="text-sm text-muted-foreground">
-                                Active projects are visible to all team members
+                                Active projects are visible to all users
                             </p>
                         </div>
                         <Switch
@@ -152,7 +153,7 @@ export default function Edit() {
                         <div className="space-y-0.5">
                             <Heading level={6}>Requestable</Heading>
                             <p className="text-sm text-muted-foreground">
-                                Allow members to request to join this project
+                                Allows members to request to join this project
                             </p>
                         </div>
                         <Switch
@@ -208,38 +209,7 @@ export default function Edit() {
                             </AlertDialogContent>
                         </AlertDialog>
 
-                        <AlertDialog>
-                            <AlertDialogTrigger asChild>
-                                <Button
-                                    variant="outline"
-                                    className="w-full sm:w-auto"
-                                >
-                                    <LogOut className="mr-2 h-4 w-4" />
-                                    Leave Project
-                                </Button>
-                            </AlertDialogTrigger>
-                            <AlertDialogContent>
-                                <AlertDialogHeader>
-                                    <AlertDialogTitle>
-                                        Leave this project?
-                                    </AlertDialogTitle>
-                                    <AlertDialogDescription>
-                                        You will no longer have access to this
-                                        project or its resources. You can
-                                        request to rejoin later if the project
-                                        is requestable.
-                                    </AlertDialogDescription>
-                                </AlertDialogHeader>
-                                <AlertDialogFooter>
-                                    <AlertDialogCancel>
-                                        Cancel
-                                    </AlertDialogCancel>
-                                    <AlertDialogAction>
-                                        Leave Project
-                                    </AlertDialogAction>
-                                </AlertDialogFooter>
-                            </AlertDialogContent>
-                        </AlertDialog>
+                        <LeaveProjectDialog />
                     </div>
                 </div>
             </CardContent>
