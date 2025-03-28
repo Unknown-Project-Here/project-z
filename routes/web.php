@@ -53,6 +53,8 @@ Route::prefix('projects')->name('projects.')->group(function () {
         Route::get('/{project}', 'show')->name('show');
 
         Route::middleware(['auth', 'verified'])->group(function () {
+            Route::post('/updateTitleOrDescription', 'updateTitleAndDescription')->name('updateTitleAndDescription');
+            Route::post('/handleUpdateStatusAndRequestable', 'handleUpdateStatusAndRequestable')->name('handleUpdateStatusAndRequestable');
             Route::get('/{project}/edit', 'edit')->name('edit');
             Route::get('/{project}/request', 'request')->name('request');
             Route::post('/{project}/configure/request/toggle', 'handleAllowRequestConfiguration')->name('configure.request.toggle');

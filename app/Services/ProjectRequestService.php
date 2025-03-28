@@ -147,7 +147,7 @@ class ProjectRequestService
     {
         $user = User::findOrFail($userId);
 
-        if (! $user->can('edit', $project)) {
+        if (! $user->can('manage', $project)) {
             throw new UnauthorizedAccessException('You do not have permission to view this project.');
         }
     }

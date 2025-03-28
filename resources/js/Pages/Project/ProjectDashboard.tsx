@@ -8,7 +8,6 @@ import DashboardStats from '@/Components/projects/show/DashboardStats';
 import Leaderboard from '@/Components/projects/show/Leaderboard';
 import { MembersList } from '@/Components/projects/show/MembersList';
 import ProjectDashboardTabHelper from '@/Components/projects/show/ProjectDashboardTabHelper';
-import { Spacer } from '@/Components/ui/spacer';
 import { TabsContent } from '@/Components/ui/tabs';
 import Heading from '@/Components/ui/typography/Heading';
 import { ActiveTab, Project } from '@/types';
@@ -65,8 +64,7 @@ function ProjectDashboard({
                                     <>
                                         <DashboardButtonCarousel />
                                         <Heading level={3}>Dashboard</Heading>
-                                        <Spacer size="2" />
-                                        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+                                        <div className="mt-4 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
                                             <DashboardStats />
                                             <AssignedIssues />
                                             <Leaderboard />

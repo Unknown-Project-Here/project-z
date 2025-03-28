@@ -24,26 +24,6 @@ class ProjectPolicy
     }
 
     /**
-     * Determine if the user can rename the project. Only the creator can rename the project.
-     */
-    public function rename(User $user, Project $project): Response
-    {
-        return $user->hasPermission($project, ProjectPermission::PROJECT_RENAME)
-            ? Response::allow()
-            : Response::deny('You do not have permission to rename this project.');
-    }
-
-    /**
-     * Determine if the user can delete the project. Only the creator can delete the project.
-     */
-    public function delete(User $user, Project $project): Response
-    {
-        return $user->hasPermission($project, ProjectPermission::PROJECT_DELETE)
-            ? Response::allow()
-            : Response::deny('You do not have permission to delete this project.');
-    }
-
-    /**
      * Determine if the user can invite a user to the project. Only the creator and admins can invite users to the project.
      */
     public function invite(User $user, Project $project): Response
@@ -53,11 +33,11 @@ class ProjectPolicy
             : Response::deny('You do not have permission to invite users to this project.');
     }
 
-    public function edit(User $user, Project $project): Response
+    public function manage(User $user, Project $project): Response
     {
-        return $user->hasPermission($project, ProjectPermission::PROJECT_EDIT)
+        return $user->hasPermission($project, ProjectPermission::PROJECT_MANAGE)
             ? Response::allow()
-            : Response::deny('You do not have permission to edit this project.');
+            : Response::deny('You do not have permission to manage this project.');
     }
 
     public function request(User $user, Project $project): Response

@@ -17,7 +17,7 @@ class HandleProjectPermissions
 
         return [
             'invite' => $user->can('invite', $project) ?? false,
-            'edit' => $user->can('edit', $project) ?? false,
+            'manage' => $user->can('manage', $project) ?? false,
             'request' => $user->can('request', $project),
             'manageRequests' => $user->can('manageRequests', $project) ?? false,
             'removeMember' => $user->can('removeMember', $project) ?? false,
@@ -32,7 +32,7 @@ class HandleProjectPermissions
     {
         return [
             'invite' => false,
-            'edit' => false,
+            'manage' => false,
             'request' => false,
             'manageRequests' => false,
             'removeMember' => false,

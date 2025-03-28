@@ -142,5 +142,8 @@ class Project extends Model
         return $query->where('is_active', true);
     }
 
-
+    public function getIsRequestableAttribute(): bool
+    {
+        return $this->configuration->is_requestable;
+    }
 }

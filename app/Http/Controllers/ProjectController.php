@@ -137,10 +137,21 @@ class ProjectController extends Controller
      */
     public function edit(Project $project): Response
     {
-        $this->authorize('edit', $project);
+        $user = Auth::user();
+
+        abort_if(! $user, 403, 'Unauthorized.');
+        abort_if($user->cannot('manage', $project), 403, 'Unauthorized.');
+
+        $projectData = $project->only([
+            'id',
+            'title',
+            'description',
+            'is_active',
+            'is_requestable',
+        ]);
 
         return Inertia::render('Project/Edit', [
-            'project' => $project->load('user'),
+            'project' => $projectData,
         ]);
     }
 
@@ -149,7 +160,7 @@ class ProjectController extends Controller
      */
     public function saveApplicationQuestions(Request $request, Project $project): JsonResponse
     {
-        if ($request->user()->cannot('edit', $project)) {
+        if ($request->user()->cannot('manage', $project)) {
             abort(403, 'You do not have permission to configure this project.');
         }
 
@@ -185,7 +196,7 @@ class ProjectController extends Controller
                 'is_requestable' => 'required|boolean',
             ]);
 
-            if ($request->user()->cannot('edit', $project)) {
+            if ($request->user()->cannot('manage', $project)) {
                 abort(403, 'You do not have permission to configure this project.');
             }
 
@@ -241,7 +252,7 @@ class ProjectController extends Controller
     public function connectRepository(Request $request, Project $project): JsonResponse
     {
         try {
-            Gate::inspect('edit', $project);
+            Gate::inspect('manage', $project);
 
             $user = Auth::user();
 
@@ -400,7 +411,7 @@ class ProjectController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => $targetUser->username . ' removed from blocklist successfully',
+                'message' => $targetUser->username.' removed from blocklist successfully',
             ], 200);
         } catch (\Exception $e) {
             logger($e->getMessage());
@@ -412,6 +423,74 @@ class ProjectController extends Controller
             ], 500);
         }
 
+    }
+
+    public function updateTitleAndDescription(Request $request)
+    {
+        $user = Auth::user();
+
+        $validated = $request->validate([
+            'title' => 'required|string|max:50',
+            'description' => 'required|string|max:200',
+            'project_id' => 'required|integer|exists:projects,id',
+        ]);
+
+        $project = Project::find($validated['project_id']);
+
+        abort_if($user->cannot('manage', $project), 403, 'Forbidden.');
+
+        try {
+            $project->update([
+                'title' => $validated['title'],
+                'description' => $validated['description'],
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Project updated successfully',
+            ], 200);
+        } catch (\Exception $e) {
+            logger($e->getMessage());
+            logger($e->getTraceAsString());
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to update project',
+            ], 500);
+        }
+    }
+
+    public function handleUpdateStatusAndRequestable(Request $request)
+    {
+        try {
+            $user = Auth::user();
+
+            $validated = $request->validate([
+                'is_active' => 'required|boolean',
+                'is_requestable' => 'required|boolean',
+                'project_id' => 'required|integer|exists:projects,id',
+            ]);
+
+            $project = Project::find($validated['project_id']);
+
+            abort_if($user->cannot('manage', $project), 403, 'Forbidden.');
+
+            $project->update(['is_active' => $validated['is_active']]);
+            $project->configuration->update(['is_requestable' => $validated['is_requestable']]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Project updated successfully',
+            ], 200);
+        } catch (\Exception $e) {
+            logger($e->getMessage());
+            logger($e->getTraceAsString());
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to update project',
+            ], 500);
+        }
     }
 
     private function getRoleHierarchy(): array

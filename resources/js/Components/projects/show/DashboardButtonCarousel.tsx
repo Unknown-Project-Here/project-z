@@ -7,6 +7,7 @@ import {
     ChevronLeft,
     ChevronRight,
     ClipboardList,
+    Pencil,
     Settings,
     ShieldX,
     Trophy,
@@ -26,9 +27,18 @@ const ButtonCarousel: React.FC = () => {
     const project_id = useProjectProps('id');
     const [canScrollLeft, setCanScrollLeft] = useState(false);
     const [canScrollRight, setCanScrollRight] = useState(true);
-    const { canManageRequests, canInviteToProject } = useProjectPermissions();
+    const { canManageRequests, canInviteToProject, canManageProject } =
+        useProjectPermissions();
 
     const buttons: ButtonItem[] = [
+        {
+            text: 'Edit Project',
+            icon: <Pencil className="mr-2 size-4" />,
+            link: route('projects.edit', {
+                project: project_id,
+            }),
+            visible: canManageProject,
+        },
         {
             text: 'Configure Request Questions',
             icon: <Settings className="mr-2 size-4" />,

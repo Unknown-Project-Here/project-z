@@ -13,9 +13,6 @@ enum ProjectRole: string
         return match ($this) {
             self::CREATOR => true,
             self::ADMIN => in_array($permission, [
-                ProjectPermission::PROJECT_EDIT,
-                ProjectPermission::PROJECT_UPDATE_STATUS,
-
                 ProjectPermission::MEMBER_INVITE,
                 ProjectPermission::MEMBER_REMOVE,
                 ProjectPermission::MEMBER_UPDATE_ROLE,

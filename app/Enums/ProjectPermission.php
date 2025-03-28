@@ -5,11 +5,7 @@ namespace App\Enums;
 enum ProjectPermission: string
 {
     // Project Management
-    case PROJECT_RENAME = 'project.rename';
-    case PROJECT_DELETE = 'project.delete';
-    case PROJECT_UPDATE_STATUS = 'project.update_status';
-    case PROJECT_EDIT = 'project.edit';
-    case PROJECT_ARCHIVE = 'project.archive';
+    case PROJECT_MANAGE = 'project.manage';
 
     // Member Management
     case MEMBER_INVITE = 'member.invite';
