@@ -347,7 +347,6 @@ class ProjectController extends Controller
 
         abort_if($requestUser->cannot('updateMemberRole', $project), 403, 'You do not have permission to update member roles in this project.');
 
-
         $roleHierarchy = $this->getRoleHierarchy();
         $requestUserRole = $requestUser->getRole($project);
         $targetUserRole = $targetUser->getRole($project);
@@ -378,6 +377,41 @@ class ProjectController extends Controller
                 'message' => 'Failed to update member role',
             ], 500);
         }
+    }
+
+    public function removeFromBlocklist(Request $request, Project $project)
+    {
+        $validated = $request->validate([
+            'user_id' => 'required|integer|exists:project_user_blacklists,user_id',
+        ]);
+
+        $requestUser = Auth::user();
+        $targetUser = User::find($validated['user_id']);
+
+        if (! $requestUser) {
+            return to_route('login', [], 302);
+        }
+
+        abort_if($requestUser->cannot('reinstateMember', $project), 403, 'Unauthorized.');
+        abort_if($targetUser->id === $requestUser->id, 403, 'Unauthorized.');
+
+        try {
+            $project->blacklistedUsers()->where('user_id', $targetUser->id)->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => $targetUser->username . ' removed from blocklist successfully',
+            ], 200);
+        } catch (\Exception $e) {
+            logger($e->getMessage());
+            logger($e->getTraceAsString());
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to reinstate member',
+            ], 500);
+        }
+
     }
 
     private function getRoleHierarchy(): array

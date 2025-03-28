@@ -53,6 +53,11 @@ class Project extends Model
             ->withTimestamps();
     }
 
+    public function blacklistedUsers(): HasMany
+    {
+        return $this->hasMany(ProjectUserBlacklist::class);
+    }
+
     public function configuration(): HasOne
     {
         return $this->hasOne(ProjectConfiguration::class);
@@ -137,9 +142,5 @@ class Project extends Model
         return $query->where('is_active', true);
     }
 
-    public function blacklistedUsers(): HasMany
-    {
-        return $this->hasMany(ProjectUserBlacklist::class);
-    }
 
 }

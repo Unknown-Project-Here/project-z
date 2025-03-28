@@ -65,11 +65,7 @@ function ConfigureRequestQuestions() {
                 <Heading level={2} className="mb-2 text-3xl font-bold">
                     Create Application Form
                 </Heading>
-                <Button
-                    onClick={() =>
-                        router.visit(route('projects.show', project.id))
-                    }
-                >
+                <Button onClick={() => window.history.back()}>
                     <ChevronLeft className="mr-2 size-4" />
                     Back
                 </Button>

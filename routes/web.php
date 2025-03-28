@@ -79,6 +79,7 @@ Route::prefix('projects')->name('projects.')->group(function () {
         Route::controller(ProjectController::class)->group(function () {
             Route::delete('/{user}', 'removeMember')->name('removeMember');
             Route::post('/updateRole', 'updateMemberRole')->name('updateRole');
+            Route::post('/removeFromBlocklist', 'removeFromBlocklist')->name('removeFromBlocklist');
         });
     });
 });

@@ -6,11 +6,11 @@ export function ManagerToggleButton() {
     return (
         <SheetTrigger asChild>
             <Button
-                variant="outline"
+                variant="ghost"
                 size="icon"
-                className="absolute right-1 top-1"
+                className="absolute right-1 top-1 border-none hover:bg-gray-400 dark:hover:bg-gray-500"
             >
-                <CogIcon className="size-2" />
+                <CogIcon className="size-4" />
             </Button>
         </SheetTrigger>
     );

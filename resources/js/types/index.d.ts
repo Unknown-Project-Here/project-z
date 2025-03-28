@@ -18,12 +18,12 @@ export interface User {
     skill_level: SkillLevel;
     social_usernames: SocialProviderUsernames;
 }
-
-export interface Member {
-    id: number;
-    username: string;
-    created_at: string;
-}
+//
+// export interface Member {
+//     id: number;
+//     username: string;
+//     created_at: string;
+// }
 
 export interface ProjectStack {
     id: number;
@@ -214,3 +214,10 @@ export interface IssueUser {
     avatar: string | null;
     username: string;
 }
+
+export type Member = {
+    id: number;
+    username: string;
+    avatar: string | null;
+    role?: string;
+};

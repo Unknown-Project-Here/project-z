@@ -8,6 +8,7 @@ export interface ProjectPermissions {
     removeMember: boolean;
     updateMemberRole: boolean;
     updateToCreator: boolean;
+    removeFromBlocklist: boolean;
     userRole: 'creator' | 'admin' | 'contributor';
 }
 

@@ -12,5 +12,6 @@ export function useProjectPermissions() {
         canUpdateMemberRole: permissions.project.updateMemberRole,
         canUpdateToCreator: permissions.project.updateToCreator,
         userRole: permissions.project.userRole,
+        canRemoveFromBlocklist: permissions.project.removeFromBlocklist,
     };
 }

@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Actions\Project\Dashboard\GetApplicationAction;
 use App\Actions\Project\Dashboard\GetApplicationsAction;
+use App\Actions\Project\Dashboard\GetBlocklistAction;
 use App\Actions\Project\Dashboard\GetProjectDataAction;
 use App\Actions\Project\Dashboard\GetProjectMembersAction;
 use App\Actions\Project\Dashboard\Issues\GetProjectIssuesAction;
@@ -24,7 +25,8 @@ class ProjectDashboardService
         protected GetProjectDataAction $getProjectDataAction,
         protected ProjectService $projectService,
         protected ProjectRequestService $projectRequestService,
-        protected GetProjectIssuesAction $getProjectIssuesAction
+        protected GetProjectIssuesAction $getProjectIssuesAction,
+        protected GetBlocklistAction $getBlocklistAction
     ) {}
 
     public function handleShow(ProjectShowRequest $request, Project $project): Response|RedirectResponse
@@ -88,6 +90,14 @@ class ProjectDashboardService
 
             return $this->renderDashboard($project, $activeTab, $activeSection, [
                 'users' => $users,
+            ]);
+        }
+
+        if ($activeTab === 'members' && $activeSection === 'blocklist') {
+            $blocklist = ($this->getBlocklistAction)($project, $search);
+
+            return $this->renderDashboard($project, $activeTab, $activeSection, [
+                'blocklist' => $blocklist,
             ]);
         }
 

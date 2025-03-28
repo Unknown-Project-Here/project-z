@@ -23,6 +23,7 @@ class HandleProjectPermissions
             'removeMember' => $user->can('removeMember', $project) ?? false,
             'updateMemberRole' => $user->can('updateMemberRole', $project) ?? false,
             'updateToCreator' => $user->can('updateToCreator', $project) ?? false,
+            'removeFromBlocklist' => $user->can('reinstateMember', $project) ?? false,
             'userRole' => $user->getRole($project),
         ];
     }
@@ -37,6 +38,7 @@ class HandleProjectPermissions
             'removeMember' => false,
             'updateMemberRole' => false,
             'updateToCreator' => false,
+            'removeFromBlocklist' => false,
             'userRole' => null,
         ];
     }

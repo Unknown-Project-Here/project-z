@@ -63,7 +63,7 @@ export function ManageMemberSheet({
                 <MemberSheetHeader username={managedUser.username} />
 
                 <RoleSelector
-                    currentRole={managedUser.role}
+                    currentRole={managedUser.role as Role}
                     allowedRoles={allowedRoles}
                     onRoleSelect={handleRoleSelect}
                 />

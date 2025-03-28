@@ -20,6 +20,7 @@ enum ProjectRole: string
                 ProjectPermission::MEMBER_REMOVE,
                 ProjectPermission::MEMBER_UPDATE_ROLE,
                 ProjectPermission::MEMBER_VIEW,
+                ProjectPermission::MEMBER_REINSTATE,
             ]),
             self::CONTRIBUTOR => in_array($permission, [
                 ProjectPermission::MEMBER_VIEW,

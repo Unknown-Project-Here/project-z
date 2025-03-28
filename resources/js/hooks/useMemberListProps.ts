@@ -1,12 +1,5 @@
 import { usePageProps } from '@/hooks/usePageProps';
-import { PaginationMeta } from '@/types';
-
-export type Member = {
-    id: number;
-    username: string;
-    avatar: string | null;
-    role: string;
-};
+import { Member, PaginationMeta } from '@/types';
 
 type MemberListProps = {
     members: Member[];

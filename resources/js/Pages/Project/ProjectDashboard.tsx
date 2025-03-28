@@ -3,13 +3,17 @@ import ApplicationsList from '@/Components/applications/ApplicationsList';
 import { AssignedIssues } from '@/Components/projects/show/AssignedIssues';
 import AssignedIssuesFullView from '@/Components/projects/show/AssignedIssuesFullView';
 import ConfigurationBanner from '@/Components/projects/show/Configuration/components/ConfigurationBanner';
+import DashboardButtonCarousel from '@/Components/projects/show/DashboardButtonCarousel';
 import DashboardStats from '@/Components/projects/show/DashboardStats';
 import Leaderboard from '@/Components/projects/show/Leaderboard';
 import { MembersList } from '@/Components/projects/show/MembersList';
 import ProjectDashboardTabHelper from '@/Components/projects/show/ProjectDashboardTabHelper';
+import { Spacer } from '@/Components/ui/spacer';
 import { TabsContent } from '@/Components/ui/tabs';
+import Heading from '@/Components/ui/typography/Heading';
 import { ActiveTab, Project } from '@/types';
 import { router } from '@inertiajs/react';
+import { BlockList } from './BlockList';
 import ConfigureRequestQuestions from './Configure/ConfigureRequestQuestions';
 import InviteUser from './InviteUser';
 import MemberApplication from './MemberApplication';
@@ -23,7 +27,12 @@ interface ProjectDashboardProps {
         canManageApplications: boolean;
     };
 }
-type MemberSection = 'view-applications' | 'invite' | 'application' | null;
+type MemberSection =
+    | 'view-applications'
+    | 'invite'
+    | 'application'
+    | 'blocklist'
+    | null;
 type DashboardSection = 'configure-questions' | null;
 type IssuesSection = 'assigned' | null;
 
@@ -53,11 +62,16 @@ function ProjectDashboard({
                                 return <ConfigureRequestQuestions />;
                             default:
                                 return (
-                                    <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-                                        <DashboardStats />
-                                        <AssignedIssues />
-                                        <Leaderboard />
-                                    </div>
+                                    <>
+                                        <DashboardButtonCarousel />
+                                        <Heading level={3}>Dashboard</Heading>
+                                        <Spacer size="2" />
+                                        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+                                            <DashboardStats />
+                                            <AssignedIssues />
+                                            <Leaderboard />
+                                        </div>
+                                    </>
                                 );
                         }
                     })()}
@@ -81,6 +95,8 @@ function ProjectDashboard({
                                 return <InviteUser />;
                             case 'application':
                                 return <MemberApplication />;
+                            case 'blocklist':
+                                return <BlockList />;
                             default:
                                 return <MembersList />;
                         }
