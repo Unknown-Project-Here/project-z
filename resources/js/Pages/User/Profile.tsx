@@ -10,11 +10,13 @@ import {
 } from '@/Components/ui/card';
 import { IndexProject } from '@/types';
 import { Link } from '@inertiajs/react';
+import { CompleteOnboardingAlert } from './Partials/CompleteOnboardingAlert';
 
 interface ProfileUser {
     username: string;
     created_at: string;
     avatar: string | null;
+    onboarded: boolean;
 }
 
 interface ProfileProps {
@@ -51,6 +53,8 @@ export default function Profile({
                         </Button>
                     )}
                 </div>
+
+                {!profileUser.onboarded && <CompleteOnboardingAlert />}
 
                 <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
                     <Card className="md:col-span-2">
