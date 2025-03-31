@@ -76,7 +76,7 @@ export default function OnboardingPage() {
     };
 
     return (
-        <div className="container mx-auto max-w-7xl">
+        <div className="container mx-auto max-w-7xl p-4">
             <h1 className="text-3xl font-bold">Welcome to Project-Z</h1>
             <p className="mt-2 text-lg text-muted-foreground">
                 Please fill out the following information to help us understand

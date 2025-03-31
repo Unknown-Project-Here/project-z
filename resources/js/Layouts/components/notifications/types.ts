@@ -2,6 +2,8 @@
 export enum NotificationType {
     PROJECT_REQUEST = 'App\\Notifications\\ProjectJoinRequestNotification',
     PROJECT_INVITATION = 'App\\Notifications\\ProjectInvitationNotification',
+    PROJECT_REQUEST_REJECTED = 'App\\Notifications\\ProjectRequestRejectedNotification',
+    PROJECT_REQUEST_ACCEPTED = 'App\\Notifications\\ProjectRequestAcceptedNotification',
 }
 
 export interface BaseNotification {
@@ -29,6 +31,19 @@ export interface ProjectInvitationNotification extends BaseNotification {
     role: string;
 }
 
+export interface ProjectRequestRejectedNotification extends BaseNotification {
+    type: NotificationType.PROJECT_REQUEST_REJECTED;
+    project_title: string;
+}
+
+export interface ProjectRequestAcceptedNotification extends BaseNotification {
+    type: NotificationType.PROJECT_REQUEST_ACCEPTED;
+    project_id: number;
+    project_title: string;
+}
+
 export type Notification =
     | ProjectRequestNotification
-    | ProjectInvitationNotification;
+    | ProjectInvitationNotification
+    | ProjectRequestRejectedNotification
+    | ProjectRequestAcceptedNotification;

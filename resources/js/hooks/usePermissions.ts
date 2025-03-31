@@ -2,8 +2,14 @@ import { usePageProps } from '@/hooks/usePageProps';
 
 export interface ProjectPermissions {
     invite: boolean;
-    edit: boolean;
+    manage: boolean;
     request: boolean;
+    manageRequests: boolean;
+    removeMember: boolean;
+    updateMemberRole: boolean;
+    updateToCreator: boolean;
+    removeFromBlocklist: boolean;
+    userRole: 'creator' | 'admin' | 'contributor';
 }
 
 export interface Permissions {

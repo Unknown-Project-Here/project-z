@@ -63,8 +63,10 @@ export function AppSidebar() {
                         href="/"
                         className="flex items-center justify-center py-1.5 text-3xl"
                     >
-                        <FeatherIcon className="mr-2 h-8 w-8" />
-                        Project Hub
+                        <FeatherIcon className="mr-2 h-8 w-8 text-black dark:text-white" />
+                        <span className="text-black dark:text-white">
+                            Project Hub
+                        </span>
                     </Link>
                 </SidebarMenu>
             </SidebarHeader>
@@ -81,7 +83,7 @@ export function AppSidebar() {
                             <SidebarMenuItem key={item.href}>
                                 <SidebarMenuButton
                                     asChild
-                                    className={`my-1 ${isActive ? 'bg-primary/50' : 'hover:bg-secondary/50'}`}
+                                    className={`my-1 text-black dark:text-white ${isActive ? 'bg-primary/50' : 'hover:bg-secondary/50'}`}
                                 >
                                     <Link href={item.href}>
                                         <IconComponent
@@ -109,7 +111,7 @@ export function AppSidebar() {
                                         {auth.user.username.charAt(0)}
                                     </AvatarFallback>
                                 </Avatar>
-                                <span className="ml-2">
+                                <span className="ml-2 text-black dark:text-white">
                                     {auth.user.username}
                                 </span>
                             </div>

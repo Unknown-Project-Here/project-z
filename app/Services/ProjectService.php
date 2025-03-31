@@ -4,9 +4,11 @@ namespace App\Services;
 
 use App\Actions\Options\CreateMissingOptions;
 use App\Actions\Project\AssignCreatorRole;
+use App\Actions\Project\CreateConfigurationRow;
 use App\Actions\Project\CreateGitHubWebhook;
 use App\Actions\Project\CreateProject;
 use App\Actions\Project\CreateProjectTechStack;
+use App\Enums\ProjectRole;
 use App\Models\Project;
 use App\Models\User;
 use App\Services\GitHub\GitHubApiService;
@@ -31,7 +33,7 @@ class ProjectService
      * @param  array  $validatedData  The validated request data
      * @return array Response with project and status information
      */
-   public function store(array $validatedData): array
+    public function store(array $validatedData): array
     {
         try {
             $githubRepoData = null;
@@ -61,6 +63,7 @@ class ProjectService
                         CreateProjectTechStack::class,
                         AssignCreatorRole::class,
                         CreateGitHubWebhook::class,
+                        CreateConfigurationRow::class,
                     ])
                     ->then(function ($data) {
                         return $data['project'];
@@ -157,7 +160,7 @@ class ProjectService
     {
         $user = Auth::user();
 
-        if (!$user || !$user->hasSocialProvider('github') || !$user->getAccessToken('github')) {
+        if (! $user || ! $user->hasSocialProvider('github') || ! $user->getAccessToken('github')) {
             return [
                 'public' => [],
                 'private' => [],
@@ -168,7 +171,7 @@ class ProjectService
         $this->githubApiService->setUser($user);
         $repos = $this->githubApiService->getPersonandOrganizationRepos();
 
-        if (!$repos) {
+        if (! $repos) {
             return [
                 'public' => [],
                 'private' => [],
@@ -185,25 +188,160 @@ class ProjectService
         }
 
         $usedRepoIds = [];
-        if (!empty($allRepoIds)) {
+        if (! empty($allRepoIds)) {
             $usedRepoIds = Project::whereIn('repo_id', $allRepoIds)->pluck('repo_id')->toArray();
         }
 
         $filteredRepos = [];
         foreach (['public', 'private', 'orgs'] as $repoType) {
-            if (!isset($repos[$repoType])) {
+            if (! isset($repos[$repoType])) {
                 $filteredRepos[$repoType] = [];
+
                 continue;
             }
 
             $filteredRepos[$repoType] = collect($repos[$repoType])
-                ->filter(function($repo) use ($usedRepoIds) {
-                    return !in_array($repo['id'], $usedRepoIds);
+                ->filter(function ($repo) use ($usedRepoIds) {
+                    return ! in_array($repo['id'], $usedRepoIds);
                 })
                 ->values()
                 ->toArray();
         }
 
         return $filteredRepos;
+    }
+
+    public function show(Project $project): array
+    {
+        $project->load(['stack.option.category', 'members', 'configuration']);
+
+        $stackByCategory = collect($project->stack)
+            ->groupBy(fn ($stack) => $stack->option->category->name)
+            ->map(fn ($items) => $items->map(fn ($item) => [
+                'id' => $item->option->id,
+                'name' => $item->option->name,
+                'skill_level' => $item->skill_level,
+            ]));
+
+        $projectArray = $project->toArray();
+        $projectArray['stack'] = $stackByCategory;
+        $projectArray['creator'] = $project->creator;
+
+        $user = Auth::user();
+
+        $projectArray['issues'] = $project->issues()->with(['assignees.user', 'user'])->limit(3)->get()
+            ->map(function ($issue) {
+                return [
+                    'issue_id' => $issue->id,
+                    'issue_title' => $issue->title,
+                    'issue_url' => $issue->url,
+                    'issue_state' => $issue->state,
+                    'issue_creator' => [
+                        'id' => $issue->user->id ?? null,
+                        'avatar' => $issue->user->avatar ?? null,
+                        'username' => $issue->user->username ?? null,
+                    ],
+                    'issue_assignees' => $issue->assignees->map(function ($assignee) {
+                        return [
+                            'id' => $assignee->user->id ?? null,
+                            'avatar' => $assignee->user->avatar ?? null,
+                            'username' => $assignee->user->username ?? null,
+                        ];
+                    })->toArray(),
+                ];
+            })->toArray();
+
+        $projectArray['total_assigned_issues'] = $project->issues()->count();
+        $projectArray['total_issues'] = $project->issue_count;
+        $projectArray['total_members'] = $project->members()->count();
+
+        if ($user) {
+            $memberPivot = $project->members()->where('user_id', $user->id)->first()?->pivot;
+
+            if ($memberPivot && in_array($memberPivot->role, [ProjectRole::CREATOR, ProjectRole::ADMIN])) {
+                $mustConfigure = [];
+
+                $mustConfigure['questions'] = ! $project->configuration->isQuestionsStepConfigured();
+
+                $mustConfigure['members_request'] = ! $project->configuration->isRequestStepConfigured();
+
+                $mustConfigure['repo'] = ! $project->repo_id;
+
+                if (! empty($mustConfigure)) {
+                    $projectArray['must_configure'] = (object) $mustConfigure;
+                }
+            }
+        }
+
+        return $projectArray;
+    }
+
+    /**
+     * Save project application questions
+     *
+     * @param  Project  $project  The project to save the questions for
+     * @param  array  $questionsData  An array of questions with text and optional status
+     * @return array Response with status information
+     */
+    public function saveApplicationQuestions(Project $project, array $questionsData): array
+    {
+        try {
+            return DB::transaction(function () use ($project, $questionsData) {
+
+                if (empty($questionsData)) {
+                    $project->configuration->update(['is_questions_configured' => true]);
+
+                    return [
+                        'success' => true,
+                        'message' => 'Project configured with no application questions.',
+                    ];
+                }
+
+                foreach ($questionsData as $questionData) {
+                    $project->applicationQuestions()->create([
+                        'question' => $questionData['text'],
+                        'is_optional' => $questionData['optional'] ?? false,
+                    ]);
+                }
+
+                $project->configuration->update([
+                    'is_questions_configured' => true,
+                ]);
+
+                return [
+                    'success' => true,
+                    'message' => 'Application questions saved successfully.',
+                ];
+            });
+        } catch (\Exception $e) {
+
+            return [
+                'success' => false,
+                'message' => 'Failed to save application questions.',
+                'error' => config('app.debug') ? $e->getMessage() : null,
+            ];
+        }
+    }
+
+    public function connectRepository(User $user, Project $project, array $repoData): void
+    {
+        $project->update([
+            'repo_id' => $repoData['id'],
+        ]);
+
+        $webhookConfig = [
+            'name' => 'web',
+            'config' => [
+                'url' => config('services.github.webhook_url'),
+                'content_type' => 'json',
+                'secret' => config('github-webhooks.signing_secret'),
+                'insecure_ssl' => '0',
+            ],
+            'events' => ['ping', 'issues'],
+            'active' => true,
+        ];
+
+        $this->githubApiService->setUser($user);
+        $this->githubApiService->createWebhook($repoData['owner'], $repoData['name'], $webhookConfig);
     }
 }

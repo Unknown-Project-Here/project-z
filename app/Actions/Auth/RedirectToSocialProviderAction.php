@@ -9,6 +9,7 @@ class RedirectToSocialProviderAction
 {
     public function execute(string $provider): RedirectResponse
     {
+
         if (! in_array($provider, config('auth.socialite.drivers'), true)) {
             abort(404, 'Social Provider is not supported');
         }

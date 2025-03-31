@@ -2,11 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\ProjectRenameRequest;
+use App\Actions\Project\Invite\GetEligibleUsers;
+use App\Enums\ProjectRole;
+use App\Enums\ProjectUserBlacklistEnum;
 use App\Http\Requests\ProjectRequest;
+use App\Http\Requests\ProjectShowRequest;
 use App\Models\Project;
-use App\Services\GitHub\GitHubApiService;
+use App\Models\ProjectIssueAssignee;
+use App\Models\User;
+use App\Services\ProjectDashboardService;
+use App\Services\ProjectRequestService;
 use App\Services\ProjectService;
+use Gate;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -18,6 +25,26 @@ use Inertia\Response;
 class ProjectController extends Controller
 {
     use AuthorizesRequests;
+
+    protected ProjectService $projectService;
+
+    protected ProjectRequestService $projectRequestService;
+
+    protected GetEligibleUsers $getEligibleUsers;
+
+    protected ProjectDashboardService $projectDashboardService;
+
+    public function __construct(
+        ProjectService $projectService,
+        ProjectRequestService $projectRequestService,
+        GetEligibleUsers $getEligibleUsers,
+        ProjectDashboardService $projectDashboardService
+    ) {
+        $this->projectService = $projectService;
+        $this->projectRequestService = $projectRequestService;
+        $this->getEligibleUsers = $getEligibleUsers;
+        $this->projectDashboardService = $projectDashboardService;
+    }
 
     /**
      * Display a listing of the resource.
@@ -66,13 +93,13 @@ class ProjectController extends Controller
     /**
      * Show the form for creating a new project.
      */
-    public function create(ProjectService $projectService)
+    public function create()
     {
         $this->authorize('create', Project::class);
 
         $user = Auth::user();
         $socialUsernames = $user->getSocialUsernames();
-        $repos = $projectService->getRepositoriesForProjectCreation();
+        $repos = $this->projectService->getRepositoriesForProjectCreation();
 
         return inertia('Project/Create', [
             'usernames' => $socialUsernames,
@@ -80,50 +107,19 @@ class ProjectController extends Controller
         ]);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Project $project): Response|JsonResponse|RedirectResponse
+    public function show(ProjectShowRequest $request, Project $project)
     {
-        try {
-            $project->load(['stack.option.category', 'members']);
-
-            // Organize stack by categories
-            $stackByCategory = collect($project->stack)
-                ->groupBy(fn ($stack) => $stack->option->category->name)
-                ->map(fn ($items) => $items->map(fn ($item) => [
-                    'id' => $item->option->id,
-                    'name' => $item->option->name,
-                    'skill_level' => $item->skill_level,
-                ]));
-
-            $projectArray = $project->toArray();
-            $projectArray['stack'] = $stackByCategory;
-            $projectArray['creator'] = $project->creator;
-
-            return Inertia::render('Project/Show', [
-                'project' => $projectArray,
-            ]);
-        } catch (\Exception $e) {
-            logger($e->getMessage());
-            logger($e->getTraceAsString());
-
-            return back()->with([
-                'success' => false,
-                'message' => 'Failed to retrieve project.',
-                'error' => config('app.debug') ? $e->getMessage() : null,
-            ]);
-        }
+        return $this->projectDashboardService->handleShow($request, $project);
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(ProjectRequest $request, ProjectService $projectService): RedirectResponse|JsonResponse
+    public function store(ProjectRequest $request): RedirectResponse|JsonResponse
     {
         $this->authorize('create', Project::class);
 
-        $result = $projectService->store($request->validated());
+        $result = $this->projectService->store($request->validated());
 
         if ($result['success']) {
             return redirect()->route('projects.show', $result['project']->id)
@@ -142,85 +138,527 @@ class ProjectController extends Controller
      */
     public function edit(Project $project): Response
     {
-        $this->authorize('edit', $project);
+        $user = Auth::user();
+
+        abort_if(! $user, 403, 'Unauthorized.');
+        abort_if($user->cannot('manage', $project), 403, 'Unauthorized.');
+
+        $projectData = $project->only([
+            'id',
+            'title',
+            'description',
+            'is_active',
+            'is_requestable',
+        ]);
 
         return Inertia::render('Project/Edit', [
-            'project' => $project->load('user'),
+            'project' => $projectData,
         ]);
     }
 
     /**
-     * Update the specified resource in storage.
+     * Save application questions for the project.
      */
-    public function update(ProjectRequest $request, Project $project): JsonResponse
+    public function saveApplicationQuestions(Request $request, Project $project): JsonResponse
     {
-        $this->authorize('update', $project);
+        if ($request->user()->cannot('manage', $project)) {
+            abort(403, 'You do not have permission to configure this project.');
+        }
 
-        try {
-            $project->update($request->validated());
+        $validated = $request->validate([
+            'questions' => 'present|array',
+            'questions.*.text' => 'required|string|max:500',
+            'questions.*.optional' => 'boolean',
+        ]);
 
+        $result = $this->projectService->saveApplicationQuestions(
+            $project,
+            $validated['questions']
+        );
+
+        if ($result['success']) {
             return response()->json([
                 'success' => true,
-                'data' => $project->fresh()->load('user'),
-                'message' => 'Project updated successfully.',
+                'message' => $result['message'],
             ]);
+        }
+
+        return response()->json([
+            'success' => false,
+            'message' => $result['message'],
+            'error' => $result['error'] ?? null,
+        ], 500);
+    }
+
+    public function handleAllowRequestConfiguration(Request $request, Project $project): JsonResponse
+    {
+        try {
+            $validated = $request->validate([
+                'is_requestable' => 'required|boolean',
+            ]);
+
+            if ($request->user()->cannot('manage', $project)) {
+                abort(403, 'You do not have permission to configure this project.');
+            }
+
+            $project->configuration->update([
+                'is_requestable' => $validated['is_requestable'],
+                'request_configured_at' => now(),
+            ]);
+
+            $project->refresh();
+
+            $message = $project->configuration->is_requestable
+                ? 'Configured - Users can now request to join this project.'
+                : 'Configured - Users cannot request to join this project.';
+
+            return response()->json(['success' => true, 'message' => $message]);
         } catch (\Exception $e) {
+            logger($e->getMessage());
+            logger($e->getTraceAsString());
+
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to update project.',
-                'error' => config('app.debug') ? $e->getMessage() : null,
+                'message' => 'Failed to configure request configuration.',
             ], 500);
         }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Project $project): JsonResponse
+    public function request(Project $project): Response|RedirectResponse|JsonResponse
     {
-        if (request()->user()->cannot('delete', $project)) {
-            abort(403, 'You do not have permission to delete this project.');
+        $user = Auth::user();
+
+        if (! $user) {
+            return to_route('login');
         }
 
+        if ($user->isMemberOf($project)) {
+            return to_route('projects.show', $project->id);
+        }
+
+        if (! $user->can('request', $project)) {
+            abort(403, 'You do not have permission to request to join this project.');
+        }
+
+        $socialUsernames = $user->getSocialUsernames();
+        $questions = $project->applicationQuestions;
+
+        return Inertia::render('Project/ProjectRequestApplicationForm', [
+            'project' => $project,
+            'questions' => $questions,
+            'socialUsernames' => $socialUsernames,
+        ]);
+    }
+
+    public function connectRepository(Request $request, Project $project): JsonResponse
+    {
         try {
-            $project->delete();
+            Gate::inspect('manage', $project);
+
+            $user = Auth::user();
+
+            $validated = $request->validate([
+                'repo' => 'required|array',
+                'repo.id' => 'required|integer',
+                'repo.name' => 'required|string',
+                'repo.owner' => 'required|string',
+            ]);
+
+            $repoExists = Project::where('repo_id', $validated['repo']['id'])->exists();
+
+            if ($repoExists) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Repository already connected.',
+                ], 400);
+            }
+
+            $this->projectService->connectRepository($user, $project, $validated['repo']);
 
             return response()->json([
                 'success' => true,
-                'message' => 'Project deleted successfully.',
-            ], 204);
+                'message' => 'Repository connected successfully.',
+            ]);
         } catch (\Exception $e) {
+            logger($e->getMessage());
+
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to delete project.',
-                'error' => config('app.debug') ? $e->getMessage() : null,
+                'message' => 'Failed to connect repository.',
             ], 500);
         }
     }
 
-    /**
-     * Rename the specified project.
-     */
-    public function rename(ProjectRenameRequest $request, Project $project): JsonResponse
+    public function removeMember(Project $project, User $user)
     {
-        if ($request->user()->cannot('rename', $project)) {
-            abort(403, 'You do not have permission to rename this project.');
+        $requestUser = Auth::user();
+
+        if (! $requestUser) {
+            return to_route('login', [], 302);
         }
 
+        if ($requestUser->cannot('removeMember', $project)) {
+            abort(403, 'You do not have permission to remove members from this project.');
+        }
+
+        if ($user->id === $requestUser->id) {
+            abort(403, 'You cannot remove yourself from this project.');
+        }
+
+        $requestUserRole = $requestUser->getRole($project);
+        $targetUserRole = $user->getRole($project);
+
+        $roleHierarchy = $this->getRoleHierarchy();
+
+        if ($roleHierarchy[$targetUserRole] >= $roleHierarchy[$requestUserRole]) {
+            abort(403, 'You cannot remove a member with the same or higher role.');
+        }
+
+        $project->blacklistedUsers()->create([
+            'user_id' => $user->id,
+            'project_id' => $project->id,
+            'reason' => ProjectUserBlacklistEnum::REMOVED,
+        ]);
+
         try {
-            $project->update(['title' => $request->title]);
+            $project->issues()->where('user_id', $user->id)->delete();
+            ProjectIssueAssignee::where('user_id', $user->id)->delete();
+            $project->members()->detach($user);
 
             return response()->json([
                 'success' => true,
-                'data' => $project->fresh(),
-                'message' => 'Project renamed successfully.',
-            ]);
+                'message' => 'Member removed successfully',
+            ], 200);
         } catch (\Exception $e) {
+            logger($e->getMessage());
+            logger($e->getTraceAsString());
+
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to rename project.',
-                'error' => config('app.debug') ? $e->getMessage() : null,
+                'message' => 'Failed to remove member',
             ], 500);
         }
+    }
+
+    public function updateMemberRole(Request $request, Project $project)
+    {
+        $validated = $request->validate([
+            'role' => 'required|string|in:creator,admin,contributor',
+            'user_id' => 'required|integer|exists:project_user,user_id',
+        ]);
+
+        $requestUser = Auth::user();
+        $targetUser = User::find($validated['user_id']);
+
+        $newRole = $validated['role'];
+
+        if (! $requestUser) {
+            return to_route('login', [], 302);
+        }
+
+        abort_if($requestUser->id === $targetUser->id, 403, 'You cannot update your own role.');
+
+        abort_if($requestUser->cannot('updateMemberRole', $project), 403, 'You do not have permission to update member roles in this project.');
+
+        $roleHierarchy = $this->getRoleHierarchy();
+        $requestUserRole = $requestUser->getRole($project);
+        $targetUserRole = $targetUser->getRole($project);
+
+        abort_if($targetUserRole === $newRole, 403, 'Cannot update to the same role the user already has.');
+
+        if ($requestUserRole !== ProjectRole::CREATOR) {
+            abort_if($newRole === ProjectRole::CREATOR, 403, 'Only project creators can assign the creator role.');
+            abort_if($roleHierarchy[$targetUserRole] >= $roleHierarchy[$requestUserRole],
+                403,
+                'You cannot update the role of a member with the same or higher role.'
+            );
+        }
+
+        try {
+            $project->members()->updateExistingPivot($targetUser->id, ['role' => $newRole]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Member role updated successfully',
+            ], 200);
+        } catch (\Exception $e) {
+            logger($e->getMessage());
+            logger($e->getTraceAsString());
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to update member role',
+            ], 500);
+        }
+    }
+
+    public function removeFromBlocklist(Request $request, Project $project)
+    {
+        $validated = $request->validate([
+            'user_id' => 'required|integer|exists:project_user_blacklists,user_id',
+        ]);
+
+        $requestUser = Auth::user();
+        $targetUser = User::find($validated['user_id']);
+
+        if (! $requestUser) {
+            return to_route('login', [], 302);
+        }
+
+        abort_if($requestUser->cannot('reinstateMember', $project), 403, 'Unauthorized.');
+        abort_if($targetUser->id === $requestUser->id, 403, 'Unauthorized.');
+
+        try {
+            $project->blacklistedUsers()->where('user_id', $targetUser->id)->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => $targetUser->username.' removed from blocklist successfully',
+            ], 200);
+        } catch (\Exception $e) {
+            logger($e->getMessage());
+            logger($e->getTraceAsString());
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to reinstate member',
+            ], 500);
+        }
+
+    }
+
+    public function updateTitleAndDescription(Request $request)
+    {
+        $user = Auth::user();
+
+        $validated = $request->validate([
+            'title' => 'required|string|max:50',
+            'description' => 'required|string|max:200',
+            'project_id' => 'required|integer|exists:projects,id',
+        ]);
+
+        $project = Project::find($validated['project_id']);
+
+        abort_if($user->cannot('manage', $project), 403, 'Forbidden.');
+
+        try {
+            $project->update([
+                'title' => $validated['title']->ucfirst(),
+                'description' => $validated['description'],
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Project updated successfully',
+            ], 200);
+        } catch (\Exception $e) {
+            logger($e->getMessage());
+            logger($e->getTraceAsString());
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to update project',
+            ], 500);
+        }
+    }
+
+    public function handleUpdateStatusAndRequestable(Request $request)
+    {
+        try {
+            $user = Auth::user();
+
+            $validated = $request->validate([
+                'is_active' => 'required|boolean',
+                'is_requestable' => 'required|boolean',
+                'project_id' => 'required|integer|exists:projects,id',
+            ]);
+
+            $project = Project::find($validated['project_id']);
+
+            abort_if($user->cannot('manage', $project), 403, 'Forbidden.');
+
+            $project->update(['is_active' => $validated['is_active']]);
+            $project->configuration->update(['is_requestable' => $validated['is_requestable']]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Project updated successfully',
+            ], 200);
+        } catch (\Exception $e) {
+            logger($e->getMessage());
+            logger($e->getTraceAsString());
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to update project',
+            ], 500);
+        }
+    }
+
+    public function leaveProjectStepOne(Request $request)
+    {
+        $user = Auth::user();
+
+        $validated = $request->validate([
+            'project_id' => 'required|integer|exists:projects,id',
+        ]);
+
+        try {
+            $project = Project::find($validated['project_id']);
+
+            if (! $project->members()->wherePivot('user_id', $user->id)->exists()) {
+                abort(403, 'You are not a member of this project.');
+            }
+
+            // at this point, the user is a member of the project
+
+            if ($project->members()->count() < 2) {
+                return response()->json([
+                    'success' => true,
+                    'allow_leave' => true,
+                    'message' => 'You are the only member of this project, you are allowed to leave the project.',
+                ], 200);
+            }
+
+            // at this point, the user is not the only member of the project
+
+            if ($user->getRole($project) !== ProjectRole::CREATOR->value) {
+                return response()->json([
+                    'success' => true,
+                    'allow_leave' => true,
+                    'message' => 'You are not a creator of this project, you are allowed to leave the project.',
+                ], 200);
+            }
+
+            // at this point, the user is a creator of the project
+
+            $otherCreators = $project->members()->wherePivot('role', ProjectRole::CREATOR)->get();
+
+            if ($otherCreators->count() > 1) {
+                return response()->json([
+                    'success' => true,
+                    'allow_leave' => true,
+                    'message' => 'You are not the only creator of this project, you are allowed to leave the project.',
+                ], 200);
+            }
+
+            // at this point, the user is the only creator of the project, and needs to transfer the creator role to another member
+
+            return response()->json([
+                'success' => false,
+                'allow_leave' => false,
+                'message' => 'You are the only creator of this project, please transfer the creator role to another member before leaving.',
+            ], 403);
+        } catch (\Exception $e) {
+            logger($e->getMessage());
+            logger($e->getTraceAsString());
+
+            return response()->json([
+                'success' => false,
+                'allow_leave' => false,
+                'message' => 'There was an error checking if you can leave the project.',
+            ], 500);
+        }
+    }
+
+    public function confirmLeaveProject(Request $request)
+    {
+        $user = Auth::user();
+
+        if (! $user) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Unauthorized.',
+            ], 403);
+        }
+
+        $validated = $request->validate([
+            'project_id' => 'required|integer|exists:projects,id',
+            'project_title' => 'required|string',
+        ]);
+
+        try {
+            $project = Project::where('id', $validated['project_id'])
+                ->where('title', $validated['project_title'])->first();
+
+            if (! $project) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'The provided project title does not match the project.',
+                ], 400);
+            }
+
+            $isUserMemberOfProject = $user->isMemberOf($project);
+
+            if (! $isUserMemberOfProject) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'You are not a member of this project.',
+                ], 403);
+            }
+
+            $userRole = $user->getRole($project);
+
+            if ($userRole !== ProjectRole::CREATOR) {
+                $project->blacklistedUsers()->create([
+                    'user_id' => $user->id,
+                    'project_id' => $project->id,
+                    'reason' => ProjectUserBlacklistEnum::LEFT,
+                ]);
+                $project->members()->detach($user);
+            }
+
+            // User is a creator of the project
+
+            if ($project->members()->count() < 2) {
+                $project->delete();
+
+                return response()->json([
+                    'success' => true,
+                    'message' => 'You have left the project successfully.',
+                ], 200);
+            }
+
+            // check if there are other creators of the project
+            $otherCreators = $project->members()->wherePivot('role', ProjectRole::CREATOR)->get();
+
+            if ($otherCreators->count() > 1) {
+                $project->blacklistedUsers()->create([
+                    'user_id' => $user->id,
+                    'project_id' => $project->id,
+                    'reason' => ProjectUserBlacklistEnum::LEFT,
+                ]);
+                $project->members()->detach($user);
+
+                // TODO: send notification to other admins and users
+
+                return response()->json([
+                    'success' => true,
+                    'message' => 'You have left the project successfully.',
+                ], 200);
+            }
+
+            return response()->json([
+                'success' => false,
+                'message' => 'You are the only creator of this project, please transfer the creator role to another member before leaving.',
+            ], 403);
+        } catch (\Exception $e) {
+            logger($e->getMessage());
+            logger($e->getTraceAsString());
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to leave the project.',
+            ], 500);
+        }
+    }
+
+    private function getRoleHierarchy(): array
+    {
+        return [
+            'creator' => 3,
+            'admin' => 2,
+            'contributor' => 1,
+        ];
     }
 }

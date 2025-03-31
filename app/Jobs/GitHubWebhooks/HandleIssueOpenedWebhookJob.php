@@ -2,6 +2,7 @@
 
 namespace App\Jobs\GitHubWebhooks;
 
+use App\Services\GitHubWebhookService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
@@ -16,15 +17,9 @@ class HandleIssueOpenedWebhookJob implements ShouldQueue
         public GitHubWebhookCall $webhookCall
     ) {}
 
-    public function handle()
+    public function handle(GitHubWebhookService $service)
     {
-        logger()->channel('webhook')->info('GitHub issue opened', [
-            'repository' => $this->webhookCall->payload('repository.full_name'),
-            'issue_number' => $this->webhookCall->payload('issue.number'),
-            'issue_title' => $this->webhookCall->payload('issue.title'),
-            'issue_body' => $this->webhookCall->payload('issue.body'),
-            'issue_url' => $this->webhookCall->payload('issue.html_url'),
-            'sender' => $this->webhookCall->payload('sender.login'),
-        ]);
+        $payload = $this->webhookCall->payload();
+        $service->handleIssueOpened($payload);
     }
 }

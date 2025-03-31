@@ -23,3 +23,5 @@ yarn-error.log
 /.vscode
 /.zed
 /.cursor
+_ide_helper.php
+.phpstorm.meta.php

@@ -16,13 +16,14 @@ export interface User {
     onboarded: boolean;
     created_at: string;
     skill_level: SkillLevel;
+    social_usernames: SocialProviderUsernames;
 }
-
-export interface Member {
-    id: number;
-    username: string;
-    created_at: string;
-}
+//
+// export interface Member {
+//     id: number;
+//     username: string;
+//     created_at: string;
+// }
 
 export interface ProjectStack {
     id: number;
@@ -43,7 +44,14 @@ export interface BaseProject {
         created_at: string;
     };
     contact?: ProjectContact;
+    must_configure?: ProjectConfiguration;
     skill_level: string;
+}
+
+export interface ProjectConfiguration {
+    questions: boolean;
+    repo: boolean;
+    members_request: boolean;
 }
 
 export interface IndexProject extends BaseProject {
@@ -55,6 +63,10 @@ export interface Project extends BaseProject {
         [category: string]: ProjectStack[];
     };
     members: Member[];
+    issues: ProjectIssue[];
+    total_assigned_issues: number | null;
+    total_issues: number | null;
+    total_members: number | null;
 }
 
 export interface PaginationLink {
@@ -137,7 +149,76 @@ export type ProjectCreateGithubRepoList = {
     orgs: ProjectCreateGithubRepo[];
 };
 
-type ProjectCreateGithubRepo = {
+export type ProjectCreateGithubRepo = {
     id: number;
     name: string;
+};
+
+export interface PaginationMeta {
+    current_page: number;
+    first_page_url: string;
+    from: number;
+    last_page: number;
+    last_page_url: string;
+    links: Array<{
+        url: string | null;
+        label: string;
+        active: boolean;
+    }>;
+    next_page_url: string | null;
+    path: string;
+    per_page: number;
+    prev_page_url: string | null;
+    to: number;
+    total: number;
+}
+
+export interface Application {
+    id: number;
+    project_id?: number;
+    created_at: string;
+    user: {
+        id: number;
+        username: string;
+        avatar: string;
+    };
+}
+
+export type Provider = 'github' | 'discord' | 'google' | 'email';
+
+export type SocialProviderUsername = {
+    provider: Provider;
+    username: string;
+};
+
+export type SocialProviderUsernames = Record<Provider, string>;
+
+export type ActiveTab =
+    | 'dashboard'
+    | 'members'
+    | 'issues'
+    | 'settings'
+    | 'assigned'
+    | 'leaderboard';
+
+export interface ProjectIssue {
+    issue_id: number;
+    issue_title: string;
+    issue_url: string;
+    issue_state: 'open' | 'closed';
+    issue_creator: IssueUser;
+    issue_assignees: IssueUser[] | [];
+}
+
+export interface IssueUser {
+    id: number;
+    avatar: string | null;
+    username: string;
+}
+
+export type Member = {
+    id: number;
+    username: string;
+    avatar: string | null;
+    role?: string;
 };

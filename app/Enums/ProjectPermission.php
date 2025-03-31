@@ -5,23 +5,14 @@ namespace App\Enums;
 enum ProjectPermission: string
 {
     // Project Management
-    case PROJECT_RENAME = 'project.rename';
-    case PROJECT_DELETE = 'project.delete';
-    case PROJECT_UPDATE_STATUS = 'project.update_status';
-    case PROJECT_EDIT = 'project.edit';
-    case PROJECT_ARCHIVE = 'project.archive';
+    case PROJECT_MANAGE = 'project.manage';
 
     // Member Management
     case MEMBER_INVITE = 'member.invite';
     case MEMBER_REMOVE = 'member.remove';
+    case MEMBER_REINSTATE = 'member.reinstate';
     case MEMBER_UPDATE_ROLE = 'member.update_role';
     case MEMBER_VIEW = 'member.view';
-
-    // Task Management
-    case TASK_CREATE = 'task.create';
-    case TASK_EDIT = 'task.edit';
-    case TASK_DELETE = 'task.delete';
-    case TASK_ASSIGN = 'task.assign';
-    case TASK_MOVE_STAGE = 'task.move_stage';
-    case TASK_SET_PRIORITY = 'task.set_priority';
+    case MEMBER_MANAGE_REQUESTS = 'member.manage_requests';
+    case MEMBER_UPDATE_TO_CREATOR = 'member.update_to_creator';
 }

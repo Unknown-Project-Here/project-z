@@ -193,7 +193,7 @@ class GitHubApiService
                 }
 
                 foreach ($orgRepos as $repo) {
-                    if (($repo['permissions']['admin'] ?? false)) {
+                    if (($repo['permissions']['admin'])) {
                         $organizationRepos[] = [
                             'id' => $repo['id'],
                             'name' => $repo['full_name'],

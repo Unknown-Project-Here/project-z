@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\ProjectRole;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Str;
@@ -19,6 +20,7 @@ class ProjectInvitation extends Model
 
     protected $casts = [
         'expires_at' => 'datetime',
+        'role' => ProjectRole::class,
     ];
 
     protected static function boot()
@@ -28,6 +30,7 @@ class ProjectInvitation extends Model
         static::creating(function ($invitation) {
             $invitation->token = Str::random(32);
             $invitation->expires_at = now()->addDays(7);
+            $invitation->role = ProjectRole::CONTRIBUTOR;
         });
     }
 

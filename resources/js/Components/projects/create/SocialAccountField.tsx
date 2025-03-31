@@ -30,11 +30,7 @@ export default function SocialAccountField({
     const username = props.usernames?.[platform];
 
     const handleLinkAccount = () => {
-        if (platform === 'github') {
-            router.visit(route('social.link', platform));
-        } else {
-            window.location.href = route('social.login', platform);
-        }
+        router.visit(route('social.login', platform));
     };
 
     if (username) {

@@ -121,7 +121,7 @@ class HandleSocialCallbackAction
             $this->socialAuthService->linkSocialAccount($user, $socialUser, $provider);
 
             return redirect()->route('settings.edit')
-                ->with('success', 'Social account connected successfully');
+                ->with(['success' => 'Social account connected successfully', 'closeTab' => true]);
         } catch (AuthorizationException $e) {
             return redirect()->route('settings.edit')
                 ->with('error', $e->getMessage() ?: 'This social account is already linked to another user');

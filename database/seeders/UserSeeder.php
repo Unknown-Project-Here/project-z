@@ -18,8 +18,9 @@ class UserSeeder extends Seeder
         User::factory()
             ->count(100)
             ->sequence(fn ($sequence) => [
-                'email_verified_at' => $sequence->index % 3 === 0 ? null : now(), // 1/3 unverified
-                'onboarded' => $sequence->index % 4 === 0, // 1/4 onboarded
+                'email_verified_at' => now(),
+                'onboarded' => 1,
+                'password' => 'testpass',
             ])
             ->afterCreating(function (User $user) {
                 // Get all available tech stack options

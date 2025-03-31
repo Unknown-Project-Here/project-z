@@ -4,12 +4,15 @@ import './bootstrap';
 import { Toaster } from '@/Components/ui/sonner';
 import { ThemeProvider } from '@/Providers/ThemeProvider';
 import { createInertiaApp } from '@inertiajs/react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { createRoot, hydrateRoot } from 'react-dom/client';
 import LandingPageLayout from './Layouts/LandingPageLayout';
 import Layout from './Layouts/Layout';
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
+const queryClient = new QueryClient();
 
 createInertiaApp({
     title: (title) => `${title} - ${appName}`,
@@ -42,7 +45,10 @@ createInertiaApp({
 
         createRoot(el).render(
             <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
-                <App {...props} />
+                <QueryClientProvider client={queryClient}>
+                    <App {...props} />
+                    <ReactQueryDevtools initialIsOpen={false} />
+                </QueryClientProvider>
                 <Toaster />
             </ThemeProvider>,
         );

@@ -6,12 +6,15 @@ use App\Actions\Project\Invite\GetEligibleUsers;
 use App\Actions\Project\Invite\InviteUserToProject;
 use App\Models\Project;
 use App\Models\ProjectRequest;
+use App\Models\ProjectApplicationRequestAnswers;
 use App\Notifications\ProjectJoinRequestNotification;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Notification;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class ProjectInvitationController extends Controller
 {
@@ -25,7 +28,7 @@ class ProjectInvitationController extends Controller
      *
      * Excludes current project members and users with pending invitations.
      */
-    public function getUsers(Request $request, Project $project): JsonResponse
+    public function searchUsers(Request $request, Project $project)
     {
         if ($request->user()->cannot('invite', $project)) {
             abort(403, 'You do not have permission to invite users to this project.');
@@ -41,16 +44,15 @@ class ProjectInvitationController extends Controller
                 $validated['search']
             );
 
-            return response()->json([
-                'success' => true,
+            return Inertia::render('Project/InviteUser', [
+                'project' => $project,
                 'users' => $users,
             ]);
         } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to fetch eligible users.',
-                'error' => config('app.debug') ? $e->getMessage() : null,
-            ], 500);
+            return Inertia::render('Project/InviteUser', [
+                'project' => $project,
+                'error' => 'Failed to fetch eligible users.',
+            ]);
         }
     }
 
@@ -65,7 +67,6 @@ class ProjectInvitationController extends Controller
 
         $validated = $request->validate([
             'invitee_id' => 'required|exists:users,id',
-            'role' => 'required|in:creator,admin,contributor',
         ]);
 
         try {
@@ -73,7 +74,6 @@ class ProjectInvitationController extends Controller
                 $project,
                 $request->user(),
                 $validated['invitee_id'],
-                $validated['role']
             );
 
             if (! $result['success']) {
@@ -93,45 +93,6 @@ class ProjectInvitationController extends Controller
                 'message' => 'Failed to send invitation.',
                 'error' => config('app.debug') ? $e->getMessage() : null,
             ], 500);
-        }
-    }
-
-    /**
-     * Create a request to join the project.
-     */
-    public function request(Request $request, Project $project): RedirectResponse
-    {
-        $response = Gate::inspect('request', $project);
-
-        if ($response->denied()) {
-            return back()->withErrors([
-                'success' => false,
-                'message' => $response->message(),
-            ]);
-        }
-
-        try {
-            $projectRequest = ProjectRequest::create([
-                'project_id' => $project->id,
-                'user_id' => $request->user()->id,
-            ]);
-
-            $projectMembers = $project->members()
-                ->wherePivotIn('role', ['creator', 'admin'])
-                ->get();
-
-            Notification::send($projectMembers, new ProjectJoinRequestNotification($projectRequest));
-
-            return back()->with([
-                'success' => true,
-                'message' => 'Your request to join the project has been sent.',
-            ]);
-        } catch (\Exception $e) {
-            return back()->withErrors([
-                'success' => false,
-                'message' => 'Failed to send join request.',
-                'debug' => config('app.debug') ? $e->getMessage() : null,
-            ]);
         }
     }
 }

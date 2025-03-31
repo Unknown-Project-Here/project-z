@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Project extends Model
 {
@@ -17,6 +19,9 @@ class Project extends Model
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
         'is_active' => 'boolean',
+        'is_requestable' => 'boolean',
+        'is_questions_configured' => 'boolean',
+        'issue_count' => 'integer',
     ];
 
     protected $fillable = [
@@ -28,7 +33,14 @@ class Project extends Model
         'created_at',
         'updated_at',
         'skill_level',
-        'repo_id'
+        'repo_id',
+        'is_requestable',
+        'is_questions_configured',
+        'issue_count',
+    ];
+
+    protected $hidden = [
+        'is_requestable',
     ];
 
     // Relationships
@@ -39,6 +51,16 @@ class Project extends Model
             ->using(ProjectUser::class)
             ->withPivot('role')
             ->withTimestamps();
+    }
+
+    public function blacklistedUsers(): HasMany
+    {
+        return $this->hasMany(ProjectUserBlacklist::class);
+    }
+
+    public function configuration(): HasOne
+    {
+        return $this->hasOne(ProjectConfiguration::class);
     }
 
     public function stack()
@@ -80,15 +102,31 @@ class Project extends Model
             ->exists();
     }
 
-    // Accessors & Mutators
-    protected function title(): Attribute
+    public function applicationQuestions()
     {
-        return new Attribute(
-            function ($value) {
-                return ucwords($value);
-            }
-        );
+        return $this->hasMany(ProjectApplicationRequestQuestions::class);
     }
+
+    public function applications()
+    {
+        return $this->hasMany(ProjectRequest::class);
+    }
+
+    public function issues(): HasMany
+    {
+        return $this->hasMany(ProjectIssue::class);
+    }
+
+    // Accessors & Mutators
+
+    // protected function title(): Attribute
+    // {
+    //     return new Attribute(
+    //         function ($value) {
+    //             return ucwords($value);
+    //         }
+    //     );
+    // }
 
     protected function description(): Attribute
     {
@@ -103,5 +141,10 @@ class Project extends Model
     public function scopeActive($query): mixed
     {
         return $query->where('is_active', true);
+    }
+
+    public function getIsRequestableAttribute(): bool
+    {
+        return $this->configuration->is_requestable;
     }
 }
