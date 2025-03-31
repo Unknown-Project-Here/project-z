@@ -105,7 +105,9 @@ Route::prefix('messages')->name('messages.')->middleware(['auth', 'verified'])->
         Route::get('/', 'index')->name('index');
         Route::post('/upload-image', 'uploadImage')->name('uploadImage');
         Route::get('/{message}', 'message')->name('message');
-        Route::post('/message', 'store')->name('store');
+        Route::post('/message', 'store')->name('store');       
+        Route::post('/block-user', 'blockUser')->name('block.user');
+        Route::post('/reject-chat', 'rejectChat')->name('reject.chat');
     });
 });
 

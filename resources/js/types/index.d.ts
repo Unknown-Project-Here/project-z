@@ -135,12 +135,13 @@ export type NavItem = {
 
 export interface Message {
     id: number;
+    user_id: number;
+    recipient_id: number;
     text: string;
     image_url?: string;
-    is_mine: boolean;
     created_at: string;
     user: User;
-    recipient_id: number;
+    is_mine: boolean;
 }
 
 export type ProjectCreateGithubRepoList = {
