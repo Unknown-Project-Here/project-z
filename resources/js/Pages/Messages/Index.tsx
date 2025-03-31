@@ -27,6 +27,43 @@ export default function Messages({
         messagesContainerRef,
     } = useMessage(initialMessages, auth.user.id, recipientId, users);
 
+    // Get all active chats with their last messages
+    const activeChats = users.reduce(
+        (acc, user) => {
+            const userMessages = messages.filter(
+                (msg) =>
+                    (msg.user_id === user.id &&
+                        msg.recipient_id === auth.user.id) ||
+                    (msg.user_id === auth.user.id &&
+                        msg.recipient_id === user.id),
+            );
+
+            if (userMessages.length > 0) {
+                const lastMessage = userMessages.reduce((latest, current) =>
+                    latest.created_at > current.created_at ? latest : current,
+                );
+
+                acc.push({
+                    userId: user.id,
+                    lastMessage: lastMessage.image_url
+                        ? '📷 Image'
+                        : lastMessage.text,
+                    timestamp: lastMessage.created_at,
+                });
+            }
+            return acc;
+        },
+        [] as { userId: number; lastMessage: string; timestamp: string }[],
+    );
+
+    // Filter current chat messages
+    const currentChatMessages = messages.filter(
+        (message) =>
+            message.recipient_id === Number(recipientId) ||
+            (message.user_id === Number(recipientId) &&
+                message.recipient_id === auth.user.id),
+    );
+
     const handleKeyPress = (e: React.KeyboardEvent) => {
         if (e.key === 'Enter' && !e.shiftKey) {
             e.preventDefault();
@@ -46,6 +83,7 @@ export default function Messages({
                 <UserList
                     users={users}
                     currentUserId={auth.user.id}
+                    activeChats={activeChats}
                     onUserSelect={(userId) =>
                         router.visit(`/messages?user_id=${userId}`, {
                             preserveScroll: true,
@@ -72,7 +110,7 @@ export default function Messages({
                     />
                 ) : (
                     <ChatInterface
-                        messages={messages}
+                        messages={currentChatMessages}
                         newMessage={newMessage}
                         setNewMessage={setNewMessage}
                         handleKeyPress={handleKeyPress}

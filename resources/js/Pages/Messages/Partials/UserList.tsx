@@ -10,42 +10,64 @@ interface UserListProps {
     users: User[];
     currentUserId: number;
     onUserSelect: (userId: number) => void;
+    activeChats: { userId: number; lastMessage: string; timestamp: string }[];
 }
 
 export const UserList = ({
     users,
     currentUserId,
     onUserSelect,
+    activeChats,
 }: UserListProps) => {
     const [searchQuery, setSearchQuery] = useState('');
 
-    const filteredUsers = users.filter(
+    // Filter users based on search query
+    const searchResults = users.filter(
         (user) =>
             user.id !== currentUserId &&
             user.username.toLowerCase().includes(searchQuery.toLowerCase()),
     );
+
+    // Get users with active chats and their last messages
+    const activeUsers = users.filter((user) =>
+        activeChats.some((chat) => chat.userId === user.id),
+    );
+
+    // Show search results only when searching
+    const showSearchResults = searchQuery.length > 0;
+    const displayedUsers = showSearchResults ? searchResults : activeUsers;
 
     return (
         <div className="flex h-full flex-col gap-4">
             <div className="px-4 pt-2">
                 <Input
                     type="search"
-                    placeholder="Search users..."
+                    placeholder={
+                        showSearchResults
+                            ? 'Search users...'
+                            : 'Search to start a new chat...'
+                    }
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     className="h-10"
                 />
             </div>
 
-            {filteredUsers.length === 0 ? (
+            {displayedUsers.length === 0 ? (
                 <EmptyState
-                    title="No users found"
-                    description="Try a different search term"
+                    title={
+                        showSearchResults ? 'No users found' : 'No active chats'
+                    }
+                    description={
+                        showSearchResults
+                            ? 'Try a different search term'
+                            : 'Search above to start a new chat'
+                    }
                 />
             ) : (
                 <ScrollArea className="flex-1 px-4">
                     <div className="space-y-2">
-                        {filteredUsers.map((user) => (
+                        {displayedUsers.map((user) => (
                             <div
                                 key={user.id}
                                 className="border-b border-gray-100 last:border-b-0"
@@ -66,9 +88,45 @@ export const UserList = ({
                                                 .toUpperCase()}
                                         </AvatarFallback>
                                     </Avatar>
-                                    <span className="text-sm font-medium text-primary">
-                                        {user.username}
-                                    </span>
+                                    <div className="flex w-full flex-col">
+                                        <span className="text-sm font-medium text-primary">
+                                            {user.username}
+                                        </span>
+                                        {!showSearchResults && (
+                                            <div className="flex w-full items-center justify-between">
+                                                <span className="text-xs text-gray-500">
+                                                    {activeChats.find(
+                                                        (chat) =>
+                                                            chat.userId ===
+                                                            user.id,
+                                                    )?.lastMessage ||
+                                                        'No messages yet'}
+                                                </span>
+                                                <span className="ml-2 text-xs text-gray-500">
+                                                    {activeChats.find(
+                                                        (chat) =>
+                                                            chat.userId ===
+                                                            user.id,
+                                                    )?.timestamp
+                                                        ? new Date(
+                                                              activeChats.find(
+                                                                  (chat) =>
+                                                                      chat.userId ===
+                                                                      user.id,
+                                                              )?.timestamp ||
+                                                                  '',
+                                                          ).toLocaleTimeString(
+                                                              [],
+                                                              {
+                                                                  hour: '2-digit',
+                                                                  minute: '2-digit',
+                                                              },
+                                                          )
+                                                        : ''}
+                                                </span>
+                                            </div>
+                                        )}
+                                    </div>
                                 </Link>
                             </div>
                         ))}
