@@ -73,12 +73,14 @@ class HandleSocialCallbackAction
             }
         } catch (AuthorizationException $e) {
             if (Auth::check()) {
-                return redirect()->intended(route('settings.edit'))
-                    ->withErrors('Unauthorized social login attempt');
+                return $this->redirectWithCloseScript(route('settings.edit'), [
+                    'error' => 'Unauthorized social login attempt'
+                ]);
             }
 
-            return redirect()->route('login')
-                ->with('error', $e->getMessage() ?: 'Unauthorized social login attempt');
+            return $this->redirectWithCloseScript(route('login'), [
+                'error' => $e->getMessage() ?: 'Unauthorized social login attempt'
+            ]);
         } catch (Exception $e) {
             Log::error('Social login failed:', [
                 'provider' => $provider,
@@ -86,8 +88,9 @@ class HandleSocialCallbackAction
                 'trace' => $e->getTraceAsString(),
             ]);
 
-            return redirect()->route('login')
-                ->with('error', 'Unable to authenticate with '.ucfirst($provider));
+            return $this->redirectWithCloseScript(route('login'), [
+                'error' => 'Unable to authenticate with '.ucfirst($provider)
+            ]);
         }
     }
 
@@ -99,19 +102,22 @@ class HandleSocialCallbackAction
                 'provider_id' => $socialUser->getId(),
             ]);
 
-            return redirect()->route('login')
-                ->with('error', 'Account error. Please contact support.');
+            return $this->redirectWithCloseScript(route('login'), [
+                'error' => 'Account error. Please contact support.'
+            ]);
         }
 
         $this->socialAuthService->handleExistingUser($user, $socialUser, $provider);
 
         Auth::login($user, true);
 
-        return redirect()->intended(
-            $user->hasVerifiedEmail() && ! $user->onboarded
-                ? route('profile.onboarding')
-                : route('verification.notice')
-        );
+        $redirectRoute = $user->hasVerifiedEmail() && ! $user->onboarded
+            ? route('profile.onboarding')
+            : route('verification.notice');
+
+        return $this->redirectWithCloseScript($redirectRoute, [
+            'success' => 'Successfully authenticated with ' . ucfirst($provider)
+        ]);
     }
 
     // Handle linking a social account for an authenticated user
@@ -120,14 +126,17 @@ class HandleSocialCallbackAction
         try {
             $this->socialAuthService->linkSocialAccount($user, $socialUser, $provider);
 
-            return redirect()->route('settings.edit')
-                ->with(['success' => 'Social account connected successfully', 'closeTab' => true]);
+            return $this->redirectWithCloseScript(route('settings.edit'), [
+                'success' => 'Social account connected successfully'
+            ]);
         } catch (AuthorizationException $e) {
-            return redirect()->route('settings.edit')
-                ->with('error', $e->getMessage() ?: 'This social account is already linked to another user');
+            return $this->redirectWithCloseScript(route('settings.edit'), [
+                'error' => $e->getMessage() ?: 'This social account is already linked to another user'
+            ]);
         } catch (Exception $e) {
-            return redirect()->route('settings.edit')
-                ->with('error', $e->getMessage());
+            return $this->redirectWithCloseScript(route('settings.edit'), [
+                'error' => $e->getMessage()
+            ]);
         }
     }
 
@@ -143,14 +152,17 @@ class HandleSocialCallbackAction
 
             Auth::login($user, true);
 
-            return redirect()->intended(
-                $user->hasVerifiedEmail() && ! $user->onboarded
-                    ? route('profile.onboarding')
-                    : route('verification.notice')
-            );
+            $redirectRoute = $user->hasVerifiedEmail() && ! $user->onboarded
+                ? route('profile.onboarding')
+                : route('verification.notice');
+
+            return $this->redirectWithCloseScript($redirectRoute, [
+                'success' => 'Successfully authenticated with ' . ucfirst($provider)
+            ]);
         } catch (AuthorizationException $e) {
-            return redirect()->route('login')
-                ->with('error', $e->getMessage() ?: 'This social account is already linked to another user');
+            return $this->redirectWithCloseScript(route('login'), [
+                'error' => $e->getMessage() ?: 'This social account is already linked to another user'
+            ]);
         }
     }
 
@@ -161,14 +173,34 @@ class HandleSocialCallbackAction
 
             Auth::login($newUser, true);
 
-            return redirect()->intended(
-                $newUser->hasVerifiedEmail()
-                    ? route('profile.onboarding')
-                    : route('verification.notice')
-            );
+            $redirectRoute = $newUser->hasVerifiedEmail()
+                ? route('profile.onboarding')
+                : route('verification.notice');
+
+            return $this->redirectWithCloseScript($redirectRoute, [
+                'success' => 'Account created successfully'
+            ]);
         } catch (AuthorizationException $e) {
-            return redirect()->route('login')
-                ->with('error', $e->getMessage() ?: 'This social account is already linked to another user');
+            return $this->redirectWithCloseScript(route('login'), [
+                'error' => $e->getMessage() ?: 'This social account is already linked to another user'
+            ]);
         }
+    }
+
+    /**
+     * Create a response that includes JavaScript to communicate with the opener and close itself
+     */
+    protected function redirectWithCloseScript(string $parentRedirectUrl, array $flashData = []): RedirectResponse
+    {
+        // Set any flash messages
+        foreach ($flashData as $key => $value) {
+            session()->flash($key, $value);
+        }
+        
+        // Set a flag to indicate this should trigger the popup close behavior
+        session()->flash('closePopup', true);
+        
+        // For Inertia, we need to return to the redirect URL
+        return redirect()->to($parentRedirectUrl);
     }
 }

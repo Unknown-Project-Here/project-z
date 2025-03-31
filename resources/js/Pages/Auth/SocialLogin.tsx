@@ -27,6 +27,24 @@ export function SocialLoginButtons({ className }: SocialLoginButtonsProps) {
         },
     ];
 
+    const handleSocialLogin = (routeName: string, provider: string) => {
+        const url = route(routeName, provider);
+        const width = 600;
+        const height = 700;
+        const left = window.innerWidth / 2 - width / 2;
+        const top = window.innerHeight / 2 - height / 2;
+
+        // Open the popup window
+        const popup = window.open(
+            url,
+            `${provider}Auth`,
+            `width=${width},height=${height},left=${left},top=${top},resizable=yes,scrollbars=yes,status=yes`,
+        );
+
+        // Keep focus on the popup
+        if (popup) popup.focus();
+    };
+
     return (
         <div className={className}>
             <div className="relative my-6">
@@ -46,10 +64,7 @@ export function SocialLoginButtons({ className }: SocialLoginButtonsProps) {
                         key={provider.name}
                         variant="outline"
                         onClick={() =>
-                            (window.location.href = route(
-                                provider.route,
-                                provider.provider,
-                            ))
+                            handleSocialLogin(provider.route, provider.provider)
                         }
                         className="space-x-2"
                     >
