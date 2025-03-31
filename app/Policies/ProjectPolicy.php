@@ -3,7 +3,6 @@
 namespace App\Policies;
 
 use App\Enums\ProjectPermission;
-use App\Enums\ProjectRole;
 use App\Models\Project;
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
