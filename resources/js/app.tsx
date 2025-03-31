@@ -11,7 +11,7 @@ import { createRoot, hydrateRoot } from 'react-dom/client';
 import LandingPageLayout from './Layouts/LandingPageLayout';
 import Layout from './Layouts/Layout';
 
-const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
+const appName = import.meta.env.VITE_APP_NAME || 'Project Z';
 const queryClient = new QueryClient();
 
 createInertiaApp({
@@ -46,8 +46,10 @@ createInertiaApp({
         createRoot(el).render(
             <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
                 <QueryClientProvider client={queryClient}>
+                    {/* <AuthPopupHandler> */}
                     <App {...props} />
                     <ReactQueryDevtools initialIsOpen={false} />
+                    {/* </AuthPopupHandler> */}
                 </QueryClientProvider>
                 <Toaster />
             </ThemeProvider>,
