@@ -202,4 +202,26 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->projects()->where('project_id', $project->id)->first()->pivot?->role->value ?? null;
     }
+
+    // public function blockedUsers()
+    // {
+    //     return $this->belongsToMany(User::class, 'blocked_users', 'user_id', 'blocked_user_id')
+    //         ->withTimestamps();
+    // }
+
+    // public function chatDenials()
+    // {
+    //     return $this->belongsToMany(User::class, 'chat_request_denials', 'user_id', 'denied_user_id')
+    //         ->withTimestamps();
+    // }
+
+    // public function hasBlocked(User $user): bool
+    // {
+    //     return $this->blockedUsers()->where('blocked_user_id', $user->id)->exists();
+    // }
+
+    // public function hasChatRejected(User $user): bool
+    // {
+    //     return $this->chatDenials()->where('denied_user_id', $user->id)->exists();
+    // }
 }

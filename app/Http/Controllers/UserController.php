@@ -29,6 +29,7 @@ class UserController extends Controller
                 'username' => $user->username,
                 'created_at' => $user->created_at,
                 'avatar' => $user->avatar ?? null,
+                'onboarded' => $user->onboarded,
             ],
             'projects' => $projects,
             'skills' => $skills,

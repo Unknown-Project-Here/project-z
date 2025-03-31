@@ -19,28 +19,48 @@ class MessageController extends Controller
     public function index(Request $request)
     {
         $recipientId = $request->input('user_id');
+        $messages = [];
+        $recipient = null;
 
-        // Get all messages between the authenticated user and the recipient
-        $messages = Message::with('user')
-            ->where(function($query) use ($recipientId) {
-                // Get messages where either:
-                // 1. Auth user is sender AND recipient is the selected user
-                // OR
-                // 2. Auth user is recipient AND sender is the selected user
-                $query->where(function($q) use ($recipientId) {
-                    $q->where('user_id', Auth::id())
-                      ->where('recipient_id', $recipientId);
-                })->orWhere(function($q) use ($recipientId) {
-                    $q->where('user_id', $recipientId)
-                      ->where('recipient_id', Auth::id());
-                });
-            })
-            ->orderBy('created_at', 'asc') // Changed to ASC to show oldest messages first
-            ->get();
+        if ($recipientId) {
+            try {
+                $recipient = User::findOrFail($recipientId);
+
+                // Check if chat is allowed
+                // if (!Auth::user()->can('viewChat', $recipient)) {
+                //     return back()->with('error', 'Chat is not available with this user');
+                // }
+
+                // Get messages between authenticated user and specific recipient
+                $messages = Message::with('user')
+                    ->where(function($query) use ($recipientId) {
+                        $query->where(function($q) use ($recipientId) {
+                            $q->where('user_id', Auth::id())
+                              ->where('recipient_id', $recipientId);
+                        })->orWhere(function($q) use ($recipientId) {
+                            $q->where('user_id', $recipientId)
+                              ->where('recipient_id', Auth::id());
+                        });
+                    })
+                    ->orderBy('created_at', 'asc')
+                    ->get();
+            } catch (\Exception $e) {
+                Log::error('Error loading chat messages: ' . $e->getMessage());
+                return back()->with('error', 'Failed to load chat messages');
+            }
+        } else {
+            // Get all messages where user is either sender or recipient
+            $messages = Message::with('user')
+                ->where('user_id', Auth::id())
+                ->orWhere('recipient_id', Auth::id())
+                ->orderBy('created_at', 'asc')
+                ->get();
+        }
             
         return Inertia::render('Messages/Index', [
             'messages' => $messages,
             'recipientId' => $recipientId,
+            'recipient' => $recipient,
             'users' => User::select(['id', 'username'])->get(),
         ]);
     }
@@ -82,6 +102,13 @@ class MessageController extends Controller
             return back()->with('error', 'User not authenticated');
         }
 
+        $recipient = User::findOrFail($validated['recipient_id']);
+
+        // Check if message can be sent
+        if (!Auth::user()->can('sendMessage', $recipient)) {
+            return back()->with('error', 'Cannot send message to this user');
+        }
+
         try {
             $messageData = [
                 'user_id' => Auth::id(),
@@ -117,6 +144,33 @@ class MessageController extends Controller
         }
     }
 
-    
+    // Add new methods for blocking and rejecting
+    public function blockUser(Request $request)
+    {
+        $validated = $request->validate([
+            'user_id' => 'required|exists:users,id'
+        ]);
+
+        $user = Auth::user();
+        $targetUser = User::findOrFail($validated['user_id']);
+
+        $user->blockedUsers()->attach($targetUser->id);
+
+        return back()->with('success', 'User blocked successfully');
+    }
+
+    public function rejectChat(Request $request)
+    {
+        $validated = $request->validate([
+            'user_id' => 'required|exists:users,id'
+        ]);
+
+        $user = Auth::user();
+        $targetUser = User::findOrFail($validated['user_id']);
+
+        $user->chatDenials()->attach($targetUser->id);
+
+        return back()->with('success', 'Chat requests rejected for this user');
+    }
 }
 
